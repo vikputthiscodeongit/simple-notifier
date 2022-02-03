@@ -1,0 +1,36 @@
+@import "~sass-rem/rem";
+
+@import "variables";
+
+.simple-notifier {
+    position: fixed;
+    top: rem(32px);
+    z-index: 10;
+    max-width: calc(100% - #{rem(48px)});
+    padding: rem(12px) rem(16px);
+    background-color: $white;
+    border-radius: rem(4px);
+    box-shadow: 0 rem(2px) rem(2px) 0 rgba(0, 0, 0, 0.333333);
+
+    @include respond-above(xs) {
+        max-width: calc(100% - 20vw);
+    }
+
+    @include respond-above(sm) {
+        max-width: calc(100% - 30vw);
+    }
+
+    @include respond-above(xxl) {
+        max-width: rem(1440px);
+    }
+
+    &:not(.is-shown) {
+        display: none;
+    }
+
+    @each $state, $value in $states {
+        &--#{$state} {
+            color: $state;
+        }
+    }
+}

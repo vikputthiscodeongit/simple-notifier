@@ -1,0 +1,11 @@
+$white: white;
+$green: green;
+$yellow: yellow;
+$red: red;
+
+$states: (
+    "default": $white,
+    "success": $green,
+    "warning": $yellow,
+    "error": $red
+) !default;
