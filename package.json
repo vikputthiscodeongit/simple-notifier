@@ -16,9 +16,11 @@
     "easy",
     "light",
     "notifier",
+    "notification",
     "notifications",
+    "alert",
     "alerts",
-    "toasts"
+    "information"
   ],
   "author": "codebundlesbyvik",
   "license": "MIT",
