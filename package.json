@@ -1,0 +1,51 @@
+{
+  "name": "@codebundlesbyvik/simple-notifier",
+  "version": "0.9.0",
+  "description": "A lightweight and easy to use notification library.",
+  "main": "/src/js/index.js",
+  "scripts": {
+    "dev": "webpack --mode development --config webpack.config.dev.js --watch",
+    "prod": "webpack --mode production --config webpack.config.prod.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vikputthiscodeongit/simple-notifier"
+  },
+  "keywords": [
+    "simple",
+    "easy",
+    "light",
+    "notifier",
+    "notification",
+    "notifications",
+    "alert",
+    "alerts",
+    "information"
+  ],
+  "author": "codebundlesbyvik",
+  "license": "MIT",
+  "bugs": "https://github.com/vikputthiscodeongit/simple-notifier/issues",
+  "dependencies": {
+    "@codebundlesbyvik/css-media-functions": "^1.0.0-2",
+    "@codebundlesbyvik/element-operations": "^1.0.0-2",
+    "@codebundlesbyvik/number-operations": "^1.0.1-1",
+    "css-duration": "^0.3.0"
+  },
+  "devDependencies": {
+    "css-loader": "^6.2.0",
+    "cssnano": "^5.0.7",
+    "mini-css-extract-plugin": "^2.1.0",
+    "node-sass": "^7.0.1",
+    "sass-loader": "^12.1.0",
+    "sass-rem": "2.0.1",
+    "webpack": "^5.46.0",
+    "webpack-cli": "^4.7.2"
+  },
+  "browserslist": [
+    "since 2019-01 and > 0.5%",
+    "last 2 versions and not dead",
+    "Firefox ESR",
+    "not Explorer >= 0",
+    "not OperaMini all"
+  ]
+}
