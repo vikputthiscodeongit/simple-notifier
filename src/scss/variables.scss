@@ -1,11 +1,11 @@
-$white: white;
-$green: green;
-$yellow: yellow;
-$red: red;
+$notifier-white: white;
+$notifier-green: green;
+$notifier-yellow: yellow;
+$notifier-red: red;
 
 $states: (
-    "default": $white,
-    "success": $green,
-    "warning": $yellow,
-    "error": $red
+    "default": $notifier-white,
+    "success": $notifier-green,
+    "warning": $notifier-yellow,
+    "error": $notifier-red
 ) !default;
