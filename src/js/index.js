@@ -81,7 +81,8 @@ class SimpleNotifier {
             tagName: "div",
             role: "notifier",
             attrs: {
-                class: SimpleNotifier.nodeCls.base
+                class: SimpleNotifier.nodeCls.base,
+                role: "alert"
             }
         },
         {
