@@ -10,10 +10,12 @@
     min-width: rem(272px);
     width: calc(100% - 2 * #{rem(24px)});
     padding: rem(12px) rem(16px);
-    background-color: $white;
     transform: translateX(-50%);
+    color: map-get($notifier-text-colors, "default");
+    background-color: map-get($notifier-bg-colors, "default");
     border-radius: rem(4px);
     box-shadow: 0 rem(2px) rem(2px) 0 rgba(0, 0, 0, 0.333333);
+    backdrop-filter: blur(rem(4px));
 
     @media (min-width: 30em) { // 480 px
         width: rem(384px);
@@ -55,6 +57,31 @@
             bottom: rem(32px);
         }
     }
+
+    @each $type, $value in $notifier-types {
+        &--#{$type} {
+            //
+            // TODO:
+            // Uncomment the following when (if ever) Sass gains proper flow control.
+            // https://github.com/sass/sass/issues/378.
+            //
+            // @if ($type == "default") {
+            //     @continue;
+            // }
+
+            $color: map-get($notifier-text-colors, $type);
+            $background-color: map-get($notifier-bg-colors, $type);
+
+            @if ($color == null) {
+                $color: map-get($notifier-text-colors, "default");
+            }
+
+            @if ($background-color == null) {
+                $background-color: map-get($notifier-bg-colors, "default");
+            }
+
+            color: $color;
+            background-color: $background-color;
         }
     }
 }
