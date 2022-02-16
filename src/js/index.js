@@ -6,6 +6,7 @@ import getRandomIntUnder from "@codebundlesbyvik/number-operations";
 const defaultOptions = {
     autoHide: 3500,          // Number / Boolean
     parentEl: document.body, // Element
+    position: "top center",  // String
     animations: "auto"       // String / Boolean
 };
 
@@ -15,6 +16,7 @@ class SimpleNotifier {
 
         this.autoHide = this.mergedOptions.autoHide;
         this.parentEl = this.mergedOptions.parentEl;
+        this.position = this.mergedOptions.position;
         this.motionPref = this.mergedOptions.animations;
         this.animatedRun = null;
 
@@ -124,6 +126,17 @@ class SimpleNotifier {
                 this.nodes.notifier.append(el);
             }
         });
+
+        const screenPosArray = this.position.split(" ");
+
+        if (screenPosArray.length === 1) {
+            screenPosArray[1] = "center";
+        }
+
+        this.nodes.notifier.classList.add(
+            `${SimpleNotifier.nodeCls.base}--pos-y-${screenPosArray[0]}`,
+            `${SimpleNotifier.nodeCls.base}--pos-x-${screenPosArray[1]}`
+        );
 
         this.events.isShown = new Event("notifierShown");
         this.nodes.notifier.addEventListener("notifierShown", () => {

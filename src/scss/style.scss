@@ -5,32 +5,56 @@
 .simple-notifier {
     position: fixed;
     top: rem(32px);
+    left: 50%;
     z-index: 10;
-    max-width: calc(100% - #{rem(48px)});
+    min-width: rem(272px);
+    width: calc(100% - 2 * #{rem(24px)});
     padding: rem(12px) rem(16px);
     background-color: $white;
+    transform: translateX(-50%);
     border-radius: rem(4px);
     box-shadow: 0 rem(2px) rem(2px) 0 rgba(0, 0, 0, 0.333333);
 
-    @include respond-above(xs) {
-        max-width: calc(100% - 20vw);
+    @media (min-width: 30em) { // 480 px
+        width: rem(384px);
     }
 
-    @include respond-above(sm) {
-        max-width: calc(100% - 30vw);
-    }
-
-    @include respond-above(xxl) {
-        max-width: rem(1440px);
+    @media (min-width: 48em) { // 768 px
+        width: rem(448px)
     }
 
     &:not(.is-shown) {
         display: none;
     }
 
-    @each $state, $value in $states {
-        &--#{$state} {
-            color: $state;
+    &--pos {
+        &-x {
+            &-left,
+            &-right {
+                @media (min-width: 48em) { // 768 px
+                    transform: unset;
+                }
+            }
+
+            &-left {
+                @media (min-width: 48em) { // 768 px
+                    left: rem(32px);
+                }
+            }
+
+            &-right {
+                @media (min-width: 48em) { // 768 px
+                    left: unset;
+                    right: rem(32px);
+                }
+            }
+        }
+
+        &-y-bottom {
+            top: unset;
+            bottom: rem(32px);
+        }
+    }
         }
     }
 }
