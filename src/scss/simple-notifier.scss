@@ -9,13 +9,9 @@
     z-index: 10;
     min-width: rem(272px);
     width: calc(100% - 2 * #{rem(24px)});
-    padding: rem(12px) rem(16px);
+    margin-top: rem(-12px);
+    margin-bottom: rem(-12px);
     transform: translateX(-50%);
-    color: map-get($notifier-text-colors, "default");
-    background-color: map-get($notifier-bg-colors, "default");
-    border-radius: rem(4px);
-    box-shadow: 0 rem(2px) rem(2px) 0 rgba(0, 0, 0, 0.333333);
-    backdrop-filter: blur(rem(4px));
 
     @media (min-width: 30em) { // 480 px
         width: rem(384px);
@@ -23,10 +19,6 @@
 
     @media (min-width: 48em) { // 768 px
         width: rem(448px)
-    }
-
-    &:not(.is-shown) {
-        display: none;
     }
 
     &--pos {
@@ -56,6 +48,21 @@
             top: unset;
             bottom: rem(32px);
         }
+    }
+}
+
+.simple-notification {
+    margin-top: rem(12px);
+    margin-bottom: rem(12px);
+    padding: rem(12px) rem(16px);
+    color: map-get($notifier-text-colors, "default");
+    background-color: map-get($notifier-bg-colors, "default");
+    border-radius: rem(4px);
+    box-shadow: 0 rem(2px) rem(2px) 0 rgba(0, 0, 0, 0.333333);
+    backdrop-filter: blur(rem(4px));
+
+    &:not(.is-shown) {
+        display: none;
     }
 
     @each $type, $value in $notifier-types {

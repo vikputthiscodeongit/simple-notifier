@@ -4,13 +4,14 @@ import { createEl, getElCssValue } from "@codebundlesbyvik/element-operations";
 import getRandomIntUnder from "@codebundlesbyvik/number-operations";
 
 const defaultOptions = {
-    autoHide: 3500,          // Number / Boolean
-    parentEl: document.body, // Element
-    position: "top center",  // String
-    animations: "auto"       // String / Boolean
+    autoHide: true,            // Number / Boolean
+    onlyOneNotification: true, // Boolean
+    parentEl: document.body,   // Element
+    position: "top center",    // String
+    animations: "auto"         // String / Boolean
 };
 
-class SimpleNotifier {
+class SN {
     constructor(userOptions = {}) {
         this.mergedOptions = Object.assign(defaultOptions, userOptions);
 
@@ -18,33 +19,67 @@ class SimpleNotifier {
         this.parentEl = this.mergedOptions.parentEl;
         this.position = this.mergedOptions.position;
         this.motionPref = this.mergedOptions.animations;
-        this.animatedRun = null;
 
         this.instanceId = null;
-        this.states = {
-            isShown: null,
-            hiding: null,
-            reshowing: null
-        };
-        this.timeoutIds = {
-            showAnim: null,
-            hideCall: null,
-            hideAnim: null
-        };
-        this.events = {
-            isShown: null,
-            isHidden: null
+
+        this.nId = 1;
+        this.nodes = {};
+        this.msgData = {};
+
+        this.timeoutIds = {};
+        this.events = {};
+        this.onlyOne = {
+            set: this.mergedOptions.onlyOneNotification,
+            states: {},
+            nextMsgData: {}
         };
 
-        this.nodes = {
-            notifier: null,
-            message: null
-        };
-        this.message = {
-            text: null,
-            type: null
-        };
+        this.animatedRun = null;
     }
+
+    static nodeClasses = {
+        wrapper: "simple-notifier",
+        notification: "simple-notification",
+        typeRegex: /simple-notification--[A-Za-z]+/g,
+        shown: "is-shown",
+        anim: {
+            base: "animated",
+            show: "fadeIn",
+            hide: "fadeOut"
+        }
+    }
+
+    static nodeSkeletons = {
+        wrapper: {
+            tagName: "div",
+            attrs: {
+                class: SN.nodeClasses.wrapper
+            }
+        },
+        notification: {
+            tagName: "div",
+            attrs: {
+                class: SN.nodeClasses.notification,
+                role: "alert"
+            }
+        },
+        message: {
+            tagName: "p",
+            attrs: {
+                class: `${SN.nodeClasses.notification}__message`
+            }
+        }
+    };
+
+    static defaultMsgData = {
+        notext: {
+            text: "This is some dummy text for you, because none was passed in.",
+            type: "debug"
+        },
+        notype: {
+            type: "default"
+        }
+    };
 
     get animated() {
         switch(this.motionPref) {
@@ -67,229 +102,359 @@ class SimpleNotifier {
         }
     }
 
-    static nodeCls = {
-        base: "simple-notifier",
-        typeRegex: /simple-notifier--[A-Za-z]+/g,
-        shown: "is-shown",
-        anim: {
-            base: "animated",
-            show: "fadeIn",
-            hide: "fadeOut"
-        }
+    _eventCallbackShown(e) {
+        console.log(`SN: notificationShown event dispatched by notification ${e.detail.id}.`);
     }
 
-    static nodeSkeletons = [
-        {
-            tagName: "div",
-            role: "notifier",
-            attrs: {
-                class: SimpleNotifier.nodeCls.base,
-                role: "alert"
-            }
-        },
-        {
-            tagName: "p",
-            role: "message",
-            attrs: {
-                class: `${SimpleNotifier.nodeCls.base}__message`
-            }
-        }
-    ];
-
-    static defaultMsgData = {
-        notext: {
-            text: "This is some dummy text for you, because none was passed in.",
-            type: "debug"
-        },
-        notype: {
-            type: "default"
-        }
-    };
+    _eventCallbackDestroyed(e) {
+        console.log(`SN: notificationDestroyed event dispatched by notification ${e.detail.id}.`);
+    }
 
     init() {
-        console.log("In SimpleNotifier.init().");
+        console.log("SN: Running .init()...");
 
         if (this.instanceId) {
-            throw new Error("Can't call .init() on an already initialized instance.");
+            throw new Error("SN: .init() has already been called on this instance.");
         }
 
         this.instanceId = getRandomIntUnder(1000);
 
-        SimpleNotifier.nodeSkeletons.forEach((skeleton) => {
-            const el = createEl(skeleton.tagName, skeleton.attrs);
+        const wrapperEl = createEl(
+            SN.nodeSkeletons.wrapper.tagName,
+            SN.nodeSkeletons.wrapper.attrs
+        );
 
-            this.nodes[skeleton.role] = el;
+        this.parentEl.insertBefore(wrapperEl, this.parentEl.firstElementChild);
 
-            if (skeleton.role === "notifier") {
-                this.parentEl.insertBefore(el, this.parentEl.firstElementChild);
-            } else {
-                this.nodes.notifier.append(el);
-            }
-        });
+        this.nodes.wrapper = wrapperEl;
 
         const screenPosArray = this.position.split(" ");
 
+        // If only a y-position is set by the user, add an x-position.
         if (screenPosArray.length === 1) {
             screenPosArray[1] = "center";
         }
 
-        this.nodes.notifier.classList.add(
-            `${SimpleNotifier.nodeCls.base}--pos-y-${screenPosArray[0]}`,
-            `${SimpleNotifier.nodeCls.base}--pos-x-${screenPosArray[1]}`
+        this.nodes.wrapper.classList.add(
+            `${SN.nodeClasses.wrapper}--pos-y-${screenPosArray[0]}`,
+            `${SN.nodeClasses.wrapper}--pos-x-${screenPosArray[1]}`
         );
-
-        this.events.isShown = new Event("notifierShown");
-        this.nodes.notifier.addEventListener("notifierShown", () => {
-            console.log("notifierShown event dispatched.");
-        });
-
-        this.events.isHidden = new Event("notifierHidden");
-        this.nodes.notifier.addEventListener("notifierHidden", () => {
-            console.log("notifierHidden event dispatched.");
-
-            if (this.states.reshowing) {
-                this.states.reshowing = false;
-
-                this._newShow();
-            }
-        });
-    }
-
-    destroy() {
-        // Code
     }
 
     show(text, type) {
-        console.log("In SimpleNotifier.show().");
+        console.log("SN: Running .show()...");
 
         if (!this.instanceId) {
-            throw new Error(".init() must be called at least once before usage!");
+            throw new Error("SN: .init() must be called at least once before usage!");
         }
 
-        if (this.states.reshowing) {
-            console.log(".show() was called while executing .reShow(). Returning!");
+        if (this.onlyOne.set) {
+            if (
+                this.onlyOne.states.inShow || this.onlyOne.states.inShowNew ||
+                this.onlyOne.states.inReshow || this.onlyOne.states.inHide
+            ) {
+                console.log("SN: onlyOneNotification === true and .show() was called during execution of .show(), ._showNewNotification(), ._reshowNotification() or .hide(). Returning.");
 
-            return;
+                return;
+            }
+
+            if (this.onlyOne.states.isVisible) {
+                console.log("SN: onlyOneNotification === true and notification is currently visible. Calling ._reshowNotification()...");
+
+                this._reshowNotification(text, type);
+
+                return;
+            }
+
+            this.onlyOne.states.inShow = true;
         }
+
+        let nId = this.nId;
+
+        if (!this.onlyOne.set) {
+            this.nId++;
+        }
+
+        this._initNotification(nId);
+
+        this._getMsgData(nId, text, type);
+
+        this._showNewNotification(nId);
+
+        if (this.onlyOne.set) {
+            this.onlyOne.states.inShow = false;
+        }
+    }
+
+    _initNotification(nId) {
+        console.log(`SN: Running ._initNotification() on nId ${nId}...`);
+
+        // Nodes
+        this.nodes[nId] = {};
+
+        for (const [role, values] of Object.entries(SN.nodeSkeletons)) {
+            if (role === "wrapper")
+                continue;
+
+            const el = createEl(values.tagName, values.attrs);
+
+            this.nodes[nId][role] = el;
+
+            if (role === "notification") {
+                this.nodes.wrapper.insertBefore(el, this.nodes.wrapper.firstElementChild);
+            } else {
+                this.nodes[nId].notification.append(el);
+            }
+        }
+
+        // Timeouts
+        this.timeoutIds[nId] = {};
+
+        // Events
+        this.events[nId] = {};
+
+        this.events[nId].shown =
+            new CustomEvent("notificationShown", { detail: { id: nId } });
+        this.events[nId].destroyed =
+            new CustomEvent("notificationDestroyed", { detail: { id: nId } });
+
+        this.events[nId].shown.cbBound = this._eventCallbackShown.bind(this);
+        this.events[nId].destroyed.cbBound = this._eventCallbackDestroyed.bind(this);
+
+        this.nodes.wrapper
+            .addEventListener("notificationShown", this.events[nId].shown.cbBound);
+        this.nodes.wrapper
+            .addEventListener("notificationDestroyed", this.events[nId].destroyed.cbBound);
+    }
+
+    _getMsgData(nId, text, type) {
+        console.log(`SN: Running ._getMsgData on nId ${nId}...`);
 
         if (!text) {
-            type = SimpleNotifier.defaultMsgData.notext.type;
-            text = SimpleNotifier.defaultMsgData.notext.text;
+            if (this.onlyOne.nextMsgData) {
+                text = this.onlyOne.nextMsgData.text;
+                type = this.onlyOne.nextMsgData.type;
+
+                this.onlyOne.nextMsgData = {};
+            } else {
+                text = SN.defaultMsgData.notext.text;
+                type = SN.defaultMsgData.notext.type;
+            }
         }
 
         if (!type) {
-            type = SimpleNotifier.defaultMsgData.notype.type;
+            type = SN.defaultMsgData.notype.type;
         }
 
-        this.message.text = text;
-        this.message.type = type;
+        this.msgData[nId] = {};
 
-        if (this.states.isShown) {
-            console.log("A notification is already being shown. Calling .reShow().");
-
-            this._reShow();
-        } else {
-            console.log("No notification is currently shown. Calling .newShow().");
-
-            this._newShow();
-        }
+        this.msgData[nId].text = text;
+        this.msgData[nId].type = type;
     }
 
-    _newShow() {
-        console.log("In SimpleNotifier.newShow().");
+    _showNewNotification(nId) {
+        console.log(`SN: Running ._showNewNotification() on nId ${nId}...`);
+
+        if (this.onlyOne.set) {
+            this.onlyOne.states.inShowNew = true;
+        }
 
         this.animatedRun = this.animated;
 
-        this.nodes.message.textContent = this.message.text;
+        this.nodes[nId].message.textContent = this.msgData[nId].text;
 
-        this.nodes.notifier.classList.add(
-            `${SimpleNotifier.nodeCls.base}--${this.message.type}`,
-            SimpleNotifier.nodeCls.shown
+        this.nodes[nId].notification.classList.add(
+            `${SN.nodeClasses.notification}--${this.msgData[nId].type}`,
+               SN.nodeClasses.shown
         );
 
-        this.states.isShown = true;
-
-        this.nodes.notifier.dispatchEvent(this.events.isShown);
+        if (this.onlyOne.set) {
+            this.onlyOne.states.isVisible = true;
+        }
 
         if (this.animatedRun) {
-            this.nodes.notifier.classList.add(
-                SimpleNotifier.nodeCls.anim.base,
-                SimpleNotifier.nodeCls.anim.show
+            this.nodes[nId].notification.classList.add(
+                SN.nodeClasses.anim.base,
+                SN.nodeClasses.anim.show
             );
 
-            const toDur = cssTimeToMs(getElCssValue(this.nodes.notifier, "animation-duration"));
+            const animTimeout = cssTimeToMs(getElCssValue(
+                this.nodes[nId].notification,
+                "animation-duration"
+            ));
 
-            this.timeoutIds.showAnim = setTimeout(() => {
-                this.nodes.notifier.classList.remove(SimpleNotifier.nodeCls.anim.show);
+            this.timeoutIds[nId].showAnim = setTimeout(() => {
+                this.nodes[nId].notification.classList.remove(SN.nodeClasses.anim.show);
 
-                this.timeoutIds.showAnim = null;
-            }, toDur);
+                this.timeoutIds[nId].showAnim = null;
+            }, animTimeout);
         }
+
+        this.nodes.wrapper.dispatchEvent(this.events[nId].shown);
+
+        this.nodes.wrapper
+            .removeEventListener("notificationShown", this.events[nId].shown.cbBound);
+        delete this.events[nId].shown;
 
         if (this.hideCallTimeout > 0) {
-            this.timeoutIds.hideCall = setTimeout(() => {
-                this.hide();
+            this.timeoutIds[nId].hideCall = setTimeout(() => {
+                this.hide(nId);
 
-                this.timeoutIds.hideCall = null;
+                this.timeoutIds[nId].hideCall = null;
             }, this.hideCallTimeout);
+        } else {
+            this.animatedRun = null;
+        }
+
+        if (this.onlyOne.set) {
+            this.onlyOne.states.inShowNew = false;
         }
     }
 
-    _reShow() {
-        console.log("In SimpleNotifier.reShow().");
+    _reshowNotification(text, type) {
+        console.log("SN: Running ._reshowNotification()...");
 
-        this.states.reshowing = true;
+        this.onlyOne.states.inReshow = true;
 
-        clearTimeout(this.timeoutIds.hideCall);
+        this.onlyOne.nextMsgData.text = text;
+        this.onlyOne.nextMsgData.type = type;
 
-        this.hide();
+        clearTimeout(this.timeoutIds[1].hideCall);
+        this.timeoutIds[1].hideCall = null;
+
+        this.hide(1);
     }
 
-    hide() {
-        console.log("In SimpleNotifier.hide().");
+    hide(nId) {
+        console.log(`SN: Running .hide() on nId ${nId}...`);
 
-        if (this.states.hiding) {
-            console.log(".hide() was called whilst already running. Returning!");
+        if (this.onlyOne.set) {
+            if (this.onlyOne.states.inHide) {
+                console.log("SN: onlyOneNotification === true and .hide() was called whilst already running. Returning.");
 
-            return;
-        }
-
-        this.states.hiding = true;
-
-        let toDur = 0;
-
-        if (this.animatedRun) {
-            this.nodes.notifier.classList.add(SimpleNotifier.nodeCls.anim.hide);
-
-            toDur = cssTimeToMs(getElCssValue(this.nodes.notifier, "animation-duration"));
-        }
-
-        this.timeoutIds.hideAnim = setTimeout(() => {
-            this.nodes.notifier.classList.remove(SimpleNotifier.nodeCls.shown);
-            this.nodes.notifier.className =
-                this.nodes.notifier.className.replace(SimpleNotifier.nodeCls.typeRegex, "");
-
-            this.states.isShown = false;
-
-            this.nodes.message.textContent = "";
-
-            if (this.animatedRun) {
-                this.nodes.notifier.classList.remove(SimpleNotifier.nodeCls.anim.hide);
-
-                if (!this.states.reshowing) {
-                    this.nodes.notifier.classList.remove(SimpleNotifier.nodeCls.anim.base);
-                }
+                return;
             }
 
-            this.animatedRun = null;
+            this.onlyOne.states.inHide = true;
+        }
 
-            this.states.hiding = false;
+        let nIdsArray;
 
-            this.nodes.notifier.dispatchEvent(this.events.isHidden);
+        if (typeof nId === "number") {
+            if (this.msgData[nId] === "undefined") {
+                console.warn(`SN: .hide() was called on a non-existant notification. Returning!`);
 
-            this.timeoutIds.hideAnim = null;
-        }, toDur);
+                return;
+            }
+
+            nIdsArray = [nId];
+        }
+
+        if (typeof nId === "undefined") {
+            nIdsArray = Object.keys(this.msgData);
+
+            if (nIdsArray.length === 0) {
+                console.warn("SN: .hide() was called, but no notification is currently shown. Returning!");
+
+                return;
+            }
+        }
+
+        let i = 1;
+
+        nIdsArray.forEach((id) => {
+            this._hideNotification(id);
+
+            i++;
+
+            if (this.onlyOne.set && i > nIdsArray.length) {
+                this.onlyOne.states.inHide = false;
+            }
+        });
+    }
+
+    _hideNotification(nId) {
+        console.log(`SN: Running ._hideNotification() on nId ${nId}...`);
+
+        if (this.animatedRun === null) {
+            this.animatedRun = this.animated;
+        }
+
+        let animTimeout = 0;
+
+        if (this.animatedRun) {
+            this.nodes[nId].notification.classList.add(SN.nodeClasses.anim.hide);
+
+            animTimeout = cssTimeToMs(getElCssValue(
+                this.nodes[nId].notification,
+                "animation-duration"
+            ));
+        }
+
+        this.timeoutIds[nId].hideAnim = setTimeout(() => {
+            this.nodes[nId].notification.classList.remove(SN.nodeClasses.shown);
+            this.nodes[nId].notification.className =
+                this.nodes[nId].notification.className.replace(SN.nodeClasses.typeRegex, "");
+
+            if (this.animatedRun) {
+                this.nodes[nId].notification.classList.remove(SN.nodeClasses.anim.hide);
+            }
+
+            if (this.onlyOne.set) {
+                this.onlyOne.states.isVisible = false;
+            }
+
+            this._destroyNotification(nId);
+        }, animTimeout);
+    }
+
+    _destroyNotification(nId) {
+        console.log(`SN: Running ._destroyNotification() on nId ${nId}...`);
+
+        const nodesArrayKeys = Object.keys(this.nodes[nId]);
+        const nodesArrayValues = Object.values(this.nodes[nId]);
+
+        new Promise((resolve) => {
+            let nodeKey = 0;
+
+            nodesArrayValues.forEach((node) => {
+                node.remove();
+
+                nodeKey++;
+
+                if (nodeKey === nodesArrayKeys.length) {
+                    resolve("All nodes were removed succesfully.");
+                }
+            });
+        })
+            .then(() => {
+                this.nodes.wrapper.dispatchEvent(this.events[nId].destroyed);
+
+                this.nodes.wrapper.removeEventListener(
+                    "notificationDestroyed",
+                    this.events[nId].destroyed.cbBound
+                );
+                delete this.events[nId];
+
+                delete this.nodes[nId];
+                delete this.msgData[nId];
+
+                this.animatedRun = null;
+
+                this.timeoutIds[nId].hideAnim = null;
+
+                console.log(`SN: Notification ${nId} has succesfully been destroyed.`);
+
+                if (this.onlyOne.set && this.onlyOne.states.inReshow) {
+                    this.onlyOne.states.inReshow = false;
+
+                    this.show();
+                }
+            })
+            .catch((error) => {
+                throw new Error(error);
+            });
     }
 }
 
-export default SimpleNotifier;
+export default SN;
