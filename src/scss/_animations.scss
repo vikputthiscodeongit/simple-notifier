@@ -1,0 +1,44 @@
+.animated {
+    animation-duration: 0.5s;
+    animation-fill-mode: both;
+}
+
+.fade {
+    &In {
+        animation-name: fadeIn;
+    }
+
+    &Out {
+        animation-name: fadeOut;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
