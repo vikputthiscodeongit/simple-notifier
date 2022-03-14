@@ -3,12 +3,18 @@
   "version": "0.9.0",
   "description": "A lightweight and easy to use notification library.",
   "main": "./src/js/index.js",
+  "sass": "./src/scss/simple-notifier.scss",
+  "style": "./dist/css/simple-notifier.css",
   "scripts": {
-    "css-compile": "sass ./src/scss/simple-notifier.scss ./dist/simple-notifier.css --style=compressed",
-    "css-prefix": "postcss -r ./dist/simple-notifier.css -m -u autoprefixer",
-    "css-build": "npm-run-all css-compile css-prefix",
-    "js-build": "webpack --mode production --config webpack.config.js",
-    "build-all": "npm-run-all css-build js-build"
+    "css-dev": "npm run scss-compile-dev",
+    "css-prod": "npm-run-all scss-compile-prod css-prefix",
+    "scss-compile-dev": "sass --watch --load-path=node_modules ./src/scss/simple-notifier.scss ./dist/css/simple-notifier.css --style=expanded --embed-source-map",
+    "scss-compile-prod": "sass --load-path=node_modules ./src/scss/simple-notifier.scss ./dist/css/simple-notifier.css --style=compressed --no-source-map",
+    "css-prefix": "postcss ./dist/css/simple-notifier.css --replace --map --use autoprefixer",
+    "js-dev": "webpack --watch --mode development --config webpack.config.js",
+    "js-prod": "webpack --mode production --config webpack.config.js",
+    "dev": "npm-run-all --parallel js-dev css-dev",
+    "prod": "npm-run-all js-prod css-prod"
   },
   "repository": {
     "type": "git",
@@ -39,6 +45,7 @@
     "@babel/preset-env": "^7.16.11",
     "autoprefixer": "^10.4.2",
     "babel-loader": "^8.2.3",
+    "babel-plugin-transform-remove-console": "^6.9.4",
     "npm-run-all": "^4.1.5",
     "postcss": "^8.4.6",
     "postcss-cli": "^9.1.0",
@@ -46,7 +53,8 @@
     "sass-loader": "^12.6.0",
     "sass-rem": "^3.0.0",
     "webpack": "^5.46.0",
-    "webpack-cli": "^4.7.2"
+    "webpack-cli": "^4.7.2",
+    "webpack-merge": "^5.8.0"
   },
   "browserslist": [
     "since 2019-01 and > 0.5%",

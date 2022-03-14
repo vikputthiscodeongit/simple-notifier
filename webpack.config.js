@@ -1,13 +1,15 @@
 const path = require("path");
+const { merge } = require("webpack-merge");
 
-module.exports = {
-    context: path.resolve(__dirname, "./src"),
+const baseConfig = {
+    context: path.resolve(__dirname, "./src/js"),
 
     entry: {
-        main: "./js/index.js"
+        main: "./index.js"
     },
 
     output: {
+        path: path.resolve(__dirname, "./dist/js"),
         filename: "simple-notifier.js"
     },
 
@@ -15,15 +17,24 @@ module.exports = {
         children: true
     },
 
-    mode: "production",
+    module: {
+        rules: [
+            {
+                test: /\.m?js$/i,
+                exclude: /(node_modules|bower_components)/
+            }
+        ]
+    }
+}
 
-    devtool: "source-map",
+const devConfig = {
+    mode: "development",
+
+    devtool: "eval-source-map",
 
     module: {
         rules: [
             {
-                test: /\.m?js$/,
-                exclude: /(node_modules|bower_components)/,
                 use: {
                     loader: "babel-loader",
                     options: {
@@ -32,5 +43,40 @@ module.exports = {
                 }
             }
         ]
+    }
+}
+
+const prodConfig = {
+    mode: "production",
+
+    output: {
+        clean: true
+    },
+
+    devtool: "source-map",
+
+    module: {
+        rules: [
+            {
+                use: {
+                    loader: "babel-loader",
+                    options: {
+                        presets: ["@babel/preset-env"],
+                        plugins: ["babel-plugin-transform-remove-console"]
+                    }
+                }
+            }
+        ]
+    }
+}
+
+module.exports = (env, args) => {
+    switch(args.mode) {
+        case "development":
+            return merge(baseConfig, devConfig);
+        case "production":
+            return merge(baseConfig, prodConfig);
+        default:
+            throw new Error("No matching configuration was found!");
     }
 };
