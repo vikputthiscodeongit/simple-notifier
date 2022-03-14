@@ -3,9 +3,9 @@ $notifier-color-opactiy: 0.9;
 $notifier-colors: (
     "light":  rgba(255, 255, 255, $notifier-color-opactiy),
     "dark":   rgba(0, 0, 0, $notifier-color-opactiy),
-    "green":  rgba(25, 135, 84, $notifier-color-opactiy),
-    "yellow": rgba(255, 193, 7, $notifier-color-opactiy),
-    "red":    rgba(220, 53, 69, $notifier-color-opactiy)
+    "green":  rgba(209, 231, 221, $notifier-color-opactiy),
+    "yellow": rgba(255, 243, 205, $notifier-color-opactiy),
+    "red":    rgba(132, 32, 41, $notifier-color-opactiy)
 ) !default;
 
 $notifier-types: (
