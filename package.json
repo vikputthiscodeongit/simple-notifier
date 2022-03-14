@@ -1,6 +1,6 @@
 {
   "name": "@codebundlesbyvik/simple-notifier",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A lightweight and easy to use notification library.",
   "main": "./src/js/index.js",
   "sass": "./src/scss/simple-notifier.scss",
