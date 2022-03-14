@@ -2,7 +2,7 @@
 [![npm](https://img.shields.io/npm/v/@codebundlesbyvik/simple-notifier)](https://www.npmjs.com/package/@codebundlesbyvik/simple-notifier)
 [![npm - downloads per month](https://img.shields.io/npm/dm/@codebundlesbyvik/simple-notifier)](https://img.shields.io/npm/dm/@codebundlesbyvik/simple-notifier)
 
-A lightweight and easy to use notification library.
+A lightweight and easy to use notification library, written using modern ECMAScript features.
 
 <br>
 
@@ -23,7 +23,7 @@ A lightweight and easy to use notification library.
 
 ## Nice features
 
-* Allows either at most a single notification to be shown on screen, or multiple simultaneously.
+* An instance allows either at most a single notification to be shown on screen, or multiple simultaneously.
 * Flexible positioning.
 * Check out the [options](#options) for more!
 
