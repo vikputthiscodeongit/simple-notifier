@@ -145,7 +145,7 @@ class SN {
         console.log("SN: Running .show()...");
 
         if (!this.instanceId) {
-            throw new Error("SN: .init() must be called at least once before usage!");
+            throw new Error("SN: .init() must be once before usage!");
         }
 
         if (this.onlyOne.set) {
