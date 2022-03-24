@@ -1,4 +1,16 @@
-$notifier-color-opactiy: 0.9;
+// Types
+$notifier-types: (
+    "default",
+    "success",
+    "warning",
+    "error"
+) !default;
+
+// Sizing
+$notifier-font-size: 1rem !default;
+
+// Colors
+$notifier-color-opactiy: 0.9 !default;
 
 $notifier-colors: (
     "light":  rgba(255, 255, 255, $notifier-color-opactiy),
@@ -8,16 +20,9 @@ $notifier-colors: (
     "red":    rgba(132, 32, 41, $notifier-color-opactiy)
 ) !default;
 
-$notifier-types: (
-    "default",
-    "success",
-    "warning",
-    "error"
-) !default;
-
 $notifier-text-colors: (
     "default": map-get($notifier-colors, "dark"),
-    "success": map-get($notifier-colors, "light"),
+    "success": map-get($notifier-colors, "dark"),
     "warning": map-get($notifier-colors, "dark"),
     "error":   map-get($notifier-colors, "light")
 ) !default;
