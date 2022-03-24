@@ -1,6 +1,7 @@
 import * as cssTimeToMs from "css-duration";
 import motionAllowed from "@codebundlesbyvik/css-media-functions";
 import { createEl, getElCssValue } from "@codebundlesbyvik/element-operations";
+const mergeOptions = require("merge-options");
 import getRandomIntUnder from "@codebundlesbyvik/number-operations";
 
 const defaultOptions = {
@@ -13,7 +14,7 @@ const defaultOptions = {
 
 class SN {
     constructor(userOptions = {}) {
-        this.mergedOptions = Object.assign(defaultOptions, userOptions);
+        this.mergedOptions = mergeOptions(defaultOptions, userOptions);
 
         this.autoHide = this.mergedOptions.autoHide;
         this.parentEl = this.mergedOptions.parentEl;
