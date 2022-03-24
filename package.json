@@ -29,20 +29,20 @@
     "url": "https://github.com/vikputthiscodeongit/simple-notifier"
   },
   "keywords": [
+    "es6",
+    "small",
+    "lightweight",
+    "modern",
     "simple",
     "easy",
-    "light",
-    "modern",
     "notifier",
     "notification",
-    "notifications",
     "alert",
-    "alerts",
     "toast",
-    "toasts",
     "banner",
-    "banners",
-    "information"
+    "info",
+    "information",
+    "message"
   ],
   "author": "codebundlesbyvik",
   "license": "MPL-2.0",
