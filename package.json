@@ -37,7 +37,7 @@
     "information"
   ],
   "author": "codebundlesbyvik",
-  "license": "MIT",
+  "license": "MPL-2.0",
   "bugs": "https://github.com/vikputthiscodeongit/simple-notifier/issues",
   "dependencies": {
     "@codebundlesbyvik/css-operations": "^1.0.0",

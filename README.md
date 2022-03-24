@@ -186,4 +186,4 @@ Destroy a `SimpleNotifier` instance.
 
 ## License
 
-MIT © [Viktor Chin-Kon-Sung](https://github.com/vikputthiscodeongit)
+Mozilla Public License 2.0 © [Viktor Chin-Kon-Sung](https://github.com/vikputthiscodeongit)
