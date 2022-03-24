@@ -17,7 +17,7 @@ $notifier-types: (
 
 $notifier-text-colors: (
     "default": map-get($notifier-colors, "dark"),
-    "success": map-get($notifier-colors, "light"),
+    "success": map-get($notifier-colors, "dark"),
     "warning": map-get($notifier-colors, "dark"),
     "error":   map-get($notifier-colors, "light")
 ) !default;
