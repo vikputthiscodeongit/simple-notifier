@@ -48,7 +48,7 @@
   "license": "MPL-2.0",
   "bugs": "https://github.com/vikputthiscodeongit/simple-notifier/issues",
   "dependencies": {
-    "@codebundlesbyvik/css-operations": "^1.0.0",
+    "@codebundlesbyvik/css-operations": "^1.0.1",
     "@codebundlesbyvik/element-operations": "^2.0.0",
     "@codebundlesbyvik/number-operations": "^1.0.2",
     "merge-options": "^3.0.4"
