@@ -211,7 +211,8 @@ class SN {
             }
         }
 
-        // Timeouts
+        this.nodes[nId].notification.dataset.notificationId = nId;
+
         this.timeoutIds[nId] = {};
 
         // Events
