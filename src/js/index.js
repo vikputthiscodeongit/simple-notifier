@@ -1,7 +1,6 @@
-import * as cssTimeToMs from "css-duration";
-import motionAllowed from "@codebundlesbyvik/css-media-functions";
-import { createEl, getElCssValue } from "@codebundlesbyvik/element-operations";
 const mergeOptions = require("merge-options");
+import { getPropValue, motionAllowed, timeToMs } from "@codebundlesbyvik/css-operations";
+import createEl from "@codebundlesbyvik/element-operations";
 import getRandomIntUnder from "@codebundlesbyvik/number-operations";
 
 const defaultOptions = {
@@ -279,7 +278,7 @@ class SN {
                 SN.nodeClasses.anim.show
             );
 
-            const animTimeout = cssTimeToMs(getElCssValue(
+            const animTimeout = timeToMs(getPropValue(
                 this.nodes[nId].notification,
                 "animation-duration"
             ));
@@ -386,7 +385,7 @@ class SN {
         if (this.animatedRun) {
             this.nodes[nId].notification.classList.add(SN.nodeClasses.anim.hide);
 
-            animTimeout = cssTimeToMs(getElCssValue(
+            animTimeout = timeToMs(getPropValue(
                 this.nodes[nId].notification,
                 "animation-duration"
             ));
