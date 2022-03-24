@@ -102,14 +102,6 @@ class SN {
         }
     }
 
-    _eventCallbackShown(e) {
-        console.log(`SN: notificationShown event dispatched by notification ${e.detail.id}.`);
-    }
-
-    _eventCallbackDestroyed(e) {
-        console.log(`SN: notificationDestroyed event dispatched by notification ${e.detail.id}.`);
-    }
-
     init() {
         console.log("SN: Running .init()...");
 
@@ -218,18 +210,25 @@ class SN {
         // Events
         this.events[nId] = {};
 
-        this.events[nId].shown =
-            new CustomEvent("notificationShown", { detail: { id: nId } });
-        this.events[nId].destroyed =
-            new CustomEvent("notificationDestroyed", { detail: { id: nId } });
+        this.events[nId].shown = new CustomEvent("notificationShown", { detail: {
+            instanceId: this.instanceId,
+            notificationId: nId
+        }});
+        this.events[nId].destroyed = new CustomEvent("notificationDestroyed", { detail: {
+            instanceId: this.instanceId,
+            notificationId: nId
+        }});
 
-        this.events[nId].shown.cbBound = this._eventCallbackShown.bind(this);
-        this.events[nId].destroyed.cbBound = this._eventCallbackDestroyed.bind(this);
-
-        this.nodes.wrapper
-            .addEventListener("notificationShown", this.events[nId].shown.cbBound);
-        this.nodes.wrapper
-            .addEventListener("notificationDestroyed", this.events[nId].destroyed.cbBound);
+        this.nodes.wrapper.addEventListener(
+            "notificationShown",
+            this.events[nId].shown,
+            { once: true }
+        );
+        this.nodes.wrapper.addEventListener(
+            "notificationDestroyed",
+            this.events[nId].destroyed,
+            { once: true }
+        );
     }
 
     _getMsgData(nId, text, type) {
@@ -295,11 +294,8 @@ class SN {
             }, animTimeout);
         }
 
-        this.nodes.wrapper.dispatchEvent(this.events[nId].shown);
 
-        this.nodes.wrapper
-            .removeEventListener("notificationShown", this.events[nId].shown.cbBound);
-        delete this.events[nId].shown;
+        this.nodes.wrapper.dispatchEvent(this.events[nId].shown);
 
         if (this.hideCallTimeout > 0) {
             this.timeoutIds[nId].hideCall = setTimeout(() => {
@@ -433,20 +429,15 @@ class SN {
             });
         })
             .then(() => {
-                this.nodes.wrapper.dispatchEvent(this.events[nId].destroyed);
-
-                this.nodes.wrapper.removeEventListener(
-                    "notificationDestroyed",
-                    this.events[nId].destroyed.cbBound
-                );
-                delete this.events[nId];
 
                 delete this.nodes[nId];
                 delete this.msgData[nId];
 
                 this.animatedRun = null;
+                this.nodes.wrapper.dispatchEvent(this.events[nId].destroyed);
 
                 this.timeoutIds[nId].hideAnim = null;
+                delete this.events[nId];
 
                 console.log(`SN: Notification ${nId} has succesfully been destroyed.`);
 
