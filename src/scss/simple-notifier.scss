@@ -1,26 +1,15 @@
-@import "sass-rem";
-
 @import "animations";
 @import "variables";
 
 .simple-notifier {
     position: fixed;
-    top: rem(32px);
+    top: 2em;
     left: 50%;
     z-index: 10;
-    min-width: rem(272px);
-    width: calc(100% - 2 * #{rem(24px)});
-    margin-top: rem(-12px);
-    margin-bottom: rem(-12px);
+    margin-top: -0.75em;
+    margin-bottom: -0.75em;
+    font-size: $notifier-font-size;
     transform: translateX(-50%);
-
-    @media (min-width: 30em) { // 480 px
-        width: rem(384px);
-    }
-
-    @media (min-width: 48em) { // 768 px
-        width: rem(448px)
-    }
 
     &--pos {
         &-x {
@@ -33,34 +22,44 @@
 
             &-left {
                 @media (min-width: 48em) { // 768 px
-                    left: rem(32px);
+                    left: 2em;
                 }
             }
 
             &-right {
                 @media (min-width: 48em) { // 768 px
                     left: unset;
-                    right: rem(32px);
+                    right: 2em;
                 }
             }
         }
 
         &-y-bottom {
             top: unset;
-            bottom: rem(32px);
+            bottom: 2em;
         }
     }
 }
 
 .simple-notification {
-    margin-top: rem(12px);
-    margin-bottom: rem(12px);
-    padding: rem(12px) rem(16px);
+    min-width: 17em;
+    width: calc(100% - 2 * 1.5em);
+    margin-top: 0.75em;
+    margin-bottom: 0.75em;
+    padding: 0.75em 1em;
     color: map-get($notifier-text-colors, "default");
     background-color: map-get($notifier-bg-colors, "default");
-    border-radius: rem(4px);
-    box-shadow: 0 rem(2px) rem(2px) 0 rgba(0, 0, 0, 0.333333);
-    backdrop-filter: blur(rem(4px));
+    border-radius: 0.25em;
+    box-shadow: 0 0.125em 0.125em 0 rgba(0, 0, 0, 0.333333);
+    backdrop-filter: blur(0.25em);
+
+    @media (min-width: 30em) { // 480 px
+        width: 24em;
+    }
+
+    @media (min-width: 48em) { // 768 px
+        width: 28em;
+    }
 
     &:not(.is-shown) {
         display: none;
