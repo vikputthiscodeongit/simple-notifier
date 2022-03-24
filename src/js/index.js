@@ -289,8 +289,6 @@ class SN {
 
             this.timeoutIds[nId].showAnim = setTimeout(() => {
                 this.nodes[nId].notification.classList.remove(SN.nodeClasses.anim.show);
-
-                this.timeoutIds[nId].showAnim = null;
             }, animTimeout);
         }
 
@@ -300,8 +298,6 @@ class SN {
         if (this.hideCallTimeout > 0) {
             this.timeoutIds[nId].hideCall = setTimeout(() => {
                 this.hide(nId);
-
-                this.timeoutIds[nId].hideCall = null;
             }, this.hideCallTimeout);
         } else {
             this.animatedRun = null;
@@ -321,7 +317,6 @@ class SN {
         this.onlyOne.nextMsgData.type = type;
 
         clearTimeout(this.timeoutIds[1].hideCall);
-        this.timeoutIds[1].hideCall = null;
 
         this.hide(1);
     }
@@ -436,7 +431,6 @@ class SN {
                 this.animatedRun = null;
                 this.nodes.wrapper.dispatchEvent(this.events[nId].destroyed);
 
-                this.timeoutIds[nId].hideAnim = null;
                 delete this.events[nId];
 
                 console.log(`SN: Notification ${nId} has succesfully been destroyed.`);
