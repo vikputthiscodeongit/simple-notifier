@@ -138,6 +138,49 @@ class SN {
             `${SN.nodeClasses.wrapper}--pos-y-${screenPosArray[0]}`,
             `${SN.nodeClasses.wrapper}--pos-x-${screenPosArray[1]}`
         );
+
+        this.events.allDestroyed = new CustomEvent("allNotificationsDestroyed", { detail: {
+            instanceId: this.instanceId
+        }});
+
+        console.log(`SN: Instance ${this.instanceId} has been initialized.`);
+    }
+
+    destroy() {
+        console.log("SN: Running .destroy()...");
+
+        if (!this.instanceId) {
+            throw new Error("SN: Instance isn't initialized!");
+        }
+
+        if (this.runningDestroy) {
+            console.log("SN: .destroy was called whilst already running. Returning.");
+
+            return;
+        }
+
+        this.runningDestroy = true;
+
+        this.nodes.wrapper.addEventListener("allNotificationsDestroyed", (e) => {
+            console.log("SN: All notifications have been destroyed.");
+
+            if (this.onlyOne) {
+                this.onlyOne.states = {};
+                this.onlyOne.nextMsgData = {};
+            }
+
+            this.events = {};
+
+            this.nId = 1;
+
+            this.instanceId = null;
+
+            delete this.runningDestroy;
+
+            console.log(`SN: Instance ${e.detail.instanceId} has been destroyed.`);
+        });
+
+        this.hide();
     }
 
     show(text, type) {
@@ -308,6 +351,10 @@ class SN {
     hide(nId) {
         console.log("SN: Running .hide()...");
 
+        if (!this.instanceId) {
+            throw new Error("SN: Instance isn't initialized!");
+        }
+
         if (this.onlyOne.set) {
             if (this.onlyOne.states.inHide) {
                 console.log("SN: onlyOneNotification === true and .hide() was called whilst already running. Returning.");
@@ -333,7 +380,17 @@ class SN {
         if (typeof nId === "undefined") {
             nIdsArray = Object.keys(this.msgData);
 
-            if (nIdsArray.length === 0) {
+            if (nIdsArray.length > 0) {
+                console.log(this.timeoutIds);
+
+                Object.values(this.timeoutIds).forEach((nTimeoutIds) => {
+                    Object.values(nTimeoutIds).forEach((timeoutId) => {
+                        clearTimeout(timeoutId);
+                    });
+                });
+            } else if (this.runningDestroy) {
+                this.nodes.wrapper.dispatchEvent(this.events.allDestroyed);
+            } else {
                 console.warn("SN: .hide() was called, but no notification is currently shown. Returning!");
 
                 return;
@@ -412,12 +469,17 @@ class SN {
 
                 delete this.nodes[nId];
                 delete this.msgData[nId];
+                delete this.timeoutIds[nId];
 
                 this.nodes.wrapper.dispatchEvent(this.events[nId].destroyed);
 
                 delete this.events[nId];
 
                 console.log(`SN: Notification ${nId} has succesfully been destroyed.`);
+
+                if (Object.keys(this.msgData).length === 0) {
+                    this.nodes.wrapper.dispatchEvent(this.events.allDestroyed);
+                }
 
                 if (this.onlyOne.set && this.onlyOne.states.inReshow) {
                     this.onlyOne.states.inReshow = false;
