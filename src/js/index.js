@@ -111,7 +111,7 @@ class SN {
 
         this.instanceId = getRandomIntUnder(1000);
 
-        const wrapperEl = createEl(
+        this.nodes.wrapper = createEl(
             SN.nodeSkeletons.wrapper.tagName,
             SN.nodeSkeletons.wrapper.attrs
         );
@@ -186,14 +186,15 @@ class SN {
             if (role === "wrapper")
                 continue;
 
-            const el = createEl(values.tagName, values.attrs);
-
-            this.nodes[nId][role] = el;
+            this.nodes[nId][role] = createEl(values.tagName, values.attrs);
 
             if (role === "notification") {
-                this.nodes.wrapper.insertBefore(el, this.nodes.wrapper.firstElementChild);
+                this.nodes.wrapper.insertBefore(
+                    this.nodes[nId][role],
+                    this.nodes.wrapper.firstElementChild
+                );
             } else {
-                this.nodes[nId].notification.append(el);
+                this.nodes[nId].notification.append(this.nodes[nId][role]);
             }
         }
 
