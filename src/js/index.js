@@ -124,9 +124,16 @@ class SN {
             SN.nodeSkeletons.wrapper.attrs
         );
 
-        this.parentEl.insertBefore(wrapperEl, this.parentEl.firstElementChild);
+        this.nodes.wrapper.dataset.instanceId = this.instanceId;
 
-        this.nodes.wrapper = wrapperEl;
+        const parentElFChild = this.parentEl.firstElementChild;
+
+        // Insert the instance in the DOM after any earlier initialized instances sharing the same parentEl.
+        const wrapperSibling = parentElFChild.classList.contains("simple-notifier")
+            ? parentElFChild.nextElementSibling
+            : parentElFChild;
+
+        this.parentEl.insertBefore(this.nodes.wrapper, wrapperSibling);
 
         const screenPosArray = this.position.split(" ");
 
