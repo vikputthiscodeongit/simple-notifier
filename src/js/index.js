@@ -106,10 +106,10 @@ class SN {
         console.log("SN: Running .init()...");
 
         if (this.instanceId) {
-            throw new Error("SN: .init() has already been called on this instance.");
+            throw new Error(`SN: .init() has already been called on this instance (${this.instanceId}).`);
         }
 
-        this.instanceId = getRandomIntUnder(1000);
+        this.instanceId = getRandomIntUnder(100000);
 
         this.nodes.wrapper = createEl(
             SN.nodeSkeletons.wrapper.tagName,
@@ -144,7 +144,7 @@ class SN {
         console.log("SN: Running .show()...");
 
         if (!this.instanceId) {
-            throw new Error("SN: .init() must be once before usage!");
+            throw new Error("SN: Instance isn't initialized!");
         }
 
         if (this.onlyOne.set) {
@@ -179,7 +179,6 @@ class SN {
     _initNotification(nId) {
         console.log(`SN: Running ._initNotification() on nId ${nId}...`);
 
-        // Nodes
         this.nodes[nId] = {};
 
         for (const [role, values] of Object.entries(SN.nodeSkeletons)) {
@@ -202,7 +201,6 @@ class SN {
 
         this.timeoutIds[nId] = {};
 
-        // Events
         this.events[nId] = {};
 
         this.events[nId].shown = new CustomEvent("notificationShown", { detail: {
@@ -263,10 +261,6 @@ class SN {
                SN.nodeClasses.shown
         );
 
-        if (this.onlyOne.set) {
-            this.onlyOne.states.isVisible = true;
-        }
-
         if (this.animatedRun) {
             this.nodes[nId].notification.classList.add(
                 SN.nodeClasses.anim.base,
@@ -283,6 +277,9 @@ class SN {
             }, animTimeout);
         }
 
+        if (this.onlyOne.set) {
+            this.onlyOne.states.isVisible = true;
+        }
 
         this.nodes.wrapper.dispatchEvent(this.events[nId].shown);
 
@@ -309,7 +306,7 @@ class SN {
     }
 
     hide(nId) {
-        console.log(`SN: Running .hide() on nId ${nId}...`);
+        console.log("SN: Running .hide()...");
 
         if (this.onlyOne.set) {
             if (this.onlyOne.states.inHide) {
@@ -406,16 +403,16 @@ class SN {
                 nodeKey++;
 
                 if (nodeKey === nodesArrayKeys.length) {
-                    resolve("All nodes were removed succesfully.");
+                    resolve("All nodes have been removed succesfully.");
                 }
             });
         })
             .then(() => {
+                this.animatedRun = null;
 
                 delete this.nodes[nId];
                 delete this.msgData[nId];
 
-                this.animatedRun = null;
                 this.nodes.wrapper.dispatchEvent(this.events[nId].destroyed);
 
                 delete this.events[nId];
