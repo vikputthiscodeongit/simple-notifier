@@ -91,4 +91,13 @@
             background-color: $background-color;
         }
     }
+
+    &__message {
+        margin-top: 0;
+        margin-bottom: 1em;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
 }
