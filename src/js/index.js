@@ -156,11 +156,8 @@ class SN {
         }
 
         if (this.onlyOne.set) {
-            if (
-                this.onlyOne.states.inShow || this.onlyOne.states.inShowNew ||
-                this.onlyOne.states.inReshow || this.onlyOne.states.inHide
-            ) {
-                console.log("SN: onlyOneNotification === true and .show() was called during execution of .show(), ._showNewNotification(), ._reshowNotification() or .hide(). Returning.");
+            if (this.onlyOne.states.inReshow) {
+                console.log("SN: onlyOneNotification === true and .show() was called during execution ._reshowNotification(). Returning.");
 
                 return;
             }
