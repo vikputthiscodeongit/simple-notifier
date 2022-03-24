@@ -161,8 +161,6 @@ class SN {
 
                 return;
             }
-
-            this.onlyOne.states.inShow = true;
         }
 
         let nId = this.nId;
@@ -176,10 +174,6 @@ class SN {
         this._getMsgData(nId, text, type);
 
         this._showNewNotification(nId);
-
-        if (this.onlyOne.set) {
-            this.onlyOne.states.inShow = false;
-        }
     }
 
     _initNotification(nId) {
@@ -259,10 +253,6 @@ class SN {
     _showNewNotification(nId) {
         console.log(`SN: Running ._showNewNotification() on nId ${nId}...`);
 
-        if (this.onlyOne.set) {
-            this.onlyOne.states.inShowNew = true;
-        }
-
         this.animatedRun = this.animated;
 
         this.nodes[nId].message.textContent = this.msgData[nId].text;
@@ -301,10 +291,6 @@ class SN {
             }, this.hideCallTimeout);
         } else {
             this.animatedRun = null;
-        }
-
-        if (this.onlyOne.set) {
-            this.onlyOne.states.inShowNew = false;
         }
     }
 
