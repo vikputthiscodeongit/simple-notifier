@@ -1,5 +1,5 @@
-@import "animations";
 @import "variables";
+@import "animations";
 
 .simple-notifier {
     position: fixed;
@@ -62,11 +62,11 @@
     backdrop-filter: blur(0.25em);
 
     @media (min-width: 30em) { // 480 px
-        width: 24em;
+        width: 24em; // 384 px
     }
 
     @media (min-width: 48em) { // 768 px
-        width: 28em;
+        width: 28em; // 448 px
     }
 
     &:not(.is-shown) {
