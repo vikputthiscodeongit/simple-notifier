@@ -352,8 +352,8 @@
       this.nodes.wrapper.dataset.instanceId = this.instanceId;
       const parentElFChild = this.parentEl.firstElementChild; // Insert the instance in the DOM after any earlier initialized instances sharing the same parentEl.
 
-      const wrapperSibling = parentElFChild.classList.contains("simple-notifier") ? parentElFChild.nextElementSibling : parentElFChild;
-      this.parentEl.insertBefore(this.nodes.wrapper, wrapperSibling);
+      const siblingEl = parentElFChild.classList.contains("simple-notifier") ? parentElFChild.nextElementSibling : parentElFChild;
+      this.parentEl.insertBefore(this.nodes.wrapper, siblingEl);
       const screenPosArray = this.position.split(" "); // If only a y-position is set by the user, add an x-position.
 
       if (screenPosArray.length === 1) {
@@ -379,6 +379,8 @@
 
       this.runningDestroy = true;
       this.nodes.wrapper.addEventListener("allNotificationsDestroyed", e => {
+        this.nodes.wrapper.remove();
+
         if (this.onlyOne) {
           this.onlyOne.states = {};
           this.onlyOne.nextMsgData = {};

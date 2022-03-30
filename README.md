@@ -8,7 +8,7 @@ A lightweight and easy to use notification library, written in modern ECMAScript
 
 <br>
 
-**[Interactive demo](./demo.html)**
+**[Demo page (interactive)](https://rawcdn.githack.com/vikputthiscodeongit/simple-notifier/7f9ffe107f1bb78043209470d13a29080444d7b4/demo.html)**
 
 <br>
 
@@ -98,21 +98,39 @@ import SimpleNotifier from "@codebundlesbyvik/simple-notifier";
 
 ### Usage as a standalone package
 
+#### Via CDN (jsdelivr)
+
+``` html
+<!-- Import the UMD bundle -->
+<script src="https://cdn.jsdelivr.net/npm/@codebundlesbyvik/simple-notifier@1.1.2/dist/js/simple-notifier.bundle.min.js" crossorigin="anonymous"></script>
+```
+
+<br>
+
+``` html
+<!-- Link to the stylesheet -->
+<link href="https://cdn.jsdelivr.net/npm/@codebundlesbyvik/simple-notifier@1.1.2/dist/css/simple-notifier.min.css" rel="stylesheet" crossorigin="anonymous">
+```
+
+<br>
+
+#### Local
+
 [Download the latest release](https://github.com/vikputthiscodeongit/simple-notifier/releases/latest) from the GitHub releases page.
 
 ``` html
 <!-- Import the UMD bundle -->
-<script src="./dist/js/simple-notifier.bundle.js"></script>
+<script src="./dist/js/simple-notifier.bundle.min.js"></script>
 ```
 
 <br>
 
 ```
 // Link to the stylesheet in HTML ...
-<link href="./dist/simple-notifier.css" rel="stylesheet">
+<link href="./dist/simple-notifier.min.css" rel="stylesheet">
 
 // ... or import it in your main CSS file.
-@import "./dist/simple-notifier.css";
+@import "./dist/simple-notifier.min.css";
 ```
 
 <br>

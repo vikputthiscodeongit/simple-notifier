@@ -121,11 +121,11 @@ class SN {
         const parentElFChild = this.parentEl.firstElementChild;
 
         // Insert the instance in the DOM after any earlier initialized instances sharing the same parentEl.
-        const wrapperSibling = parentElFChild.classList.contains("simple-notifier")
+        const siblingEl = parentElFChild.classList.contains("simple-notifier")
             ? parentElFChild.nextElementSibling
             : parentElFChild;
 
-        this.parentEl.insertBefore(this.nodes.wrapper, wrapperSibling);
+        this.parentEl.insertBefore(this.nodes.wrapper, siblingEl);
 
         const screenPosArray = this.position.split(" ");
 
@@ -163,6 +163,8 @@ class SN {
 
         this.nodes.wrapper.addEventListener("allNotificationsDestroyed", (e) => {
             console.log("SN: All notifications have been destroyed.");
+
+            this.nodes.wrapper.remove();
 
             if (this.onlyOne) {
                 this.onlyOne.states = {};
