@@ -102,17 +102,17 @@ import SimpleNotifier from "@codebundlesbyvik/simple-notifier";
 
 ``` html
 <!-- Import the UMD bundle -->
-<script src="./dist/js/simple-notifier.bundle.js"></script>
+<script src="./dist/js/simple-notifier.bundle.min.js"></script>
 ```
 
 <br>
 
 ```
 // Link to the stylesheet in HTML ...
-<link href="./dist/simple-notifier.css" rel="stylesheet">
+<link href="./dist/simple-notifier.min.css" rel="stylesheet">
 
 // ... or import it in your main CSS file.
-@import "./dist/simple-notifier.css";
+@import "./dist/simple-notifier.min.css";
 ```
 
 <br>
