@@ -8,7 +8,7 @@ A lightweight and easy to use notification library, written in modern ECMAScript
 
 <br>
 
-**[Interactive demo](./demo.html)**
+**[Demo page (interactive)](https://rawcdn.githack.com/vikputthiscodeongit/simple-notifier/7f9ffe107f1bb78043209470d13a29080444d7b4/demo.html)**
 
 <br>
 
