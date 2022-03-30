@@ -164,6 +164,8 @@ class SN {
         this.nodes.wrapper.addEventListener("allNotificationsDestroyed", (e) => {
             console.log("SN: All notifications have been destroyed.");
 
+            this.nodes.wrapper.remove();
+
             if (this.onlyOne) {
                 this.onlyOne.states = {};
                 this.onlyOne.nextMsgData = {};
