@@ -98,6 +98,24 @@ import SimpleNotifier from "@codebundlesbyvik/simple-notifier";
 
 ### Usage as a standalone package
 
+#### Via CDN (jsdelivr)
+
+``` html
+<!-- Import the UMD bundle -->
+<script src="https://cdn.jsdelivr.net/npm/@codebundlesbyvik/simple-notifier@1.1.2/dist/js/simple-notifier.bundle.min.js" crossorigin="anonymous"></script>
+```
+
+<br>
+
+``` html
+<!-- Link to the stylesheet -->
+<link href="https://cdn.jsdelivr.net/npm/@codebundlesbyvik/simple-notifier@1.1.2/dist/css/simple-notifier.min.css" rel="stylesheet" crossorigin="anonymous">
+```
+
+<br>
+
+#### Local
+
 [Download the latest release](https://github.com/vikputthiscodeongit/simple-notifier/releases/latest) from the GitHub releases page.
 
 ``` html
