@@ -3,13 +3,17 @@
 
 .simple-notifier {
     position: fixed;
-    top: 2em;
+    top: 1em;
     left: 50%;
     z-index: 10;
     margin-top: -0.75em;
     margin-bottom: -0.75em;
     font-size: $notifier-font-size;
     transform: translateX(-50%);
+
+    @media (min-width: 48em) { // 768 px
+        top: 2em;
+    }
 
     &--pos {
         &-x {
@@ -36,14 +40,18 @@
 
         &-y-bottom {
             top: unset;
-            bottom: 2em;
+            bottom: 1em;
+
+            @media (min-width: 48em) { // 768 px
+                bottom: 2em;
+            }
         }
     }
 }
 
 .simple-notification {
-    min-width: 17em;
-    width: calc(100% - 2 * 1.5em);
+    min-width: 17em; // 272 px
+    width: calc(100vw - 2em);
     margin-top: 0.75em;
     margin-bottom: 0.75em;
     padding: 0.75em 1em;
