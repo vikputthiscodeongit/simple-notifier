@@ -121,11 +121,11 @@ class SN {
         const parentElFChild = this.parentEl.firstElementChild;
 
         // Insert the instance in the DOM after any earlier initialized instances sharing the same parentEl.
-        const wrapperSibling = parentElFChild.classList.contains("simple-notifier")
+        const siblingEl = parentElFChild.classList.contains("simple-notifier")
             ? parentElFChild.nextElementSibling
             : parentElFChild;
 
-        this.parentEl.insertBefore(this.nodes.wrapper, wrapperSibling);
+        this.parentEl.insertBefore(this.nodes.wrapper, siblingEl);
 
         const screenPosArray = this.position.split(" ");
 
