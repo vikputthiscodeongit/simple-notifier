@@ -350,7 +350,7 @@ class SN {
         this.hide(1);
     }
 
-    hide(nId) {
+    hide(nId) { // -1 = destroy, 0 = all, > 0 = specific notification
         console.log("SN: Running .hide()...");
 
         if (!this.instanceId) {
@@ -390,26 +390,32 @@ class SN {
                         clearTimeout(timeoutId);
                     });
                 });
-            } else if (this.runningDestroy) {
-                this.nodes.wrapper.dispatchEvent(this.events.allDestroyed);
-            } else {
+            }
+            // else if (this.runningDestroy) {
+            //     this.nodes.wrapper.dispatchEvent(this.events.allDestroyed);
+            // }
+            else {
                 console.warn("SN: .hide() was called, but no notification is currently shown. Returning!");
 
                 return;
             }
         }
 
-        let i = 1;
+        // let i = 1;
 
         nIdsArray.forEach((id) => {
             this._hideNotification(id);
 
-            i++;
+            // i++;
 
-            if (this.onlyOne.set && i > nIdsArray.length) {
-                this.onlyOne.states.inHide = false;
-            }
+            // if (this.onlyOne.set && i > nIdsArray.length) {
+            //     this.onlyOne.states.inHide = false;
+            // }
         });
+
+        if (this.onlyOne.set) {
+            this.onlyOne.states.inHide = false;
+        }
     }
 
     _hideNotification(nId) {
@@ -462,7 +468,7 @@ class SN {
                 nodeKey++;
 
                 if (nodeKey === nodesArrayKeys.length) {
-                    resolve("All nodes have been removed succesfully.");
+                    resolve("All nodes have succesfully been removed.");
                 }
             });
         })
