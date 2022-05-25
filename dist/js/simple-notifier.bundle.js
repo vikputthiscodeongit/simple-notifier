@@ -462,6 +462,10 @@
     }
 
     _getMsgData(nId, text, type) {
+      if (!nId) {
+        return;
+      }
+
       if (!text) {
         if (this.onlyOne.nextMsgData) {
           text = this.onlyOne.nextMsgData.text;
@@ -553,20 +557,21 @@
         } else if (this.runningDestroy) {
           this.nodes.wrapper.dispatchEvent(this.events.allDestroyed);
         } else {
+          if (this.onlyOne.set) {
+            this.onlyOne.states.inHide = false;
+          }
+
           return;
         }
       }
 
-      let i = 1;
       nIdsArray.forEach(id => {
         this._hideNotification(id);
-
-        i++;
-
-        if (this.onlyOne.set && i > nIdsArray.length) {
-          this.onlyOne.states.inHide = false;
-        }
       });
+
+      if (this.onlyOne.set) {
+        this.onlyOne.states.inHide = false;
+      }
     }
 
     _hideNotification(nId) {
@@ -607,7 +612,7 @@
           nodeKey++;
 
           if (nodeKey === nodesArrayKeys.length) {
-            resolve("All nodes have been removed succesfully.");
+            resolve("All nodes have succesfully been removed.");
           }
         });
       }).then(() => {
