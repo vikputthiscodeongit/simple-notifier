@@ -49,7 +49,7 @@
 }
 .simple-notifier {
   position: fixed;
-  top: 1em;
+  top: 1.25em;
   left: 50%;
   z-index: 10;
   margin-top: -0.75em;
@@ -89,8 +89,8 @@
 }
 
 .simple-notification {
-  min-width: 17em;
-  width: calc(100vw - 2em);
+  min-width: 17.5em;
+  width: calc(100vw - 2.5em);
   margin-top: 0.75em;
   margin-bottom: 0.75em;
   padding: 0.75em 1em;
@@ -101,12 +101,7 @@
   -webkit-backdrop-filter: blur(0.25em);
           backdrop-filter: blur(0.25em);
 }
-@media (min-width: 30em) {
-  .simple-notification {
-    width: 24em;
-  }
-}
-@media (min-width: 48em) {
+@media (min-width: 33.75em) {
   .simple-notification {
     width: 28em;
   }

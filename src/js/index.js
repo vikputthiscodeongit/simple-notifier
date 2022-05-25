@@ -271,6 +271,12 @@ class SN {
 
     _getMsgData(nId, text, type) {
         console.log(`SN: Running ._getMsgData on nId ${nId}...`);
+        
+        if (!nId) {
+            console.warn("SN: No nId was passed in. Returning!")
+
+            return;
+        }
 
         if (!text) {
             if (this.onlyOne.nextMsgData) {
@@ -390,26 +396,28 @@ class SN {
                         clearTimeout(timeoutId);
                     });
                 });
-            } else if (this.runningDestroy) {
+            }
+            else if (this.runningDestroy) {
                 this.nodes.wrapper.dispatchEvent(this.events.allDestroyed);
-            } else {
+            }
+            else {
                 console.warn("SN: .hide() was called, but no notification is currently shown. Returning!");
+
+                if (this.onlyOne.set) {
+                    this.onlyOne.states.inHide = false;
+                }
 
                 return;
             }
         }
 
-        let i = 1;
-
         nIdsArray.forEach((id) => {
             this._hideNotification(id);
-
-            i++;
-
-            if (this.onlyOne.set && i > nIdsArray.length) {
-                this.onlyOne.states.inHide = false;
-            }
         });
+
+        if (this.onlyOne.set) {
+            this.onlyOne.states.inHide = false;
+        }
     }
 
     _hideNotification(nId) {
@@ -462,7 +470,7 @@ class SN {
                 nodeKey++;
 
                 if (nodeKey === nodesArrayKeys.length) {
-                    resolve("All nodes have been removed succesfully.");
+                    resolve("All nodes have succesfully been removed.");
                 }
             });
         })

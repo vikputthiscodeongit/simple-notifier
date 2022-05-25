@@ -3,7 +3,7 @@
 
 .simple-notifier {
     position: fixed;
-    top: 1em;
+    top: 1.25em;
     left: 50%;
     z-index: 10;
     margin-top: -0.75em;
@@ -50,8 +50,8 @@
 }
 
 .simple-notification {
-    min-width: 17em; // 272 px
-    width: calc(100vw - 2em);
+    min-width: 17.5em; // 280 px
+    width: calc(100vw - 2.5em);
     margin-top: 0.75em;
     margin-bottom: 0.75em;
     padding: 0.75em 1em;
@@ -61,11 +61,7 @@
     box-shadow: 0 0.125em 0.125em 0 rgba(0, 0, 0, 0.333333);
     backdrop-filter: blur(0.25em);
 
-    @media (min-width: 30em) { // 480 px
-        width: 24em; // 384 px
-    }
-
-    @media (min-width: 48em) { // 768 px
+    @media (min-width: 33.75em) { // 540 px
         width: 28em; // 448 px
     }
 
