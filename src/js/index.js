@@ -271,6 +271,12 @@ class SN {
 
     _getMsgData(nId, text, type) {
         console.log(`SN: Running ._getMsgData on nId ${nId}...`);
+        
+        if (!nId) {
+            console.warn("SN: No nId was passed in. Returning!")
+
+            return;
+        }
 
         if (!text) {
             if (this.onlyOne.nextMsgData) {
@@ -350,7 +356,7 @@ class SN {
         this.hide(1);
     }
 
-    hide(nId) { // -1 = destroy, 0 = all, > 0 = specific notification
+    hide(nId) {
         console.log("SN: Running .hide()...");
 
         if (!this.instanceId) {
@@ -391,26 +397,22 @@ class SN {
                     });
                 });
             }
-            // else if (this.runningDestroy) {
-            //     this.nodes.wrapper.dispatchEvent(this.events.allDestroyed);
-            // }
+            else if (this.runningDestroy) {
+                this.nodes.wrapper.dispatchEvent(this.events.allDestroyed);
+            }
             else {
                 console.warn("SN: .hide() was called, but no notification is currently shown. Returning!");
+
+                if (this.onlyOne.set) {
+                    this.onlyOne.states.inHide = false;
+                }
 
                 return;
             }
         }
 
-        // let i = 1;
-
         nIdsArray.forEach((id) => {
             this._hideNotification(id);
-
-            // i++;
-
-            // if (this.onlyOne.set && i > nIdsArray.length) {
-            //     this.onlyOne.states.inHide = false;
-            // }
         });
 
         if (this.onlyOne.set) {
