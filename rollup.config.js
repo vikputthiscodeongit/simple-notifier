@@ -1,26 +1,17 @@
-import resolve from "@rollup/plugin-node-resolve";
+import { nodeResolve } from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
-import { babel } from "@rollup/plugin-babel";
-
-const isDevelopment = process.env.NODE_ENV === "development";
 
 export default {
-    input: "./src/js/index.js",
-
+    input: "src/ts/index.ts",
     output: {
-        file: "./dist/js/simple-notifier.bundle.js",
+        file: "dist/js/simple-notifier.umd.js",
         format: "umd",
         name: "SimpleNotifier",
-        sourcemap: isDevelopment ? "inline" : true
     },
-
     plugins: [
-        resolve(),
+        nodeResolve(),
         commonjs({
             transformMixedEsModules: true
-        }),
-        babel({
-            babelHelpers: "bundled"
         })
     ]
 };

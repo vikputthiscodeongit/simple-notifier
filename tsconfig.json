@@ -1,0 +1,12 @@
+{
+    "extends": "@tsconfig/recommended/tsconfig.json",
+    "compilerOptions": {
+        "target": "ES2017",
+        "lib": ["ES2017", "DOM"],
+        "module": "ES2015",
+        "moduleResolution": "bundler",
+        "outDir": "dist/js",
+        "declaration": true
+    },
+    "include": ["src/**/*"]
+}

@@ -1,6 +1,5 @@
 # ignore all files starting with . or ~
 .*
-!.gitignore
 ~*
 
 # ignore Node.js dependency directories
@@ -23,3 +22,8 @@ Thumbs.db
 
 # Built Visual Studio Code Extensions
 *.vsix
+
+# Track build tooling files
+!.git*
+!.eslint*
+!.prettier*
