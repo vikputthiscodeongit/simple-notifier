@@ -1,17 +1,16 @@
 import { createEl, getPseudoRandomIntBelow } from "@codebundlesbyvik/js-helpers";
-const mergeOptions = require("merge-options");
 import wait from "./helpers/wait";
 
-interface DefaultOptions {
+interface DefaultInstanceOptions {
     parentEl: HTMLElement;
     hideAfter: number;
     dismissable: boolean;
     singleNotification: boolean;
 }
-interface InstanceOptions extends Partial<DefaultOptions> {}
-interface NotificationOptions extends Partial<Pick<DefaultOptions, "hideAfter" | "dismissable">> {}
+interface InstanceOptions extends Partial<DefaultInstanceOptions> {}
+interface NotificationOptions extends Partial<Pick<DefaultInstanceOptions, "hideAfter" | "dismissable">> {}
 
-const DEFAULT_OPTIONS: DefaultOptions = {
+const DEFAULT_INSTANCE_OPTIONS: DefaultInstanceOptions = {
     parentEl: document.body,
     hideAfter: 3500,
     dismissable: false,
@@ -27,7 +26,7 @@ class SN {
     singleNotification: boolean;
 
     notifierEl: HTMLElement | undefined;
-    instanceId: number | undefined;
+    instanceId: number | null;
     activeNotifications: {
         [id: number]: {
             abortController: AbortController;
@@ -37,7 +36,10 @@ class SN {
     currentId: number;
 
     constructor(options: InstanceOptions = {}) {
-        this.mergedOptions = mergeOptions(DEFAULT_OPTIONS, options);
+        this.mergedOptions = {
+             ...DEFAULT_INSTANCE_OPTIONS,
+             ...options
+        };
 
         this.parentEl = this.mergedOptions.parentEl;
         this.hideAfter = this.mergedOptions.hideAfter;
@@ -45,7 +47,7 @@ class SN {
         this.singleNotification = this.mergedOptions.singleNotification;
 
         this.notifierEl;
-        this.instanceId;
+        this.instanceId = null;
         this.activeNotifications = {};
         this.currentId = 0;
     }
@@ -56,7 +58,7 @@ class SN {
         console.log("SN: Running .init()...");
 
         try {
-            if (this.instanceId) {
+            if (this.instanceId !== null) {
                 throw new Error(
                     `SN: .init() has already been called on this instance (${this.instanceId}).`,
                 );
@@ -65,7 +67,7 @@ class SN {
             this.instanceId = getPseudoRandomIntBelow(100000);
 
             if (SN.instanceIds.includes(this.instanceId)) {
-                this.destroy(true); // TODO: Reactivate immediately.
+                this.destroy(true);
 
                 return;
             }
@@ -85,7 +87,17 @@ class SN {
         }
     }
 
-    destroy(reactivate: boolean = false) {}
+    destroy(reactivate: boolean = false) {
+        this.hideAll();
+
+        this.notifierEl.remove();
+        SN.instanceIds.splice(SN.instanceIds.indexOf(this.instanceIds[instanceId]), 1);
+        this.instanceId = null;
+
+        if (reactivate) {
+            this.init();
+        }
+    }
 
     show(
         text: string,
