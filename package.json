@@ -1,11 +1,7 @@
 {
   "name": "@codebundlesbyvik/simple-notifier",
   "version": "1.1.3-fix-readme",
-  "description": "A lightweight and easy to use notification library.",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/vikputthiscodeongit/simple-notifier"
-  },
+  "description": "A lightweight, easy to use notification library.",
   "keywords": [
     "es6",
     "small",
@@ -22,11 +18,15 @@
     "information",
     "message"
   ],
-  "author": "codebundlesbyvik",
   "license": "MPL-2.0",
+  "author": "codebundlesbyvik",
   "files": [
     "dist/**/*"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vikputthiscodeongit/simple-notifier.git"
+  },
   "bugs": "https://github.com/vikputthiscodeongit/simple-notifier/issues",
   "main": "./dist/js/simple-notifier.bundle.js",
   "module": "./dist/js/simple-notifier.esm.js",
