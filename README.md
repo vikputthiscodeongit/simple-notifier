@@ -5,7 +5,7 @@
 
 <br>
 
-A lightweight and easy to use notification library, written in modern ECMAScript.
+A lightweight, easy to use notification library.
 
 <br>
 
