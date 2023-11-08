@@ -8,7 +8,8 @@ interface DefaultInstanceOptions {
     singleNotification: boolean;
 }
 interface InstanceOptions extends Partial<DefaultInstanceOptions> {}
-interface NotificationOptions extends Partial<Pick<DefaultInstanceOptions, "hideAfter" | "dismissable">> {}
+interface NotificationOptions
+    extends Partial<Pick<DefaultInstanceOptions, "hideAfter" | "dismissable">> {}
 
 const DEFAULT_INSTANCE_OPTIONS: DefaultInstanceOptions = {
     parentEl: document.body,
@@ -37,8 +38,8 @@ class SN {
 
     constructor(options: InstanceOptions = {}) {
         this.mergedOptions = {
-             ...DEFAULT_INSTANCE_OPTIONS,
-             ...options
+            ...DEFAULT_INSTANCE_OPTIONS,
+            ...options,
         };
 
         this.parentEl = this.mergedOptions.parentEl;
