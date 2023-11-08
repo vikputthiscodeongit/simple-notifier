@@ -11,6 +11,9 @@ const config = {
     ],
     parser: "@typescript-eslint/parser",
     plugins: ["@typescript-eslint", "prettier"],
+    rules: {
+        "@typescript-eslint/no-explicit-any": "warn",
+    },
 };
 
 module.exports = config;
