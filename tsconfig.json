@@ -6,7 +6,10 @@
         "module": "ES2015",
         "moduleResolution": "bundler",
         "outDir": "dist/js",
-        "declaration": true
+        "allowImportingTsExtensions": true,
+        "declaration": true,
+        "declarationMap": true,
+        "emitDeclarationOnly": true
     },
     "include": ["src/**/*"]
 }

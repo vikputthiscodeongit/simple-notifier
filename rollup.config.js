@@ -2,16 +2,18 @@ import { nodeResolve } from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 
 export default {
-    input: "src/ts/index.ts",
+    input: "dist/js/index.js",
     output: {
-        file: "dist/js/simple-notifier.umd.js",
+        file: "dist/js/index.umd.js",
         format: "umd",
         name: "SimpleNotifier",
     },
     plugins: [
-        nodeResolve(),
+        nodeResolve({
+            browser: true,
+        }),
         commonjs({
-            transformMixedEsModules: true
-        })
-    ]
+            // transformMixedEsModules: true,
+        }),
+    ],
 };

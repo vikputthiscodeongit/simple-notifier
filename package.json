@@ -28,22 +28,25 @@
     "url": "git+https://github.com/vikputthiscodeongit/simple-notifier.git"
   },
   "bugs": "https://github.com/vikputthiscodeongit/simple-notifier/issues",
-  "main": "./dist/js/simple-notifier.bundle.js",
-  "module": "./dist/js/simple-notifier.esm.js",
+  "exports": {
+    ".": {
+      "module": "./dist/js/simple-notifier.js",
+      "default": "./dist/js/simple-notifier.umd.js"
+    }
+  },
   "style": "./dist/css/simple-notifier.css",
   "sass": "./src/scss/simple-notifier.scss",
   "type": "module",
   "scripts": {
-    "compile-js": "babel src --out-dir dist --extensions .ts",
+    "compile-css": "sass src/scss/simple-notifier.scss dist/css/simple-notifier.css --no-source-map && postcss dist/css/simple-notifier.css --replace --no-map --use autoprefixer",
+    "compile-js": "babel src/ts/index.ts --out-dir dist/js --extensions .ts",
     "generate-types": "tsc",
-    "lint": "eslint * src/** tests/** --config .eslintrc.cjs",
-    "lint-fix": "eslint * src/** tests/** --config .eslintrc.cjs --fix",
+    "lint": "eslint . src/ts/** --config .eslintrc.cjs",
+    "lint-fix": "eslint . src/ts/** --config .eslintrc.cjs --fix",
     "make-bundle": "rollup --config rollup.config.js",
-    "make-release": "cross-env NODE_ENV=production npm run lint-fix && rimraf dist && npm run generate-types && npm run compile-js && npm run make-bundle",
-    "scss-compile": "sass --load-path=node_modules ./src/scss/simple-notifier.scss ./dist/css/simple-notifier.css --no-source-map | postcss ./dist/css/simple-notifier.css --replace --map --use autoprefixer",
-    "css-minify": "postcss ./dist/css/simple-notifier.css --output ./dist/css/simple-notifier.min.css --map --use cssnano",
-    "css-build": "npm-run-all scss-compile css-minify",
-    "css-dev": "sass --watch --load-path=node_modules ./src/scss/simple-notifier.scss ./dist/css/simple-notifier.css --embed-source-map"
+    "make-release": "cross-env NODE_ENV=production npm run lint-fix && rimraf dist && npm run generate-types && npm run compile-js && npm run make-bundle && npm run minify-js && npm run compile-css && npm run minify-css",
+    "minify-css": "postcss dist/css/simple-notifier.css --replace --map --use cssnano",
+    "minify-js": "terser dist/js/index.js --output dist/js/index.js --compress passes=2"
   },
   "dependencies": {
     "@codebundlesbyvik/js-helpers": "^1.0.0",
