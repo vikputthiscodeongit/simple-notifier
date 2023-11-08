@@ -90,9 +90,14 @@ class SN {
     destroy(reactivate: boolean = false) {
         this.hideAll();
 
-        this.notifierEl.remove();
-        SN.instanceIds.splice(SN.instanceIds.indexOf(this.instanceIds[instanceId]), 1);
-        this.instanceId = null;
+        if (this.notifierEl) {
+            this.notifierEl.remove();
+        }
+
+        if (this.instanceId !== null) {
+            SN.instanceIds.splice(SN.instanceIds.indexOf(this.instanceId), 1);
+            this.instanceId = null;
+        }
 
         if (reactivate) {
             this.init();
