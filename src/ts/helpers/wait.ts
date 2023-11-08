@@ -1,7 +1,7 @@
 // https://stackoverflow.com/a/25345746
 function wait(
     ms: number,
-    value: ReturnType<typeof Promise.resolve>,
+    value?: Awaited<ReturnType<typeof Promise.resolve>>,
     { signal }: { signal?: AbortSignal } = {},
 ) {
     return new Promise((resolve, reject) => {
