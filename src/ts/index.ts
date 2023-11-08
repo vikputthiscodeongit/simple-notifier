@@ -64,7 +64,8 @@ class SN {
                 );
             }
 
-            this.instanceId = getPseudoRandomIntBelow(100000);
+            // TODO: Fix in js-helpers.
+            this.instanceId = getPseudoRandomIntBelow(100000, false);
 
             if (SN.instanceIds.includes(this.instanceId)) {
                 this.destroy(true);
