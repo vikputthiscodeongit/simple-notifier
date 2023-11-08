@@ -1,5 +1,5 @@
 import { createEl, getPseudoRandomIntBelow } from "@codebundlesbyvik/js-helpers";
-import wait from "./helpers/wait";
+import wait from "./helpers/wait.ts";
 
 interface DefaultInstanceOptions {
     parentEl: HTMLElement;
