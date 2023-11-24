@@ -1,35 +1,30 @@
 // Types
-$notifier-types: (
-    "default",
-    "success",
-    "warning",
-    "error"
-) !default;
+$notifier-types: ("default", "success", "warning", "error") !default;
 
 // Sizing
-$notifier-font-size: 1rem !default;
+$notifier-font-size-base: 1rem !default;
 
 // Colors
 $notifier-color-opactiy: 0.9 !default;
 
 $notifier-colors: (
-    "light":  rgba(255, 255, 255, $notifier-color-opactiy),
-    "dark":   rgba(0, 0, 0, $notifier-color-opactiy),
-    "green":  rgba(209, 231, 221, $notifier-color-opactiy),
+    "white": rgba(255, 255, 255, $notifier-color-opactiy),
+    "black": rgba(0, 0, 0, $notifier-color-opactiy),
+    "green": rgba(209, 231, 221, $notifier-color-opactiy),
     "yellow": rgba(255, 243, 205, $notifier-color-opactiy),
-    "red":    rgba(132, 32, 41, $notifier-color-opactiy)
+    "red": rgba(132, 32, 41, $notifier-color-opactiy),
 ) !default;
 
 $notifier-text-colors: (
-    "default": map-get($notifier-colors, "dark"),
-    "success": map-get($notifier-colors, "dark"),
-    "warning": map-get($notifier-colors, "dark"),
-    "error":   map-get($notifier-colors, "light")
+    "default": map-get($notifier-colors, "black"),
+    "success": map-get($notifier-colors, "black"),
+    "warning": map-get($notifier-colors, "black"),
+    "error": map-get($notifier-colors, "white"),
 ) !default;
 
 $notifier-bg-colors: (
-    "default": map-get($notifier-colors, "light"),
+    "default": map-get($notifier-colors, "white"),
     "success": map-get($notifier-colors, "green"),
     "warning": map-get($notifier-colors, "yellow"),
-    "error":   map-get($notifier-colors, "red")
+    "error": map-get($notifier-colors, "red"),
 ) !default;

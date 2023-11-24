@@ -158,7 +158,7 @@ Colors can be customized using Sass variables.
 | Variable name             | Type        | Description                                              |
 | :------------------------ | :---------- | :------------------------------------------------------- |
 | `$notifier-types`         | `Map`       | Notification types.                                      |
-| `$notifier-font-size`     | `Dimension` | Base `font-size`. Internal sizing is done relative to this value. Default is `1rem`. |
+| `$notifier-font-size-base`     | `Dimension` | Base `font-size`. Internal sizing is done relative to this value. Default is `1rem`. |
 | `$notifier-color-opacity` | `Number`    | Opacity applied to the defined colors. Default is `0.9`. |
 | `$notifier-colors`        | `Map`       | Available colors.                                             |
 | `$notifier-text-colors`   | `Map`       | Text color to use with given notification type.          |
