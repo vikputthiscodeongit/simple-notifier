@@ -1,5 +1,6 @@
 import { createEl, getPseudoRandomIntBelow } from "@codebundlesbyvik/js-helpers";
 import wait from "./helpers/wait.ts";
+import "../scss/simple-notifier.scss";
 
 type PositionY = "top" | "bottom";
 type PositionX = "left" | "center" | "right";
@@ -202,12 +203,12 @@ class SN {
         dismissable: boolean;
     }) {
         const notificationEl = createEl("div", {
-            class: "simple-notification",
+            class: `simple-notification simple-notification--${type || "default"}`,
             role: "alert",
         });
 
         const mainContainerEl = createEl("div", {
-            class: "simple-notification__partial simple-notification__partial--main",
+            class: "simple-notification__part simple-notification__part--main",
         });
 
         if (title) {
@@ -229,7 +230,7 @@ class SN {
 
         if (dismissable) {
             const sideContainerEl = createEl("div", {
-                class: "simple-notification__partial simple-notification__partial--side",
+                class: "simple-notification__part simple-notification__part--side",
             });
 
             const closeButtonEl = createEl("button", { type: "button" });
