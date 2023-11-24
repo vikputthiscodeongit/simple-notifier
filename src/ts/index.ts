@@ -14,7 +14,10 @@ interface AllInstanceOptions {
 interface InstanceOptions extends Partial<AllInstanceOptions> {}
 interface NotificationOptions
     extends Partial<Pick<AllInstanceOptions, "dismissable" | "hideAfter" | "singleNotification">> {
+    text: string;
+    title?: string;
     type?: string;
+}
 
 const DEFAULT_INSTANCE_OPTIONS: AllInstanceOptions = {
     parentEl: document.body,
@@ -37,12 +40,12 @@ class SN {
     instanceId: number | null;
     initTryCount: number;
     activeNotifications: {
-        [id: number]: {
+        [notificationId: number]: {
             abortController: AbortController;
             el: HTMLElement;
         };
     };
-    currentId: number;
+    currentNotificationId: number;
 
     constructor(options: InstanceOptions = {}) {
         this.mergedOptions = {
@@ -61,7 +64,7 @@ class SN {
         this.instanceId = null;
         this.initTryCount = 0;
         this.activeNotifications = {};
-        this.currentId = 0;
+        this.currentNotificationId = 0;
     }
 
     static instanceIds: number[] = [];
@@ -106,48 +109,67 @@ class SN {
         }
     }
 
-    show(
-        text: string,
-        titleOrOptions?: string | NotificationOptions,
-        options?: NotificationOptions,
-    ) {
-        if (this.singleNotification) {
-            this.hideAll();
+    async show(textOrOptions: string | NotificationOptions, type?: string) {
+        try {
+            const options =
+                arguments.length === 1 && typeof textOrOptions !== "string"
+                    ? (textOrOptions as NotificationOptions)
+                    : undefined;
+
+            if (this.singleNotification || !!options?.singleNotification) {
+                this.hideAll();
+            }
+
+            if (!this.notifierEl) {
+                throw new Error("notifierEl not found.");
+            }
+
+            this.currentNotificationId++;
+            console.log("this.currentNotificationId:", this.currentNotificationId);
+
+            const text = typeof textOrOptions === "string" ? textOrOptions : textOrOptions.text;
+            const title = options?.title;
+            type = type || options?.type;
+            const dismissable = this.dismissable || !!options?.dismissable;
+            const notificationEl = this.#makeNotificationEl({
+                notificationId: this.currentNotificationId,
+                text,
+                title,
+                type,
+                dismissable,
+            });
+
+            this.notifierEl.append(notificationEl);
+
+            const abortController = new AbortController();
+
+            this.activeNotifications = {
+                ...this.activeNotifications,
+                [this.currentNotificationId]: {
+                    abortController,
+                    el: notificationEl,
+                },
+            };
+            console.log("this.activeNotifications:", this.activeNotifications);
+
+            const hideAfterMs = options?.hideAfter || this.hideAfter;
+            const notificationToHideId = this.currentNotificationId; // Pass value, not a reference.
+
+            if (hideAfterMs > 0) {
+                try {
+                    await wait(hideAfterMs, null, abortController);
+                    this.hide(notificationToHideId);
+                } catch (errorOrAbortReason) {
+                    return errorOrAbortReason;
+                }
+            }
+        } catch (errorOrAbortReason) {
+            if (errorOrAbortReason instanceof Error) {
+                throw errorOrAbortReason;
+            } else {
+                console.log(errorOrAbortReason);
+            }
         }
-
-        const abortController = new AbortController();
-
-        const title = typeof titleOrOptions === "string" ? titleOrOptions : undefined;
-        options =
-            options || (arguments.length === 2 && typeof titleOrOptions !== "string")
-                ? (titleOrOptions as NotificationOptions)
-                : undefined;
-        const notificationEl = this.makeNotificationEl({
-            currentId: this.currentId,
-            text,
-            title,
-            options,
-        });
-
-        this.parentEl.append(notificationEl);
-
-        this.activeNotifications = {
-            ...this.activeNotifications,
-            [this.currentId]: {
-                abortController,
-                el: notificationEl,
-            },
-        };
-
-        const hideAfterMs = options?.hideAfter ?? this.hideAfter;
-
-        if (hideAfterMs > 0) {
-            (async () => await wait(hideAfterMs))();
-
-            this.hide(this.currentId);
-        }
-
-        this.currentId++;
     }
 
     hide(notificationId: number) {
@@ -165,19 +187,19 @@ class SN {
         }
     }
 
-    makeNotificationEl({
-        currentId,
+    #makeNotificationEl({
+        notificationId,
         text,
         title,
-        options,
+        type,
+        dismissable,
     }: {
-        currentId: number;
+        notificationId: number;
         text: string;
         title?: string;
-        options?: NotificationOptions;
+        type?: string;
+        dismissable: boolean;
     }) {
-        const dismissable = options?.dismissable ?? this.dismissable;
-
         const notificationEl = createEl("div", {
             class: "simple-notification",
             role: "alert",
@@ -210,7 +232,9 @@ class SN {
             });
 
             const closeButtonEl = createEl("button", { type: "button" });
-            closeButtonEl.addEventListener("click", () => this.hide(currentId), { once: true });
+            closeButtonEl.addEventListener("click", () => this.hide(notificationId), {
+                once: true,
+            });
 
             sideContainerEl.append(closeButtonEl);
             notificationEl.append(sideContainerEl);
