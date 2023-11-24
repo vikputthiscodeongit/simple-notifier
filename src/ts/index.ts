@@ -35,6 +35,7 @@ class SN {
 
     notifierEl: HTMLElement | undefined;
     instanceId: number | null;
+    initTryCount: number;
     activeNotifications: {
         [id: number]: {
             abortController: AbortController;
@@ -58,6 +59,7 @@ class SN {
 
         this.notifierEl;
         this.instanceId = null;
+        this.initTryCount = 0;
         this.activeNotifications = {};
         this.currentId = 0;
     }
@@ -65,12 +67,13 @@ class SN {
     static instanceIds: number[] = [];
 
     init() {
-        console.log("SN: Running .init()...");
+        console.log("Running .init()...");
+        this.initTryCount++;
 
         try {
             if (this.instanceId !== null) {
                 throw new Error(
-                    `SN: .init() has already been called on this instance (${this.instanceId}).`,
+                    `.init() has already been called on this instance (${this.instanceId}).`,
                 );
             }
 
@@ -78,6 +81,11 @@ class SN {
             this.instanceId = getPseudoRandomIntBelow(100000, false);
 
             if (SN.instanceIds.includes(this.instanceId)) {
+                this.instanceId = null;
+
+                if (this.initTryCount > 2) return;
+
+                this.init();
 
                 return;
             }
@@ -86,6 +94,7 @@ class SN {
 
             this.notifierEl = createEl("div", {
                 class: `simple-notifier simple-notifier--pos-y-${this.position[0]} simple-notifier--pos-x-${this.position[1]}`,
+                ariaLive: "assertive",
             });
             this.parentEl.insertBefore(this.notifierEl, this.parentEl.firstElementChild);
 
@@ -93,7 +102,7 @@ class SN {
         } catch (error) {
             throw error instanceof Error
                 ? error
-                : new Error("FormMc init(): Failed to initialize!");
+                : new Error("Unknown notifier initialization error.");
         }
     }
 
