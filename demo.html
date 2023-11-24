@@ -1,270 +1,282 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Simple Notifier demo page</title>
+        <title>Simple Notifier demo page</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+            crossorigin="anonymous"
+        />
 
-    <!-- Import the stylesheet -->
-    <link href="https://cdn.jsdelivr.net/npm/@codebundlesbyvik/simple-notifier@1.1.3/dist/css/simple-notifier.css" rel="stylesheet" crossorigin="anonymous">
-    <!-- <link href="./dist/css/simple-notifier.css" rel="stylesheet"> -->
+        <!-- Import the stylesheet -->
+        <link
+            href="https://cdn.jsdelivr.net/npm/@codebundlesbyvik/simple-notifier@1.1.3/dist/css/simple-notifier.css"
+            rel="stylesheet"
+            crossorigin="anonymous"
+        />
+        <!-- <link href="./dist/css/simple-notifier.css" rel="stylesheet"> -->
 
-    <style>
-        body {
-            min-width: 320px;
-            min-height: 100vh;
-            min-height: -webkit-fill-available;
-            padding: 1.5rem 0.5rem;
-        }
+        <style>
+            body {
+                min-width: 320px;
+                min-height: 100vh;
+                min-height: -webkit-fill-available;
+                padding: 1.5rem 0.5rem;
+            }
 
-        ul {
-            padding-left: 0;
-            list-style: none;
-        }
-    </style>
-  </head>
+            ul {
+                padding-left: 0;
+                list-style: none;
+            }
+        </style>
+    </head>
 
-  <body class="d-flex justify-content-center align-items-center">
-    <div class="container">
-        <div class="row mb-5">
-            <div class="col-12">
-                <div class="text-center">
-                    <h1>Simple Notifier demo page</h1>
+    <body class="d-flex justify-content-center align-items-center">
+        <div class="container">
+            <div class="row mb-5">
+                <div class="col-12">
+                    <div class="text-center">
+                        <h1>Simple Notifier demo page</h1>
 
-                    <p>
-                        Open your browser's JavaScript console to get a better grasp of  what's happening in the background.
-                    </p>
+                        <p>
+                            Open your browser's JavaScript console to get a better grasp of what's
+                            happening in the background.
+                        </p>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="row">
-            <div class="col-12 col-md-6 mb-5 mb-md-0">
-                <div class="text-center">
-                    <div class="mb-3">
-                        <h2>Instance 1</h2>
-                    </div>
+            <div class="row">
+                <div class="col-12 col-md-6 mb-5 mb-md-0">
+                    <div class="text-center">
+                        <div class="mb-3">
+                            <h2>Instance 1</h2>
+                        </div>
 
-                    <div class="mb-3">
-                        <p class="mb-2">Options</p>
+                        <div class="mb-3">
+                            <p class="mb-2">Options</p>
 
-                        <ul>
-                            <li>
-                                <code>autoHide: false,</code>
-                            </li>
+                            <ul>
+                                <li>
+                                    <code>autoHide: false,</code>
+                                </li>
 
-                            <li>
-                                <code>position: "top left"</code>
-                            </li>
-                        </ul>
-                    </div>
+                                <li>
+                                    <code>position: "top left"</code>
+                                </li>
+                            </ul>
+                        </div>
 
-                    <div class="mb-3">
-                        <p class="mb-2">Notification</p>
+                        <div class="mb-3">
+                            <p class="mb-2">Notification</p>
 
-                        <div class="mb-2">
-                            <button id="button-1-default">Default</button>
+                            <div class="mb-2">
+                                <button id="button-1-default">Default</button>
 
-                            <button id="button-1-error">Error</button>
+                                <button id="button-1-error">Error</button>
 
-                            <button id="button-1-warning">Warning</button>
+                                <button id="button-1-warning">Warning</button>
 
-                            <button id="button-1-success">Success</button>
+                                <button id="button-1-success">Success</button>
+                            </div>
+
+                            <div>
+                                <button id="button-1-hide-all">Hide all</button>
+                            </div>
                         </div>
 
                         <div>
-                            <button id="button-1-hide-all">Hide all</button>
+                            <p class="mb-2">Instance</p>
+
+                            <button id="button-1-init">Initialize</button>
+
+                            <button id="button-1-destroy">Destroy</button>
                         </div>
                     </div>
-
-                    <div>
-                        <p class="mb-2">Instance</p>
-
-                        <button id="button-1-init">Initialize</button>
-
-                        <button id="button-1-destroy">Destroy</button>
-                    </div>
                 </div>
-            </div>
 
-            <div class="col-12 col-md-6">
-                <div class="text-center">
-                    <div class="mb-3">
-                        <h2>Instance 2</h2>
-                    </div>
+                <div class="col-12 col-md-6">
+                    <div class="text-center">
+                        <div class="mb-3">
+                            <h2>Instance 2</h2>
+                        </div>
 
-                    <div class="mb-3">
-                        <p class="mb-2">Options</p>
+                        <div class="mb-3">
+                            <p class="mb-2">Options</p>
 
-                        <ul>
-                            <li>
-                                <code>onlyOneNotification: false,</code>
-                            </li>
+                            <ul>
+                                <li>
+                                    <code>onlyOneNotification: false,</code>
+                                </li>
 
-                            <li>
-                                <code>position: "top right"</code>
-                            </li>
-                        </ul>
-                    </div>
+                                <li>
+                                    <code>position: "top right"</code>
+                                </li>
+                            </ul>
+                        </div>
 
-                    <div class="mb-3">
-                        <p class="mb-2">Notification</p>
+                        <div class="mb-3">
+                            <p class="mb-2">Notification</p>
 
-                        <div class="mb-2">
-                            <button id="button-2-default">Default</button>
+                            <div class="mb-2">
+                                <button id="button-2-default">Default</button>
 
-                            <button id="button-2-error">Error</button>
+                                <button id="button-2-error">Error</button>
 
-                            <button id="button-2-warning">Warning</button>
+                                <button id="button-2-warning">Warning</button>
 
-                            <button id="button-2-success">Success</button>
+                                <button id="button-2-success">Success</button>
+                            </div>
+
+                            <div>
+                                <button id="button-2-hide-all">Hide all</button>
+                            </div>
                         </div>
 
                         <div>
-                            <button id="button-2-hide-all">Hide all</button>
+                            <p class="mb-2">Instance</p>
+
+                            <button id="button-2-init">Initialize</button>
+
+                            <button id="button-2-destroy">Destroy</button>
                         </div>
-                    </div>
-
-                    <div>
-                        <p class="mb-2">Instance</p>
-
-                        <button id="button-2-init">Initialize</button>
-
-                        <button id="button-2-destroy">Destroy</button>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-  </body>
+    </body>
 
-  <!-- Import the UMD bundle -->
-  <script src="https://cdn.jsdelivr.net/npm/@codebundlesbyvik/simple-notifier@1.1.3/dist/js/simple-notifier.bundle.js" crossorigin="anonymous"></script>
-  <!-- <script src="./dist/js/simple-notifier.bundle.js"></script> -->
+    <!-- Import the UMD bundle -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/@codebundlesbyvik/simple-notifier@1.1.3/dist/js/simple-notifier.bundle.js" crossorigin="anonymous"></script> -->
+    <script src="./dist/bundle-main.js"></script>
 
-  <script>
-    // 1
-    const instance1 = new SimpleNotifier({
-        autoHide: false,
-        position: "top left"
-    });
+    <script>
+        // 1
+        const instance1 = new SimpleNotifier({
+            autoHide: false,
+            position: "top left",
+        });
 
-    instance1.init();
-
-    // Notifications
-    const default1 = document.querySelector("#button-1-default");
-    const error1 = document.querySelector("#button-1-error");
-    const warning1 = document.querySelector("#button-1-warning");
-    const success1 = document.querySelector("#button-1-success");
-    const hideAll1 = document.querySelector("#button-1-hide-all");
-
-    default1.addEventListener("click", () => {
-        instance1.show("This instance allows at most a single, sticky notification to be shown.");
-    });
-
-    error1.addEventListener("click", () => {
-        instance1.show("Oops, something went wrong.", "error");
-    });
-
-    warning1.addEventListener("click", () => {
-        instance1.show("Hey, watch out!", "warning");
-    });
-
-    success1.addEventListener("click", () => {
-        instance1.show("Great success!", "success");
-    });
-
-    hideAll1.addEventListener("click", () => {
-        instance1.hide();
-    });
-
-    // Instance
-    const init1 = document.querySelector("#button-1-init");
-
-    init1.addEventListener("click", () => {
         instance1.init();
-    });
 
-    const destroy1 = document.querySelector("#button-1-destroy");
+        // Notifications
+        const default1 = document.querySelector("#button-1-default");
+        const error1 = document.querySelector("#button-1-error");
+        const warning1 = document.querySelector("#button-1-warning");
+        const success1 = document.querySelector("#button-1-success");
+        const hideAll1 = document.querySelector("#button-1-hide-all");
 
-    destroy1.addEventListener("click", () => {
-        instance1.destroy();
-    });
+        default1.addEventListener("click", () => {
+            instance1.show(
+                "This instance allows at most a single, sticky notification to be shown.",
+            );
+        });
 
+        error1.addEventListener("click", () => {
+            instance1.show("Oops, something went wrong.", "error");
+        });
 
-    // 2
-    const instance2 = new SimpleNotifier({
-        onlyOneNotification: false,
-        position: "top right"
-    });
+        warning1.addEventListener("click", () => {
+            instance1.show("Hey, watch out!", "warning");
+        });
 
-    instance2.init();
+        success1.addEventListener("click", () => {
+            instance1.show("Great success!", "success");
+        });
 
-    // Notifications
-    const default2 = document.querySelector("#button-2-default");
-    const error2 = document.querySelector("#button-2-error");
-    const warning2 = document.querySelector("#button-2-warning");
-    const success2 = document.querySelector("#button-2-success");
-    const hideAll2 = document.querySelector("#button-2-hide-all");
+        hideAll1.addEventListener("click", () => {
+            instance1.hide();
+        });
 
-    default2.addEventListener("click", () => {
-        instance2.show("This instance allows multiple notifications to be shown simultaneously.");
-    });
+        // Instance
+        const init1 = document.querySelector("#button-1-init");
 
-    error2.addEventListener("click", () => {
-        instance2.show("Oops, something went wrong.", "error");
-    });
+        init1.addEventListener("click", () => {
+            instance1.init();
+        });
 
-    warning2.addEventListener("click", () => {
-        instance2.show("Hey, watch out!", "warning");
-    });
+        const destroy1 = document.querySelector("#button-1-destroy");
 
-    success2.addEventListener("click", () => {
-        instance2.show("Great success!", "success");
-    });
+        destroy1.addEventListener("click", () => {
+            instance1.destroy();
+        });
 
-    hideAll2.addEventListener("click", () => {
-        instance2.hide();
-    });
+        // 2
+        const instance2 = new SimpleNotifier({
+            onlyOneNotification: false,
+            position: "top right",
+        });
 
-    // Instance
-    const init2 = document.querySelector("#button-2-init");
-
-    init2.addEventListener("click", () => {
         instance2.init();
-    });
 
-    const destroy2 = document.querySelector("#button-2-destroy");
+        // Notifications
+        const default2 = document.querySelector("#button-2-default");
+        const error2 = document.querySelector("#button-2-error");
+        const warning2 = document.querySelector("#button-2-warning");
+        const success2 = document.querySelector("#button-2-success");
+        const hideAll2 = document.querySelector("#button-2-hide-all");
 
-    destroy2.addEventListener("click", () => {
-        instance2.destroy();
-    });
-
-
-    // Event handlers
-    const instanceEls = document.querySelectorAll(".simple-notifier");
-
-    instanceEls.forEach((el) => {
-        el.addEventListener("notificationShown", (e) => {
-            console.log("SN DEMO: notificationShown event fired!");
-
-            console.log(e);
+        default2.addEventListener("click", () => {
+            instance2.show(
+                "This instance allows multiple notifications to be shown simultaneously.",
+            );
         });
 
-        el.addEventListener("notificationDestroyed", (e) => {
-            console.log("SN DEMO: notificationDestroyed event fired!");
-
-            console.log(e);
+        error2.addEventListener("click", () => {
+            instance2.show("Oops, something went wrong.", "error");
         });
 
-        el.addEventListener("allNotificationsDestroyed", (e) => {
-            console.log("SN DEMO: allNotificationsDestroyed event fired!");
-
-            console.log(e);
+        warning2.addEventListener("click", () => {
+            instance2.show("Hey, watch out!", "warning");
         });
-    })
-  </script>
+
+        success2.addEventListener("click", () => {
+            instance2.show("Great success!", "success");
+        });
+
+        hideAll2.addEventListener("click", () => {
+            instance2.hide();
+        });
+
+        // Instance
+        const init2 = document.querySelector("#button-2-init");
+
+        init2.addEventListener("click", () => {
+            instance2.init();
+        });
+
+        const destroy2 = document.querySelector("#button-2-destroy");
+
+        destroy2.addEventListener("click", () => {
+            instance2.destroy();
+        });
+
+        // Event handlers
+        const instanceEls = document.querySelectorAll(".simple-notifier");
+
+        instanceEls.forEach((el) => {
+            el.addEventListener("notificationShown", (e) => {
+                console.log("SN DEMO: notificationShown event fired!");
+
+                console.log(e);
+            });
+
+            el.addEventListener("notificationDestroyed", (e) => {
+                console.log("SN DEMO: notificationDestroyed event fired!");
+
+                console.log(e);
+            });
+
+            el.addEventListener("allNotificationsDestroyed", (e) => {
+                console.log("SN DEMO: allNotificationsDestroyed event fired!");
+
+                console.log(e);
+            });
+        });
+    </script>
 </html>
