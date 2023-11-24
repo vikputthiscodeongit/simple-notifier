@@ -6,9 +6,9 @@ type PositionX = "left" | "center" | "right";
 
 interface AllInstanceOptions {
     parentEl: HTMLElement;
-    hideAfter: number;
     position: [PositionY, PositionX];
     dismissable: boolean;
+    hideAfter: number;
     singleNotification: boolean;
 }
 interface InstanceOptions extends Partial<AllInstanceOptions> {}
@@ -21,9 +21,9 @@ interface NotificationOptions
 
 const DEFAULT_INSTANCE_OPTIONS: AllInstanceOptions = {
     parentEl: document.body,
-    hideAfter: 3500,
     position: ["top", "center"],
     dismissable: false,
+    hideAfter: 4000,
     singleNotification: false,
 };
 
@@ -54,10 +54,10 @@ class SN {
         };
 
         this.parentEl = this.mergedOptions.parentEl;
-        this.hideAfter = this.mergedOptions.hideAfter;
         this.position = this.mergedOptions.position;
 
         this.dismissable = this.mergedOptions.dismissable;
+        this.hideAfter = this.mergedOptions.hideAfter;
         this.singleNotification = this.mergedOptions.singleNotification;
 
         this.notifierEl;
@@ -172,12 +172,13 @@ class SN {
         }
     }
 
-    hide(notificationId: number) {
-        this.activeNotifications[notificationId].abortController.abort();
+    async hide(notificationId: number) {
+        console.log("Hiding notification with id:", notificationId);
 
-        // TOOD: Fade out first.
-        this.activeNotifications[notificationId].el.remove();
+        const notification = this.activeNotifications[notificationId];
 
+        notification.abortController.abort(`Notification ${notificationId} timeout aborted.`);
+        await this.#destroyNotificationEl(notification.el);
         delete this.activeNotifications[notificationId];
     }
 
@@ -241,6 +242,18 @@ class SN {
         }
 
         return notificationEl;
+    }
+
+    async #destroyNotificationEl(notificationEl: HTMLElement) {
+        const cssAnimationDuration = getCssPropValue(notificationEl, "animation-duration");
+
+        const animationTimeMs =
+            cssAnimationDuration !== null ? cssDurationToMs(cssAnimationDuration) : 0;
+        console.log("animationTimeMs:", animationTimeMs);
+        notificationEl.classList.add("fade-out");
+        await wait(animationTimeMs);
+        console.log("Hiding...");
+        notificationEl.remove();
     }
 }
 
