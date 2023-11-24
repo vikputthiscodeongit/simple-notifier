@@ -1,27 +1,34 @@
 import { createEl, getPseudoRandomIntBelow } from "@codebundlesbyvik/js-helpers";
 import wait from "./helpers/wait.ts";
 
-interface DefaultInstanceOptions {
+type PositionY = "top" | "bottom";
+type PositionX = "left" | "center" | "right";
+
+interface AllInstanceOptions {
     parentEl: HTMLElement;
     hideAfter: number;
+    position: [PositionY, PositionX];
     dismissable: boolean;
     singleNotification: boolean;
 }
-interface InstanceOptions extends Partial<DefaultInstanceOptions> {}
+interface InstanceOptions extends Partial<AllInstanceOptions> {}
 interface NotificationOptions
-    extends Partial<Pick<DefaultInstanceOptions, "hideAfter" | "dismissable">> {}
+    extends Partial<Pick<AllInstanceOptions, "dismissable" | "hideAfter" | "singleNotification">> {
+    type?: string;
 
-const DEFAULT_INSTANCE_OPTIONS: DefaultInstanceOptions = {
+const DEFAULT_INSTANCE_OPTIONS: AllInstanceOptions = {
     parentEl: document.body,
     hideAfter: 3500,
+    position: ["top", "center"],
     dismissable: false,
     singleNotification: false,
 };
 
 class SN {
-    mergedOptions: any;
+    mergedOptions: AllInstanceOptions;
 
     parentEl: HTMLElement;
+    position: [PositionY, PositionX];
     hideAfter: number;
     dismissable: boolean;
     singleNotification: boolean;
@@ -44,6 +51,8 @@ class SN {
 
         this.parentEl = this.mergedOptions.parentEl;
         this.hideAfter = this.mergedOptions.hideAfter;
+        this.position = this.mergedOptions.position;
+
         this.dismissable = this.mergedOptions.dismissable;
         this.singleNotification = this.mergedOptions.singleNotification;
 
@@ -76,7 +85,7 @@ class SN {
             SN.instanceIds.push(this.instanceId);
 
             this.notifierEl = createEl("div", {
-                class: "simple-notifier",
+                class: `simple-notifier simple-notifier--pos-y-${this.position[0]} simple-notifier--pos-x-${this.position[1]}`,
             });
             this.parentEl.insertBefore(this.notifierEl, this.parentEl.firstElementChild);
 
