@@ -69,7 +69,6 @@ class SN {
             this.instanceId = getPseudoRandomIntBelow(100000, false);
 
             if (SN.instanceIds.includes(this.instanceId)) {
-                this.destroy(true);
 
                 return;
             }
@@ -86,23 +85,6 @@ class SN {
             throw error instanceof Error
                 ? error
                 : new Error("FormMc init(): Failed to initialize!");
-        }
-    }
-
-    destroy(reactivate: boolean = false) {
-        this.hideAll();
-
-        if (this.notifierEl) {
-            this.notifierEl.remove();
-        }
-
-        if (this.instanceId !== null) {
-            SN.instanceIds.splice(SN.instanceIds.indexOf(this.instanceId), 1);
-            this.instanceId = null;
-        }
-
-        if (reactivate) {
-            this.init();
         }
     }
 
