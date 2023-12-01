@@ -1,31 +1,25 @@
-/* eslint-disable no-undef */
 import path from "path";
 import { fileURLToPath } from "url";
-// import { merge } from "webpack-merge";
-import ESLintPlugin from "eslint-webpack-plugin";
-import TerserPlugin from "terser-webpack-plugin";
-import MiniCssExtractPlugin from "mini-css-extract-plugin";
-import CssMinimizerPlugin from "css-minimizer-webpack-plugin";
+import { merge } from "webpack-merge";
 import CopyPlugin from "copy-webpack-plugin";
+import CssMinimizerPlugin from "css-minimizer-webpack-plugin";
+import ESLintPlugin from "eslint-webpack-plugin";
+import MiniCssExtractPlugin from "mini-css-extract-plugin";
+import TerserPlugin from "terser-webpack-plugin";
 
 // https://stackoverflow.com/a/64383997/6396604
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const config = {
+const baseConfig = {
     context: path.resolve(__dirname),
-    mode: "development",
-    devtool: "eval-source-map",
     entry: {
         main: "./src/ts/index.ts",
     },
     output: {
         clean: true,
-        // chunkFilename: "index-[id].js",
         filename: "./js/index.js",
-        // libraryTarget: "umd",
         library: {
-            // name: "SimpleNotifier",
             type: "module",
         },
     },
@@ -50,6 +44,11 @@ const config = {
     module: {
         rules: [
             {
+                test: /\.js$/,
+                enforce: "pre",
+                use: ["source-map-loader"],
+            },
+            {
                 test: /\.([cm]?ts|tsx|[cm]?js)$/,
                 exclude: /node_modules/,
                 use: [
@@ -61,17 +60,53 @@ const config = {
                     },
                 ],
             },
-            // {
-            //     test: /\.js$/,
-            //     enforce: "pre",
-            //     use: ["source-map-loader"],
-            // },
             {
                 test: /\.(sa|sc|c)ss$/i,
                 use: [
                     { loader: MiniCssExtractPlugin.loader },
                     { loader: "css-loader" },
                     { loader: "postcss-loader" },
+                ],
+            },
+        ],
+    },
+    experiments: {
+        outputModule: true,
+    },
+};
+
+const devConfig = {
+    mode: "development",
+    devtool: "eval-source-map",
+    module: {
+        rules: [
+            {
+                test: /\.(sa|sc|c)ss$/i,
+                use: [
+                    {
+                        loader: "sass-loader",
+                        options: {
+                            sassOptions: {
+                                indentWidth: 4,
+                                outputStyle: "expanded",
+                                precision: 6,
+                            },
+                        },
+                    },
+                ],
+            },
+        ],
+    },
+};
+
+const prodConfig = {
+    mode: "production",
+    devtool: "source-map",
+    module: {
+        rules: [
+            {
+                test: /\.(sa|sc|c)ss$/i,
+                use: [
                     {
                         loader: "sass-loader",
                         options: {
@@ -91,15 +126,19 @@ const config = {
                 terserOptions: {
                     ecma: "ES2017",
                     module: true,
+                    compress: {
+                        passes: 2,
+                    },
                     mangle: false,
                 },
             }),
             new CssMinimizerPlugin(),
         ],
     },
-    experiments: {
-        outputModule: true,
-    },
 };
 
-export default config;
+// eslint-disable-next-line no-undef
+const activeConfig = process.env.NODE_ENV === "production" ? prodConfig : devConfig;
+const mergedConfig = merge(baseConfig, activeConfig);
+
+export default mergedConfig;
