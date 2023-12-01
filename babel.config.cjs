@@ -19,6 +19,7 @@ const config = (api) => {
                 },
             ],
         ],
+        parserOpts: { strictMode: true },
     };
 };
 
