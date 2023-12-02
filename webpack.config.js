@@ -19,9 +19,6 @@ const baseConfig = {
     output: {
         clean: true,
         filename: "./js/index.js",
-        library: {
-            type: "module",
-        },
     },
     stats: {
         children: true,
@@ -70,14 +67,18 @@ const baseConfig = {
             },
         ],
     },
-    experiments: {
-        outputModule: true,
-    },
 };
 
 const devConfig = {
     mode: "development",
     devtool: "eval-source-map",
+    output: {
+        library: {
+            name: "SimpleNotifier",
+            type: "umd",
+            export: "default",
+        },
+    },
     module: {
         rules: [
             {
@@ -102,6 +103,11 @@ const devConfig = {
 const prodConfig = {
     mode: "production",
     devtool: "source-map",
+    output: {
+        library: {
+            type: "module",
+        },
+    },
     module: {
         rules: [
             {
@@ -134,6 +140,9 @@ const prodConfig = {
             }),
             new CssMinimizerPlugin(),
         ],
+    },
+    experiments: {
+        outputModule: true,
     },
 };
 

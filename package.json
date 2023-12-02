@@ -38,7 +38,7 @@
   },
   "type": "module",
   "scripts": {
-    "build-dev": "cross-env NODE_ENV=development webpack && dts-bundle-generator --out-file ./dist/js/index.d.ts ./src/ts/index.ts",
+    "build-dev": "cross-env NODE_ENV=development webpack",
     "build": "cross-env NODE_ENV=production webpack && dts-bundle-generator --out-file ./dist/js/index.d.ts ./src/ts/index.ts"
   },
   "dependencies": {
