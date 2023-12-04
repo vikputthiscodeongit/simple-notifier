@@ -1,5 +1,11 @@
-import { createEl, getPseudoRandomIntBelow } from "@codebundlesbyvik/js-helpers";
-import wait from "./helpers/wait.ts";
+import {
+    createEl,
+    cssDurationToMs,
+    getCssPropValue,
+    getPseudoRandomIntBetween,
+    isMotionAllowed,
+    wait,
+} from "@codebundlesbyvik/js-helpers";
 import "../scss/simple-notifier.scss";
 
 type PositionY = "top" | "bottom";

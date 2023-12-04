@@ -43,7 +43,6 @@
   },
   "dependencies": {
     "@codebundlesbyvik/js-helpers": "^1.0.0",
-    "merge-options": "^3.0.4"
   },
   "devDependencies": {
     "@babel/core": "^7.23.5",
