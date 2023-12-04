@@ -15,12 +15,14 @@ interface AllInstanceOptions {
     parentEl: HTMLElement;
     position: [PositionY, PositionX];
     dismissable: boolean;
-    hideAfter: number;
+    autoHideTime: number;
     singleNotification: boolean;
 }
 interface InstanceOptions extends Partial<AllInstanceOptions> {}
 interface NotificationOptions
-    extends Partial<Pick<AllInstanceOptions, "dismissable" | "hideAfter" | "singleNotification">> {
+    extends Partial<
+        Pick<AllInstanceOptions, "dismissable" | "autoHideTime" | "singleNotification">
+    > {
     text: string;
     title?: string;
     type?: string;
@@ -30,7 +32,7 @@ const DEFAULT_INSTANCE_OPTIONS: AllInstanceOptions = {
     parentEl: document.body,
     position: ["top", "center"],
     dismissable: false,
-    hideAfter: 4000,
+    autoHideTime: 4000,
     singleNotification: false,
 };
 
@@ -39,7 +41,7 @@ class SN {
 
     parentEl: HTMLElement;
     position: [PositionY, PositionX];
-    hideAfter: number;
+    autoHideTime: number;
     dismissable: boolean;
     singleNotification: boolean;
 
@@ -50,6 +52,8 @@ class SN {
         [notificationId: number]: {
             abortController: AbortController;
             el: HTMLElement;
+            autoHideTimeMs: number;
+            autoHideWaitTimeMs: number;
         };
     };
     currentNotificationId: number;
@@ -64,7 +68,7 @@ class SN {
         this.position = this.mergedOptions.position;
 
         this.dismissable = this.mergedOptions.dismissable;
-        this.hideAfter = this.mergedOptions.hideAfter;
+        this.autoHideTime = this.mergedOptions.autoHideTime;
         this.singleNotification = this.mergedOptions.singleNotification;
 
         this.notifierEl;
@@ -149,22 +153,38 @@ class SN {
             this.notifierEl.append(notificationEl);
 
             const abortController = new AbortController();
+            const autoHideTimeMs = options?.autoHideTime || this.autoHideTime;
+            const autoHideWaitTimeMs = autoHideTimeMs;
 
-            this.activeNotifications = {
-                ...this.activeNotifications,
-                [this.currentNotificationId]: {
-                    abortController,
-                    el: notificationEl,
-                },
+            this.activeNotifications[this.currentNotificationId] = {
+                abortController,
+                el: notificationEl,
+                autoHideTimeMs,
+                autoHideWaitTimeMs,
             };
             console.log("this.activeNotifications:", this.activeNotifications);
 
-            const hideAfterMs = options?.hideAfter || this.hideAfter;
-            const notificationToHideId = this.currentNotificationId; // Pass value, not a reference.
+            if (autoHideTimeMs > 0) {
+                const cssAnimationDuration = isMotionAllowed()
+                    ? getCssPropValue(notificationEl, "animation-duration")
+                    : null;
+                const animationTimeMs = cssAnimationDuration
+                    ? cssDurationToMs(cssAnimationDuration) || 0
+                    : 0;
 
-            if (hideAfterMs > 0) {
+                if (animationTimeMs < autoHideWaitTimeMs) {
+                    this.activeNotifications[this.currentNotificationId].autoHideWaitTimeMs -=
+                        animationTimeMs;
+                } else {
+                    console.warn(
+                        "Not animating notification as animation-duration > autoHideTime.",
+                    );
+                }
+
+                const notificationToHideId = this.currentNotificationId; // Pass value, not a reference.
+
                 try {
-                    await wait(hideAfterMs, null, abortController);
+                    await wait(autoHideWaitTimeMs, null, abortController);
                     this.hide(notificationToHideId);
                 } catch (errorOrAbortReason) {
                     return errorOrAbortReason;
@@ -184,9 +204,36 @@ class SN {
 
         const notification = this.activeNotifications[notificationId];
 
+        let waitTimeMs = 0;
+        const cssAnimationDuration = isMotionAllowed()
+            ? getCssPropValue(notification.el, "animation-duration")
+            : null;
+
+        if (cssAnimationDuration) {
+            const animationTimeMs = cssDurationToMs(cssAnimationDuration) || 0;
+
+            if (
+                notification.autoHideTimeMs &&
+                notification.autoHideTimeMs + 50 - notification.autoHideWaitTimeMs < animationTimeMs // Add an arbitrary 50 ms to cover for script processing time.
+            ) {
+                waitTimeMs = notification.autoHideTimeMs - notification.autoHideWaitTimeMs;
+            } else {
+                waitTimeMs = animationTimeMs;
+            }
+        }
+
+        if (waitTimeMs > 0) {
+            notification.el.classList.remove("fade-in");
+            notification.el.classList.add("animated", "fade-out");
+            await wait(waitTimeMs);
+        }
+
         notification.abortController.abort(`Notification ${notificationId} timeout aborted.`);
-        await this.#destroyNotificationEl(notification.el);
+        notification.el.remove();
         delete this.activeNotifications[notificationId];
+
+        // Fire notificationHidden event
+        // Fire allNotificationsHidden event (indien toepasselijk)
     }
 
     hideAll() {
@@ -208,8 +255,11 @@ class SN {
         type?: string;
         dismissable: boolean;
     }) {
+        const notificationElClass =
+            `simple-notification simple-notification--${type || "default"}` +
+            (isMotionAllowed() ? " animated fade-in" : undefined);
         const notificationEl = createEl("div", {
-            class: `simple-notification simple-notification--${type || "default"}`,
+            class: notificationElClass,
             role: "alert",
         });
 
@@ -249,18 +299,6 @@ class SN {
         }
 
         return notificationEl;
-    }
-
-    async #destroyNotificationEl(notificationEl: HTMLElement) {
-        const cssAnimationDuration = getCssPropValue(notificationEl, "animation-duration");
-
-        const animationTimeMs =
-            cssAnimationDuration !== null ? cssDurationToMs(cssAnimationDuration) : 0;
-        console.log("animationTimeMs:", animationTimeMs);
-        notificationEl.classList.add("fade-out");
-        await wait(animationTimeMs);
-        console.log("Hiding...");
-        notificationEl.remove();
     }
 }
 
