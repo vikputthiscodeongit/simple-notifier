@@ -263,7 +263,7 @@ class SN {
             role: "alert",
         });
 
-        const mainContainerEl = createEl("div", {
+        const mainContentEl = createEl("div", {
             class: "simple-notification__part simple-notification__part--main",
         });
 
@@ -273,7 +273,7 @@ class SN {
                 text: title,
             });
 
-            mainContainerEl.append(titleEl);
+            mainContentEl.append(titleEl);
         }
 
         const messageEl = createEl("p", {
@@ -281,11 +281,11 @@ class SN {
             text,
         });
 
-        mainContainerEl.append(messageEl);
-        notificationEl.append(mainContainerEl);
+        mainContentEl.append(messageEl);
+        notificationEl.append(mainContentEl);
 
         if (dismissable) {
-            const sideContainerEl = createEl("div", {
+            const sideContentEl = createEl("div", {
                 class: "simple-notification__part simple-notification__part--side",
             });
 
@@ -294,8 +294,8 @@ class SN {
                 once: true,
             });
 
-            sideContainerEl.append(closeButtonEl);
-            notificationEl.append(sideContainerEl);
+            sideContentEl.append(closeButtonEl);
+            notificationEl.append(sideContentEl);
         }
 
         return notificationEl;
