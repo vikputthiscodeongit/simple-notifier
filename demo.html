@@ -25,6 +25,10 @@
                 padding-left: 0;
                 list-style: none;
             }
+
+            p:last-child {
+                margin-bottom: 0;
+            }
         </style>
         <!--  -->
 
@@ -54,23 +58,23 @@
                             <h2>Instance 1</h2>
                         </div>
 
-                        <div class="mb-3">
-                            <p class="mb-2">Options</p>
-
+                        <div class="mb-4">
                             <ul>
                                 <li>
                                     <code>position: ["top", "left"]</code>
                                 </li>
 
                                 <li>
-                                    <code>autoHideTime: false,</code>
+                                    <code>dismissable: true</code>
+                                </li>
+
+                                <li>
+                                    <code>autoHideTime: 0</code>
                                 </li>
                             </ul>
                         </div>
 
                         <div>
-                            <p class="mb-2">Notification</p>
-
                             <div class="mb-2">
                                 <button id="button-1-default">Default</button>
 
@@ -94,23 +98,19 @@
                             <h2>Instance 2</h2>
                         </div>
 
-                        <div class="mb-3">
-                            <p class="mb-2">Options</p>
-
+                        <div class="mb-4">
                             <ul>
                                 <li>
                                     <code>position: ["top", "right"]</code>
                                 </li>
 
                                 <li>
-                                    <code>singleNotification: false,</code>
+                                    <code>singleNotification: true</code>
                                 </li>
                             </ul>
                         </div>
 
                         <div>
-                            <p class="mb-2">Notification</p>
-
                             <div class="mb-2">
                                 <button id="button-2-default">Default</button>
 
@@ -129,84 +129,85 @@
                 </div>
             </div>
         </div>
+
+        <!-- Simple Notifier development UMD bundle -->
+        <script src="./dist/js/index.js"></script>
+
+        <script>
+            // Instance 1
+            const instanceOne = new SimpleNotifier({
+                autoHideTime: 0,
+                position: ["top", "left"],
+                dismissable: true,
+            });
+            instanceOne.init();
+
+            // Instance 1 - notification controls
+            document.querySelector("#button-1-default").addEventListener("click", () => {
+                instanceOne.show(
+                    "This instance allows multiple notifications to be shown simultaneously.",
+                );
+            });
+            document.querySelector("#button-1-error").addEventListener("click", () => {
+                instanceOne.show("Oops, something went wrong.", "error");
+            });
+            document.querySelector("#button-1-warning").addEventListener("click", () => {
+                instanceOne.show("Hey, watch out!", "warning");
+            });
+            document.querySelector("#button-1-success").addEventListener("click", () => {
+                instanceOne.show("Great success!", "success");
+            });
+            document.querySelector("#button-1-hide-all").addEventListener("click", () => {
+                instanceOne.hideAll();
+            });
+
+            // Instance 2
+            const instanceTwo = new SimpleNotifier({
+                singleNotification: true,
+                position: ["top", "right"],
+            });
+            instanceTwo.init();
+
+            // Instance 2 - notification controls
+            document.querySelector("#button-2-default").addEventListener("click", () => {
+                instanceTwo.show(
+                    "This instance allows at most a single, sticky notification to be shown.",
+                );
+            });
+            document.querySelector("#button-2-error").addEventListener("click", () => {
+                instanceTwo.show("Oops, something went wrong.", "error");
+            });
+            document.querySelector("#button-2-warning").addEventListener("click", () => {
+                instanceTwo.show("Hey, watch out!", "warning");
+            });
+            document.querySelector("#button-2-success").addEventListener("click", () => {
+                instanceTwo.show("Great success!", "success");
+            });
+            document.querySelector("#button-2-hide-all").addEventListener("click", () => {
+                instanceTwo.hideAll();
+            });
+
+            // All instances
+            const instanceEls = document.querySelectorAll(".simple-notifier");
+            instanceEls.forEach((el) => {
+                el.addEventListener("notificationShown", (e) => {
+                    console.log("SN DEMO: notificationShown event fired!");
+
+                    console.log(e);
+                });
+
+                el.addEventListener("notificationDestroyed", (e) => {
+                    console.log("SN DEMO: notificationDestroyed event fired!");
+
+                    console.log(e);
+                });
+
+                el.addEventListener("allNotificationsDestroyed", (e) => {
+                    console.log("SN DEMO: allNotificationsDestroyed event fired!");
+
+                    console.log(e);
+                });
+            });
+        </script>
     </body>
-
-    <!-- Simple Notifier development UMD bundle -->
-    <script src="./dist/js/index.js"></script>
-
-    <script>
-        // Instance 1
-        const instanceOne = new SimpleNotifier({
-            autoHideTime: 0,
-            position: ["top", "left"],
-        });
-        instanceOne.init();
-
-        // Instance 1 - notification controls
-        document.querySelector("#button-1-default").addEventListener("click", () => {
-            instanceOne.show(
-                "This instance allows multiple notifications to be shown simultaneously.",
-            );
-        });
-        document.querySelector("#button-1-error").addEventListener("click", () => {
-            instanceOne.show("Oops, something went wrong.", "error");
-        });
-        document.querySelector("#button-1-warning").addEventListener("click", () => {
-            instanceOne.show("Hey, watch out!", "warning");
-        });
-        document.querySelector("#button-1-success").addEventListener("click", () => {
-            instanceOne.show("Great success!", "success");
-        });
-        document.querySelector("#button-1-hide-all").addEventListener("click", () => {
-            instanceOne.hideAll();
-        });
-
-        // Instance 2
-        const instanceTwo = new SimpleNotifier({
-            singleNotification: true,
-            position: "top right",
-        });
-        instanceTwo.init();
-
-        // Instance 2 - notification controls
-        document.querySelector("#button-2-default").addEventListener("click", () => {
-            instanceTwo.show(
-                "This instance allows at most a single, sticky notification to be shown.",
-            );
-        });
-        document.querySelector("#button-2-error").addEventListener("click", () => {
-            instanceTwo.show("Oops, something went wrong.", "error");
-        });
-        document.querySelector("#button-2-warning").addEventListener("click", () => {
-            instanceTwo.show("Hey, watch out!", "warning");
-        });
-        document.querySelector("#button-2-success").addEventListener("click", () => {
-            instanceTwo.show("Great success!", "success");
-        });
-        document.querySelector("#button-2-hide-all").addEventListener("click", () => {
-            instanceTwo.hideAll();
-        });
-
-        // All instances
-        const instanceEls = document.querySelectorAll(".simple-notifier");
-        instanceEls.forEach((el) => {
-            el.addEventListener("notificationShown", (e) => {
-                console.log("SN DEMO: notificationShown event fired!");
-
-                console.log(e);
-            });
-
-            el.addEventListener("notificationDestroyed", (e) => {
-                console.log("SN DEMO: notificationDestroyed event fired!");
-
-                console.log(e);
-            });
-
-            el.addEventListener("allNotificationsDestroyed", (e) => {
-                console.log("SN DEMO: allNotificationsDestroyed event fired!");
-
-                console.log(e);
-            });
-        });
-    </script>
 </html>
