@@ -71,7 +71,7 @@ const baseConfig = {
 
 const devConfig = {
     mode: "development",
-    devtool: "eval-source-map",
+    devtool: "eval-cheap-source-map",
     output: {
         library: {
             name: "SimpleNotifier",
