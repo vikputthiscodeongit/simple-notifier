@@ -9,7 +9,7 @@ const config = (api) => {
                 {
                     modules: false,
                     useBuiltIns: "usage",
-                    corejs: { version: "3.33" },
+                    corejs: { version: "3.37" },
                 },
             ],
             [
