@@ -5,11 +5,11 @@
 
 <br>
 
-A lightweight, easy to use notification library.
+An easy to use, lightweight, 0-dependency notification library.
 
 <br>
 
-**[Demo page (interactive)](https://rawcdn.githack.com/vikputthiscodeongit/simple-notifier/07b291aa0688c0d92eab0f60c12f8653db14e531/demo.html)**
+__[Demo page (interactive)](https://rawcdn.githack.com/vikputthiscodeongit/simple-notifier/07b291aa0688c0d92eab0f60c12f8653db14e531/demo.html)__
 
 <br>
 
@@ -215,4 +215,4 @@ If `onlyOneNotification` is set to `false`, passing in a `notificationId` will h
 
 ## License
 
-Mozilla Public License 2.0 © [Viktor Chin-Kon-Sung](https://github.com/vikputthiscodeongit)
+Mozilla Public License 2.0 © 2024 [Viktor Chin-Kon-Sung](https://github.com/vikputthiscodeongit)
