@@ -1,305 +1,517 @@
+// TODO:
+// * Check SCSS import in type definition
+// * Validate browser support
+// * Clean up README
+// * 'title' h level should be an option.
+// * 'text' should be able to take in an array with each item representing a paragraph.
+
 import {
     createEl,
-    cssDurationToMs,
-    getCssPropValue,
     getPseudoRandomIntBetween,
     isMotionAllowed,
     wait,
 } from "@codebundlesbyvik/js-helpers";
 import "../scss/simple-notifier.scss";
 
+enum NotificationState {
+    HIDE_BUSY = "HIDE_BUSY",
+    SHOW_BUSY = "SHOW_BUSY",
+    SHOWN = "SHOWN",
+    WAITING_ON_HIDE = "WAITING_ON_HIDE",
+}
+
 type PositionY = "top" | "bottom";
 type PositionX = "left" | "center" | "right";
 
-interface AllInstanceOptions {
+interface SharedOptions {
+    hideAfterTime: number;
+    hideOlder: boolean;
+    dismissable: boolean;
+    animationClasses: [string, string];
+    animationDuration: number;
+}
+
+interface NotifierOptions extends SharedOptions {
     parentEl: HTMLElement;
     position: [PositionY, PositionX];
-    dismissable: boolean;
-    autoHideTime: number;
-    singleNotification: boolean;
 }
-interface InstanceOptions extends Partial<AllInstanceOptions> {}
-interface NotificationOptions
-    extends Partial<
-        Pick<AllInstanceOptions, "dismissable" | "autoHideTime" | "singleNotification">
-    > {
-    text: string;
+
+interface NotificationContent {
+    text?: string;
     title?: string;
     type?: string;
 }
 
-const DEFAULT_INSTANCE_OPTIONS: AllInstanceOptions = {
+interface NotificationOptions extends Partial<SharedOptions>, NotificationContent {}
+
+interface ProcessedNotificationOptions extends SharedOptions, Omit<NotificationContent, "type"> {
+    type: string;
+}
+
+interface NotificationProps extends SharedOptions, NotificationContent {
+    abortController: AbortController;
+    el: HTMLDivElement;
+    state?: NotificationState;
+}
+
+const makeInstanceId = (min: number, max: number, excludeIds: number[], tryCount?: number) => {
+    const MAX_TRY_COUNT = 3;
+
+    tryCount = tryCount || 1;
+    const id = getPseudoRandomIntBetween(min, max);
+
+    if (excludeIds.includes(id)) {
+        if (tryCount > MAX_TRY_COUNT) {
+            throw new Error(`Failed to generate a unique instanceId ${MAX_TRY_COUNT} times!`);
+        }
+
+        makeInstanceId(min, max, excludeIds, ++tryCount);
+    }
+
+    return id;
+};
+
+const DEFAULT_INSTANCE_OPTIONS: NotifierOptions = {
     parentEl: document.body,
     position: ["top", "center"],
+    hideAfterTime: 4000,
+    hideOlder: false,
     dismissable: false,
-    autoHideTime: 4000,
-    singleNotification: false,
+    animationClasses: ["fade-in", "fade-out"],
+    animationDuration: 500,
 };
 
 class SN {
-    mergedOptions: AllInstanceOptions;
+    parentEl: NotifierOptions["parentEl"];
+    position: NotifierOptions["position"];
+    hideAfterTime: NotifierOptions["hideAfterTime"];
+    hideOlder: NotifierOptions["hideOlder"];
+    dismissable: NotifierOptions["dismissable"];
+    animationClasses: NotifierOptions["animationClasses"];
+    animationDuration: NotifierOptions["animationDuration"];
 
-    parentEl: HTMLElement;
-    position: [PositionY, PositionX];
-    autoHideTime: number;
-    dismissable: boolean;
-    singleNotification: boolean;
-
-    notifierEl: HTMLElement | undefined;
-    instanceId: number | null;
-    initTryCount: number;
-    activeNotifications: {
-        [notificationId: number]: {
-            abortController: AbortController;
-            el: HTMLElement;
-            autoHideTimeMs: number;
-            autoHideWaitTimeMs: number;
-        };
-    };
+    notifierEl: HTMLDivElement;
+    notifications: { [id: string]: NotificationProps };
     currentNotificationId: number;
+    queuedNotifications: NotificationOptions[];
+    waitingForHideOlderHideAll: boolean;
 
-    constructor(options: InstanceOptions = {}) {
-        this.mergedOptions = {
-            ...DEFAULT_INSTANCE_OPTIONS,
-            ...options,
-        };
+    instanceId: number;
 
-        this.parentEl = this.mergedOptions.parentEl;
-        this.position = this.mergedOptions.position;
+    constructor(options: Partial<NotifierOptions> = {}) {
+        try {
+            const mergedOptions = {
+                ...DEFAULT_INSTANCE_OPTIONS,
+                ...options,
+            };
 
-        this.dismissable = this.mergedOptions.dismissable;
-        this.autoHideTime = this.mergedOptions.autoHideTime;
-        this.singleNotification = this.mergedOptions.singleNotification;
+            this.parentEl = mergedOptions.parentEl;
+            this.position = mergedOptions.position;
+            this.hideAfterTime = mergedOptions.hideAfterTime;
+            this.hideOlder = mergedOptions.hideOlder;
+            this.dismissable = mergedOptions.dismissable;
+            this.animationClasses = mergedOptions.animationClasses;
+            this.animationDuration = mergedOptions.animationDuration;
 
-        this.notifierEl;
-        this.instanceId = null;
-        this.initTryCount = 0;
-        this.activeNotifications = {};
-        this.currentNotificationId = 0;
+            this.notifierEl = createEl("div", {
+                class: `simple-notifier simple-notifier--pos-x-${this.position[1]} simple-notifier--pos-y-${this.position[0]}`,
+                ariaLive: "assertive",
+            });
+            this.notifications = {};
+            this.currentNotificationId = 0;
+            this.queuedNotifications = [];
+            this.waitingForHideOlderHideAll = false;
+
+            this.instanceId = makeInstanceId(100000, 1000000, SN.#instanceIds);
+            SN.#instanceIds.push(this.instanceId);
+
+            this.parentEl.insertBefore(this.notifierEl, this.parentEl.firstElementChild);
+
+            console.info(`SimpleNotifier instance ${this.instanceId} initiated.`);
+        } catch (error) {
+            throw error instanceof Error
+                ? error
+                : new Error("Unknown error during instance initialization!");
+        }
     }
 
-    static instanceIds: number[] = [];
+    static #instanceIds: number[] = [];
 
-    init() {
-        console.log("Running .init()...");
-        this.initTryCount++;
+    get notificationIds() {
+        return Object.keys(this.notifications).map((key) => Number.parseInt(key));
+    }
+
+    get #notificationIdsStateShowBusy() {
+        const notifications = [];
+
+        for (const id in this.notifications) {
+            if (this.notifications[id].state !== NotificationState.SHOW_BUSY) continue;
+
+            notifications.push(Number.parseInt(id));
+        }
+
+        return notifications;
+    }
+
+    get #notificationIdsStateHideBusy() {
+        const notifications = [];
+
+        for (const id in this.notifications) {
+            if (this.notifications[id].state !== NotificationState.HIDE_BUSY) continue;
+
+            notifications.push(Number.parseInt(id));
+        }
+
+        return notifications;
+    }
+
+    get #notificationIdsStateWaitingOnHide() {
+        const notifications = [];
+
+        for (const id in this.notifications) {
+            if (this.notifications[id].state !== NotificationState.WAITING_ON_HIDE) continue;
+
+            notifications.push(Number.parseInt(id));
+        }
+
+        return notifications;
+    }
+
+    show(textOrOptions: string | NotificationOptions, type?: string) {
+        console.info("SN show() - Running...");
 
         try {
-            if (this.instanceId !== null) {
+            if (typeof textOrOptions !== "object" && typeof textOrOptions !== "string") {
                 throw new Error(
-                    `.init() has already been called on this instance (${this.instanceId}).`,
+                    "'textOrOptions' is required and must be a `String` or an `Object`.",
                 );
             }
+            if (type !== undefined && typeof type !== "string") {
+                throw new Error("'type' must be a `String`.");
+            }
 
-            // TODO: Fix in js-helpers.
-            this.instanceId = getPseudoRandomIntBelow(100000, false);
+            if (
+                typeof textOrOptions === "object" &&
+                ((textOrOptions.hideOlder && Object.keys(this.notifications).length > 0) ||
+                    this.queuedNotifications.length > 0)
+            ) {
+                this.queuedNotifications.push(textOrOptions);
+                console.info("SN show() - Notification added to queue:", textOrOptions);
 
-            if (SN.instanceIds.includes(this.instanceId)) {
-                this.instanceId = null;
+                if (this.waitingForHideOlderHideAll) return;
 
-                if (this.initTryCount > 2) return;
+                this.waitingForHideOlderHideAll = true;
+                this.hideAll();
 
-                this.init();
+                this.notifierEl.addEventListener(
+                    "allhidden",
+                    () => {
+                        console.info("SN show() - Processing queued notifications...");
+
+                        this.waitingForHideOlderHideAll = false;
+
+                        // Make a copy of the queue because it's possible to continuously trigger
+                        // new notifications. Any notifications triggered after a copy of the queue
+                        // is made are processed on the next run.
+                        // Reverse the queue because all notifications newer than the oldest one
+                        // that has `hideOlder` set should be shown. Processing the queue from back
+                        // to front makes this easier.
+                        const queueCopyReversed = [...this.queuedNotifications].reverse();
+                        console.debug(
+                            "SN show() - Queued notifications (newest first):",
+                            queueCopyReversed,
+                        );
+                        this.queuedNotifications = [];
+
+                        let notificationsToShowReversed: NotificationOptions[] = [];
+                        let count = 0;
+
+                        for (const notificationOptions of queueCopyReversed) {
+                            count++;
+
+                            if (!notificationOptions.hideOlder) continue;
+
+                            notificationsToShowReversed = queueCopyReversed.slice(0, count);
+
+                            break;
+                        }
+
+                        console.debug(
+                            "SN show() - Queued notifications to show (newest first):",
+                            notificationsToShowReversed,
+                        );
+
+                        // Reverse the queue again so that the oldest notification is the one
+                        // that's shown first.
+                        notificationsToShowReversed.reverse().forEach((notificationOptions) => {
+                            this.show(notificationOptions);
+                        });
+                    },
+                    { once: true },
+                );
 
                 return;
             }
 
-            SN.instanceIds.push(this.instanceId);
+            const currentNotificationId = this.currentNotificationId;
+            console.info("SN show() - Notification ID:", currentNotificationId);
+            this.currentNotificationId++;
 
-            this.notifierEl = createEl("div", {
-                class: `simple-notifier simple-notifier--pos-y-${this.position[0]} simple-notifier--pos-x-${this.position[1]}`,
-                ariaLive: "assertive",
-            });
-            this.parentEl.insertBefore(this.notifierEl, this.parentEl.firstElementChild);
+            const notificationOptions = this.#getNotificationOptions(textOrOptions, type);
+            const notificationEl = this.#makeNotificationEl(
+                currentNotificationId,
+                notificationOptions,
+            );
+            const notificationProps = {
+                ...notificationOptions,
+                state: NotificationState.SHOW_BUSY,
+                el: notificationEl,
+                abortController: new AbortController(),
+            };
+            this.notifications[currentNotificationId] = notificationProps;
 
-            // TODO: Fire initialized event.
+            this.notifierEl.append(notificationEl);
+            console.info(
+                `SN show(): Element of notification ${currentNotificationId} appended to DOM.`,
+            );
+
+            notificationEl.addEventListener(
+                "animationend",
+                () => {
+                    console.info(
+                        `SN show(): Animation of element of notification ${currentNotificationId} completed.`,
+                    );
+
+                    this.notifications[currentNotificationId].state = NotificationState.SHOWN;
+
+                    const notificationShownEvent = new CustomEvent("shown", {
+                        detail: {
+                            instanceId: this.instanceId,
+                            notificationId: currentNotificationId,
+                        },
+                    });
+                    this.notifierEl.dispatchEvent(notificationShownEvent);
+
+                    console.info(`SN show(): Notification ${currentNotificationId} shown.`);
+
+                    if (notificationOptions.hideAfterTime > 0) {
+                        const fn = async () => await this.#scheduleHide(currentNotificationId);
+                        fn().catch((reason) => console.info(reason));
+                    }
+                },
+                {
+                    once: true,
+                    signal: notificationProps.abortController.signal,
+                },
+            );
+
+            notificationEl.addEventListener(
+                "animationcancel",
+                () => {
+                    console.info(
+                        `SN show(): Animation of element of notification ${currentNotificationId} cancled.`,
+                    );
+                },
+                { once: true },
+            );
         } catch (error) {
             throw error instanceof Error
                 ? error
-                : new Error("Unknown notifier initialization error.");
+                : new Error("Unknown error during notification show!");
         }
     }
 
-    async show(textOrOptions: string | NotificationOptions, type?: string) {
-        try {
-            const options =
-                arguments.length === 1 && typeof textOrOptions !== "string"
-                    ? (textOrOptions as NotificationOptions)
-                    : undefined;
+    #getNotificationOptions(
+        textOrOptions: NotificationOptions | string,
+        type?: string,
+    ): ProcessedNotificationOptions {
+        const notificationOptions = typeof textOrOptions === "object" ? textOrOptions : undefined;
 
-            if (this.singleNotification || !!options?.singleNotification) {
-                this.hideAll();
-            }
+        const animationDuration = notificationOptions?.animationDuration ?? this.animationDuration;
+        const mergedOptions = {
+            hideAfterTime: notificationOptions?.hideAfterTime ?? this.hideAfterTime,
+            hideOlder: notificationOptions?.hideOlder ?? this.hideOlder,
+            dismissable: notificationOptions?.dismissable ?? this.dismissable,
+            animationClasses: notificationOptions?.animationClasses ?? this.animationClasses,
+            animationDuration: isMotionAllowed() && animationDuration > 0 ? animationDuration : 1,
+            text: notificationOptions ? notificationOptions.text : (textOrOptions as string),
+            title: notificationOptions?.title,
+            type: notificationOptions?.type ?? type ?? "default",
+        };
+        console.debug("SN #getNotificationOptions() - mergedOptions:", mergedOptions);
 
-            if (!this.notifierEl) {
-                throw new Error("notifierEl not found.");
-            }
-
-            this.currentNotificationId++;
-            console.log("this.currentNotificationId:", this.currentNotificationId);
-
-            const text = typeof textOrOptions === "string" ? textOrOptions : textOrOptions.text;
-            const title = options?.title;
-            type = type || options?.type;
-            const dismissable = this.dismissable || !!options?.dismissable;
-            const notificationEl = this.#makeNotificationEl({
-                notificationId: this.currentNotificationId,
-                text,
-                title,
-                type,
-                dismissable,
-            });
-
-            this.notifierEl.append(notificationEl);
-
-            const abortController = new AbortController();
-            const autoHideTimeMs = options?.autoHideTime || this.autoHideTime;
-            const autoHideWaitTimeMs = autoHideTimeMs;
-
-            this.activeNotifications[this.currentNotificationId] = {
-                abortController,
-                el: notificationEl,
-                autoHideTimeMs,
-                autoHideWaitTimeMs,
-            };
-            console.log("this.activeNotifications:", this.activeNotifications);
-
-            if (autoHideTimeMs > 0) {
-                const cssAnimationDuration = isMotionAllowed()
-                    ? getCssPropValue(notificationEl, "animation-duration")
-                    : null;
-                const animationTimeMs = cssAnimationDuration
-                    ? cssDurationToMs(cssAnimationDuration) || 0
-                    : 0;
-
-                if (animationTimeMs < autoHideWaitTimeMs) {
-                    this.activeNotifications[this.currentNotificationId].autoHideWaitTimeMs -=
-                        animationTimeMs;
-                } else {
-                    console.warn(
-                        "Not animating notification as animation-duration > autoHideTime.",
-                    );
-                }
-
-                const notificationToHideId = this.currentNotificationId; // Pass value, not a reference.
-
-                try {
-                    await wait(autoHideWaitTimeMs, null, abortController);
-                    this.hide(notificationToHideId);
-                } catch (errorOrAbortReason) {
-                    return errorOrAbortReason;
-                }
-            }
-        } catch (errorOrAbortReason) {
-            if (errorOrAbortReason instanceof Error) {
-                throw errorOrAbortReason;
-            } else {
-                console.log(errorOrAbortReason);
-            }
-        }
+        return mergedOptions;
     }
 
-    async hide(notificationId: number) {
-        console.log("Hiding notification with id:", notificationId);
-
-        const notification = this.activeNotifications[notificationId];
-
-        let waitTimeMs = 0;
-        const cssAnimationDuration = isMotionAllowed()
-            ? getCssPropValue(notification.el, "animation-duration")
-            : null;
-
-        if (cssAnimationDuration) {
-            const animationTimeMs = cssDurationToMs(cssAnimationDuration) || 0;
-
-            if (
-                notification.autoHideTimeMs &&
-                notification.autoHideTimeMs + 50 - notification.autoHideWaitTimeMs < animationTimeMs // Add an arbitrary 50 ms to cover for script processing time.
-            ) {
-                waitTimeMs = notification.autoHideTimeMs - notification.autoHideWaitTimeMs;
-            } else {
-                waitTimeMs = animationTimeMs;
-            }
-        }
-
-        if (waitTimeMs > 0) {
-            notification.el.classList.remove("fade-in");
-            notification.el.classList.add("animated", "fade-out");
-            await wait(waitTimeMs);
-        }
-
-        notification.abortController.abort(`Notification ${notificationId} timeout aborted.`);
-        notification.el.remove();
-        delete this.activeNotifications[notificationId];
-
-        // Fire notificationHidden event
-        // Fire allNotificationsHidden event (indien toepasselijk)
-    }
-
-    hideAll() {
-        for (const notificationId of Object.keys(this.activeNotifications)) {
-            this.hide(Number.parseInt(notificationId));
-        }
-    }
-
-    #makeNotificationEl({
-        notificationId,
-        text,
-        title,
-        type,
-        dismissable,
-    }: {
-        notificationId: number;
-        text: string;
-        title?: string;
-        type?: string;
-        dismissable: boolean;
-    }) {
-        const notificationElClass =
-            `simple-notification simple-notification--${type || "default"}` +
-            (isMotionAllowed() ? " animated fade-in" : undefined);
-        const notificationEl = createEl("div", {
-            class: notificationElClass,
+    #makeNotificationEl(id: number, options: ProcessedNotificationOptions) {
+        const notificationEl = createEl<HTMLDivElement>("div", {
+            class: `simple-notification simple-notification--${options.type} ${options.animationClasses[0]}`,
+            style: `animation-duration: ${options.animationDuration}ms;`,
             role: "alert",
+            dataNotificationId: id.toString(),
         });
 
-        const mainContentEl = createEl("div", {
+        const contentEl = createEl("div", {
             class: "simple-notification__part simple-notification__part--main",
         });
 
-        if (title) {
+        if (options.title) {
             const titleEl = createEl("h6", {
                 class: "simple-notification__title",
-                text: title,
+                textContent: options.title,
             });
 
-            mainContentEl.append(titleEl);
+            contentEl.append(titleEl);
         }
 
-        const messageEl = createEl("p", {
-            class: "simple-notification__message",
-            text,
-        });
+        if (options.text) {
+            const messageEl = createEl("p", {
+                class: "simple-notification__message",
+                textContent: options.text,
+            });
 
-        mainContentEl.append(messageEl);
-        notificationEl.append(mainContentEl);
+            contentEl.append(messageEl);
+        }
 
-        if (dismissable) {
+        notificationEl.append(contentEl);
+
+        if (options.dismissable) {
             const sideContentEl = createEl("div", {
                 class: "simple-notification__part simple-notification__part--side",
             });
-
-            const closeButtonEl = createEl("button", { type: "button" });
-            closeButtonEl.addEventListener("click", () => this.hide(notificationId), {
+            const hideButtonEl = createEl("button", {
+                type: "button",
+                class: "simple-notification__hide-button",
+                ariaLabel: "Dismiss notification",
+            });
+            hideButtonEl.addEventListener("click", () => this.hide(id), {
                 once: true,
             });
 
-            sideContentEl.append(closeButtonEl);
+            sideContentEl.append(hideButtonEl);
             notificationEl.append(sideContentEl);
         }
 
+        console.debug("SN #makeNotificationEl() - notificationEl:", notificationEl);
+
         return notificationEl;
+    }
+
+    async #scheduleHide(id: number) {
+        console.info(`SN #scheduleHide(): Running on notification ${id}...`);
+
+        this.notifications[id].state = NotificationState.WAITING_ON_HIDE;
+
+        const notificationProps = this.notifications[id];
+
+        try {
+            console.info(
+                `SN #scheduleHide(): hide() will be called on notification ${id} in ${notificationProps.hideAfterTime} ms...`,
+            );
+            await wait(
+                notificationProps.hideAfterTime,
+                true,
+                notificationProps.abortController.signal,
+            );
+
+            this.hide(id);
+        } catch {
+            console.info(
+                `SN #scheduleHide(): Scheduled hide() call of notification ${id} aborted.`,
+            );
+        }
+    }
+
+    hide(notificationId: number) {
+        console.info(`SN hide(): Running on notification ${notificationId}...`);
+
+        try {
+            if (typeof notificationId !== "number") {
+                throw new Error("'notificationId' must be a `Number`.");
+            }
+
+            if (this.#notificationIdsStateHideBusy.includes(notificationId)) {
+                console.warn(`Already hiding notification ${notificationId}.`);
+                return;
+            }
+
+            const notificationProps = this.notifications[notificationId];
+
+            if (!notificationProps) {
+                console.warn(`Notification ${notificationId} doesn't exist.`);
+                return;
+            }
+
+            if (
+                this.#notificationIdsStateShowBusy.includes(notificationId) ||
+                this.#notificationIdsStateWaitingOnHide.includes(notificationId)
+            ) {
+                console.info(
+                    `SN hide(): Notification ${notificationId} in show action or waiting on hide action. Aborting any scheduled function calls...`,
+                );
+
+                notificationProps.abortController.abort();
+            }
+
+            this.notifications[notificationId].state = NotificationState.HIDE_BUSY;
+
+            notificationProps.el.classList.remove(notificationProps.animationClasses[0]);
+            notificationProps.el.classList.add(notificationProps.animationClasses[1]);
+
+            notificationProps.el.addEventListener(
+                "animationend",
+                () => {
+                    console.info(
+                        `SN hide(): Animation of element of notification ${notificationId} completed.`,
+                    );
+
+                    notificationProps.el.remove();
+                    console.info(
+                        `SN hide(): Element of notification ${notificationId} removed from DOM.`,
+                    );
+
+                    delete this.notifications[notificationId];
+
+                    const notificationHiddenEvent = new CustomEvent("hidden", {
+                        detail: {
+                            instanceId: this.instanceId,
+                            notificationId,
+                        },
+                    });
+                    this.notifierEl.dispatchEvent(notificationHiddenEvent);
+
+                    console.info(`SN hide(): Notification ${notificationId} hidden.`);
+
+                    if (this.notificationIds.length === 0) {
+                        console.info(`SN hide(): All notifications hidden.`);
+
+                        const allNotificationsHiddenEvent = new CustomEvent("allhidden", {
+                            detail: { instanceId: this.instanceId },
+                        });
+                        this.notifierEl.dispatchEvent(allNotificationsHiddenEvent);
+                    }
+                },
+                { once: true },
+            );
+        } catch (error) {
+            throw error instanceof Error
+                ? error
+                : new Error("Unknown error during notification hide!");
+        }
+    }
+
+    hideAll() {
+        console.info("SN hideAll(): Running...");
+
+        const notificationIdsToHide = this.notificationIds.filter(
+            (id) => !this.#notificationIdsStateHideBusy.includes(id),
+        );
+        console.info("SN hideAll() - notifications to hide:", notificationIdsToHide);
+
+        if (notificationIdsToHide.length === 0) return;
+
+        notificationIdsToHide.forEach((notificationId) => this.hide(notificationId));
     }
 }
 
-export default SN;
+export { type NotifierOptions, type NotificationOptions, SN as default };
