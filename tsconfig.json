@@ -1,15 +1,14 @@
 {
     "extends": "@tsconfig/recommended/tsconfig.json",
     "compilerOptions": {
-        "target": "ES2022",
-        "lib": ["ES2022", "DOM"],
-        "module": "ES2015",
-        "moduleResolution": "bundler",
         "strict": true,
-        "verbatimModuleSyntax": true,
-        "allowImportingTsExtensions": true,
+        "module": "ES2022",
+        "moduleResolution": "bundler",
         "declaration": true,
-        "declarationMap": true,
-        "emitDeclarationOnly": true
-    }
+        "outDir": "dist",
+        "verbatimModuleSyntax": true,
+        "lib": ["ES2022", "DOM"],
+        "target": "ES2022"
+    },
+    "include": ["src/**/*"]
 }
