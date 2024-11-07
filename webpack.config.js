@@ -1,7 +1,6 @@
 import path from "path";
 import { fileURLToPath } from "url";
 import { merge } from "webpack-merge";
-import CopyPlugin from "copy-webpack-plugin";
 import CssMinimizerPlugin from "css-minimizer-webpack-plugin";
 import ESLintPlugin from "eslint-webpack-plugin";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
@@ -18,24 +17,20 @@ const baseConfig = {
     },
     output: {
         clean: true,
-        filename: "./js/index.js",
+        filename: "./index.js",
     },
     stats: {
         children: true,
     },
     resolve: {
         extensions: [".ts", ".js"],
-        extensionAlias: {
-            ".ts": [".ts", ".tsx"],
-        },
     },
     plugins: [
-        new ESLintPlugin({}),
-        new MiniCssExtractPlugin({
-            filename: "./styles/simple-notifier.css",
+        new ESLintPlugin({
+            configType: "flat",
         }),
-        new CopyPlugin({
-            patterns: [{ from: "src/scss", to: "styles" }],
+        new MiniCssExtractPlugin({
+            filename: "./simple-notifier.css",
         }),
     ],
     module: {
@@ -46,16 +41,9 @@ const baseConfig = {
                 use: ["source-map-loader"],
             },
             {
-                test: /\.([cm]?ts|tsx|[cm]?js)$/,
+                test: /\.tsx?$/,
+                use: "ts-loader",
                 exclude: /node_modules/,
-                use: [
-                    {
-                        loader: "babel-loader",
-                        options: {
-                            presets: [["@babel/preset-typescript"], ["@babel/preset-env"]],
-                        },
-                    },
-                ],
             },
             {
                 test: /\.(sa|sc|c)ss$/i,
@@ -71,7 +59,7 @@ const baseConfig = {
 
 const devConfig = {
     mode: "development",
-    devtool: "eval-cheap-source-map",
+    devtool: "eval-source-map",
     output: {
         library: {
             name: "SimpleNotifier",
@@ -102,7 +90,7 @@ const devConfig = {
 
 const prodConfig = {
     mode: "production",
-    devtool: "source-map",
+    devtool: false,
     output: {
         library: {
             type: "module",
@@ -130,9 +118,10 @@ const prodConfig = {
         minimizer: [
             new TerserPlugin({
                 terserOptions: {
-                    ecma: "ES2017",
+                    ecma: "ES2020",
                     module: true,
                     compress: {
+                        drop_console: ["log", "info", "debug"],
                         passes: 2,
                     },
                     mangle: false,
@@ -146,8 +135,7 @@ const prodConfig = {
     },
 };
 
-// eslint-disable-next-line no-undef
-const activeConfig = process.env.NODE_ENV === "production" ? prodConfig : devConfig;
+const activeConfig = process.env.NODE_ENV === "development" ? devConfig : prodConfig;
 const mergedConfig = merge(baseConfig, activeConfig);
 
 export default mergedConfig;

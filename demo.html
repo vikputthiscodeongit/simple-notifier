@@ -33,7 +33,7 @@
         <!--  -->
 
         <!-- Simple Notifier stylesheet -->
-        <link href="./dist/styles/simple-notifier.css" rel="stylesheet" />
+        <link href="./dist/simple-notifier.css" rel="stylesheet" />
     </head>
 
     <body class="d-flex justify-content-center align-items-center">
@@ -130,10 +130,11 @@
             </div>
         </div>
 
-        <!-- Simple Notifier development UMD bundle -->
-        <script src="./dist/js/index.js"></script>
-
+        <script src="./dist/index.js"></script>
         <script>
+            // <script type="module">
+            //     import SimpleNotifier from "./dist/index.js";
+
             // Instance 1
             const instanceOne = new SimpleNotifier({
                 autoHideTime: 0,

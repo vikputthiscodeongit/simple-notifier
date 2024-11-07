@@ -5,7 +5,7 @@ import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended"
 
 export default tsEslint.config(
     {
-        ignores: ["dist/*", "**/*.*js"],
+        ignores: ["dist/**/*", "**/*.*js"],
     },
 
     eslintJs.configs.recommended,
@@ -20,7 +20,6 @@ export default tsEslint.config(
                 ...globals.browser,
                 ...globals.es2024,
             },
-
             parserOptions: {
                 project: ["tsconfig.json"],
             },

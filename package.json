@@ -30,16 +30,15 @@
   "bugs": "https://github.com/vikputthiscodeongit/simple-notifier/issues",
   "exports": {
     ".": {
-      "style": "./dist/styles/simple-notifier.css",
-      "sass": "./dist/styles/simple-notifier.scss",
-      "module": "./dist/js/index.js",
-      "default": "./dist/js/index.umd.js"
+      "module": "./dist/index.js",
+      "types": "./dist/index.d.ts",
+      "style": "./dist/simple-notifier.css"
     }
   },
   "type": "module",
   "scripts": {
-    "build-dev": "cross-env NODE_ENV=development webpack --watch",
-    "build": "cross-env NODE_ENV=production webpack && dts-bundle-generator --out-file ./dist/js/index.d.ts ./src/ts/index.ts"
+    "dev": "cross-env NODE_ENV=development webpack --watch",
+    "build": "cross-env NODE_ENV=production webpack"
   },
   "dependencies": {
     "@codebundlesbyvik/js-helpers": "2.1.0"
@@ -72,6 +71,8 @@
     "webpack-merge": "^6.0.1"
   },
   "browserslist": [
-    "> 0.1% and fully supports async-functions"
+    "> 0.2%",
+    "last 3 versions and not dead",
+    "Firefox ESR"
   ]
 }
