@@ -137,41 +137,6 @@ class SN {
         return Object.keys(this.notifications).map((key) => Number.parseInt(key));
     }
 
-    get #notificationIdsStateShowBusy() {
-        const notifications = [];
-
-        for (const id in this.notifications) {
-            if (this.notifications[id].state !== NotificationState.SHOW_BUSY) continue;
-
-            notifications.push(Number.parseInt(id));
-        }
-
-        return notifications;
-    }
-
-    get #notificationIdsStateHideBusy() {
-        const notifications = [];
-
-        for (const id in this.notifications) {
-            if (this.notifications[id].state !== NotificationState.HIDE_BUSY) continue;
-
-            notifications.push(Number.parseInt(id));
-        }
-
-        return notifications;
-    }
-
-    get #notificationIdsStateWaitingOnHide() {
-        const notifications = [];
-
-        for (const id in this.notifications) {
-            if (this.notifications[id].state !== NotificationState.WAITING_ON_HIDE) continue;
-
-            notifications.push(Number.parseInt(id));
-        }
-
-        return notifications;
-    }
 
     show(textOrOptions: string | NotificationOptions, type?: string) {
         console.info("SN show() - Running...");
@@ -436,7 +401,7 @@ class SN {
                 throw new Error("'notificationId' must be a `Number`.");
             }
 
-            if (this.#notificationIdsStateHideBusy.includes(notificationId)) {
+            if (this.notifications[notificationId].state === NotificationState.HIDE_BUSY) {
                 console.warn(`Already hiding notification ${notificationId}.`);
                 return;
             }
@@ -449,8 +414,8 @@ class SN {
             }
 
             if (
-                this.#notificationIdsStateShowBusy.includes(notificationId) ||
-                this.#notificationIdsStateWaitingOnHide.includes(notificationId)
+                this.notifications[notificationId].state === NotificationState.SHOW_BUSY ||
+                this.notifications[notificationId].state === NotificationState.WAITING_ON_HIDE
             ) {
                 console.info(
                     `SN hide(): Notification ${notificationId} in show action or waiting on hide action. Aborting any scheduled function calls...`,
@@ -510,7 +475,7 @@ class SN {
         console.info("SN hideAll(): Running...");
 
         const notificationIdsToHide = this.notificationIds.filter(
-            (id) => !this.#notificationIdsStateHideBusy.includes(id),
+            (id) => this.notifications[id].state !== NotificationState.HIDE_BUSY,
         );
         console.info("SN hideAll() - notifications to hide:", notificationIdsToHide);
 
