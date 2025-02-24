@@ -1,7 +1,6 @@
 // TODO:
 // * Validate browser support
 // * Clean up README
-// * 'title' h level should be an option.
 // * 'text' should be able to take in an array with each item representing a paragraph.
 
 import {
@@ -34,16 +33,20 @@ interface NotifierOptions extends SharedOptions {
     classNames: string[];
 }
 
+type HeadingLevel = "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+
 interface NotificationContent {
     text?: string;
     title?: string;
     type?: string;
+    titleLevel?: HeadingLevel;
 }
 
 interface NotificationOptions extends Partial<SharedOptions>, NotificationContent {}
 
 interface ProcessedNotificationOptions extends SharedOptions, Omit<NotificationContent, "type"> {
     type: string;
+    titleLevel: HeadingLevel;
 }
 
 interface NotificationProps extends SharedOptions, NotificationContent {
@@ -329,6 +332,7 @@ class SN {
             text: notificationOptions ? notificationOptions.text : (textOrOptions as string),
             title: notificationOptions?.title,
             type: notificationOptions?.type ?? type ?? "default",
+            titleLevel: notificationOptions?.titleLevel ?? "h6",
         };
         console.debug("SN #getNotificationOptions() - mergedOptions:", mergedOptions);
 
@@ -347,7 +351,7 @@ class SN {
         });
 
         if (options.title) {
-            const titleEl = createEl("h6", {
+            const titleEl = createEl(options.titleLevel, {
                 class: "simple-notification__title",
                 textContent: options.title,
             });
