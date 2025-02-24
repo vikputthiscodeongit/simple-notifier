@@ -179,8 +179,8 @@ class SN {
                         // Make a copy of the queue because it's possible to continuously trigger
                         // new notifications. Any notifications triggered after a copy of the queue
                         // is made are processed on the next run.
-                        // Reverse the queue because all notifications newer than the oldest one
-                        // that has `hideOlder` set should be shown. Processing the queue from back
+                        // Reverse the queue because all notifications older than the oldest one
+                        // that has `hideOlder` set should be ignored. Processing the queue from back
                         // to front makes this easier.
                         const queueCopyReversed = [...this.queuedNotifications].reverse();
                         console.debug(
@@ -208,7 +208,7 @@ class SN {
                         );
 
                         // Reverse the queue again so that the oldest notification is the one
-                        // that's shown first.
+                        // shown first.
                         notificationsToShowReversed.reverse().forEach((notificationOptions) => {
                             this.show(notificationOptions);
                         });
@@ -220,7 +220,6 @@ class SN {
             }
 
             const currentNotificationId = this.currentNotificationId;
-            console.info("SN show() - Notification ID:", currentNotificationId);
             this.currentNotificationId++;
 
             const notificationOptions = this.#getNotificationOptions(textOrOptions, variant);
@@ -244,7 +243,7 @@ class SN {
             notificationEl.addEventListener(
                 "animationend",
                 () => {
-                    console.info(
+                    console.debug(
                         `SN show(): Animation of element of notification ${currentNotificationId} completed.`,
                     );
 
@@ -265,10 +264,7 @@ class SN {
                         fn().catch((reason) => console.info(reason));
                     }
                 },
-                {
-                    once: true,
-                    signal: notificationProps.abortController.signal,
-                },
+                { once: true, signal: notificationProps.abortController.signal },
             );
 
             if (process.env.NODE_ENV !== "production") {
@@ -351,9 +347,7 @@ class SN {
                 class: "simple-notification__hide-button",
                 ariaLabel: "Dismiss notification",
             });
-            hideButtonEl.addEventListener("click", () => this.hide(id), {
-                once: true,
-            });
+            hideButtonEl.addEventListener("click", () => this.hide(id), { once: true });
 
             sideContentEl.append(hideButtonEl);
             notificationEl.append(sideContentEl);
@@ -440,10 +434,7 @@ class SN {
                     delete this.notifications[notificationId];
 
                     const notificationHiddenEvent = new CustomEvent("hidden", {
-                        detail: {
-                            instanceId: this.instanceId,
-                            notificationId,
-                        },
+                        detail: { instanceId: this.instanceId, notificationId },
                     });
                     this.notifierEl.dispatchEvent(notificationHiddenEvent);
 
