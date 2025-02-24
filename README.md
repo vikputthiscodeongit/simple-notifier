@@ -5,16 +5,14 @@
 
 <br>
 
-An easy to use, lightweight, 0-dependency notification library.
-
-<br>
+A fully featured yet easy to use & lightweight notification library.
 
 __[Demo page (interactive)](https://rawcdn.githack.com/vikputthiscodeongit/simple-notifier/07b291aa0688c0d92eab0f60c12f8653db14e531/demo.html)__
 
 <br>
 
 ## Table of Contents
-1. [Nice features](#nice-features)
+1. [Unique features](#unique-features)
 2. [Basic usage](#basic-usage)
 3. [Browser support](#browser-support)
 4. [Installation](#installation)
@@ -24,17 +22,22 @@ __[Demo page (interactive)](https://rawcdn.githack.com/vikputthiscodeongit/simpl
     * [JavaScript](#javascript)
     * [Sass](#sass)
 6. [Methods](#methods)
+    * [.show(textOrOptions, variant?)](#showtextoroptions-variant)
+    * [.hide(notificationId)](#hidenotificationid-number)
+    * [.hideAll()](#hideall)
+    * [.notificationIds (getter)](#notificationids-getter)
 7. [Events](#events)
 8. [License](#license)
 
 <br>
 
-## Nice features
+## Unique features
 
-* An instance allows either at most a single notification to be shown on screen, or multiple simultaneously.
-* Flexible positioning.
-* Small and lightweight.
-* Check out the [options](#options) for more!
+* Show multiple notifications simultaneously, and/or
+* Hide older notifications before showing one or more new notifications.
+* Fully accessible.
+
+Check out [options](#options) for a complete overview of all features.
 
 <br>
 
@@ -44,30 +47,31 @@ const notifier = new SimpleNotifier();
 
 notifier.init();
 
-// Wrapper element is inserted at the top of <body>.
-// <div class="simple-notifier simple-notifier--pos-y-top simple-notifier--pos-x-center">
+// The following element is inserted as first child of <body>:
+// <div class="simple-notifier simple-notifier--position-y-top simple-notifier--position-x-center">
 // </div>
 
+const message = "This is an example notification.";
+const variant = "success";
 
-const message = "This is an example message.";
-const type = "success";
+notifier.show(message, variant);
 
-notifier.show(message, type);
-
-// Notification is shown for 3500 ms.
+// Notification is shown for 4000 ms.
 ```
 
 <br>
 
 ## Browser support
 
-The distributables are compiled with the following [`browserslist`](https://github.com/browserslist/browserslist):
+Practically speaking, all browsers released in 2021 and onwards are fully supported.
+
+The newest JavaScript feature used is [static fields](https://caniuse.com/mdn-javascript_classes_static_class_fields).
+
+The CSS distributables are prefixed with the following [`browserslist`](https://github.com/browserslist/browserslist):
 ```
-"since 2019-01 and > 0.5%",
-"last 2 versions and not dead",
-"Firefox ESR",
-"not Explorer >= 0",
-"not OperaMini all"
+"> 0.2%",
+"last 3 versions and not dead",
+"Firefox ESR"
 ```
 
 <br>
@@ -77,7 +81,7 @@ The distributables are compiled with the following [`browserslist`](https://gith
 
 ``` shell
 // Install package from npm
-npm install @codebundlesbyvik/simple-notifier`
+npm install @codebundlesbyvik/simple-notifier
 ```
 
 <br>
@@ -89,130 +93,125 @@ import SimpleNotifier from "@codebundlesbyvik/simple-notifier";
 
 <br>
 
-``` scss
-// Import the stylesheet
+``` css
+/* Import the stylesheet */
 @import "@codebundlesbyvik/simple-notifier";
-// Will import the Sass file if your project utilizes Sass, should automatically import the compiled CSS file otherwise.
 ```
 
 <br>
 
 ### Usage as a standalone package
 
-#### Via CDN (jsdelivr)
-
-``` html
-<!-- Import the UMD bundle -->
-<script src="https://cdn.jsdelivr.net/npm/@codebundlesbyvik/simple-notifier@1.1.2/dist/js/simple-notifier.bundle.min.js" crossorigin="anonymous"></script>
-```
-
-<br>
-
-``` html
-<!-- Link to the stylesheet -->
-<link href="https://cdn.jsdelivr.net/npm/@codebundlesbyvik/simple-notifier@1.1.2/dist/css/simple-notifier.min.css" rel="stylesheet" crossorigin="anonymous">
-```
-
-<br>
-
-#### Local
-
 [Download the latest release](https://github.com/vikputthiscodeongit/simple-notifier/releases/latest) from the GitHub releases page.
 
 ``` html
-<!-- Import the UMD bundle -->
-<script src="./dist/js/simple-notifier.bundle.min.js"></script>
+<!-- Load the module -->
+<script type="module">
+    import SimpleNotifier from "./dist/index.js";
+</script>
+
+<!-- Load the stylesheet -->
+<link href="./dist/simple-notifier.css" rel="stylesheet" />
 ```
 
-<br>
-
-```
-// Link to the stylesheet in HTML ...
-<link href="./dist/simple-notifier.min.css" rel="stylesheet">
-
-// ... or import it in your main CSS file.
-@import "./dist/simple-notifier.min.css";
-```
+Alternatively you can load the module via the [jsdelivr CDN](https://cdn.jsdelivr.net/npm/@codebundlesbyvik/simple-notifier@2.0.0) (don't forget to add the `crossorigin="anonymous"` attribute).
 
 <br>
 
 ## Options
 ### JavaScript
+#### Instance and notification
 
-Options should be passed in as an object on instance creation.
+These options can be passed in as an object on instance creation (applying to all notifications) as well as when creating a notification, overriding the preference defined on the instance.
 
-| Parameter             | Type                 | Default         | Description                                                                                                                                                   |
-| :-------------------- | :------------------- | :-------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `autoHide`            | `Number` / `Boolean` | `3500`          | Time in milliseconds after which `.hide()` will be automatically called. `true` defaults to `3500`, set to `false` or `0` to make the notification(s) sticky. |
-| `onlyOneNotification` | `Boolean`            | `true`          | Whether the instance is allowed to show multiple notifications on screen simultaneously or not.                                                               |
-| `parentEl`            | `Element`            | `document.body` | Instance's parent element.                                                                                                                                    |
-| `position`            | `String`             | `top center`    | On-page position of the wrapper element. Accepted value is a combination of `top` or `bottom` and `left`, `center` or `right`.                                |
-| `animations`          | `String` / `Boolean` | `"auto"`        | Animation preference. `"auto"` checks user's device motion preference on each action.                                                                         |
+| Property        | Type      | Default | Description                                                                                                          |
+| :-------------- | :-------- | :------ | :------------------------------------------------------------------------------------------------------------------- |
+| `hideAfterTime` | `number`  | `4000`  | Time in milliseconds after which `.hide()` will be called. Set to `0` to disable hiding notifications automatically. |
+| `hideOlder`     | `boolean` | `false` | Hide older notifications before showing the one most recently created.                                               |
+| `dismissable`   | `boolean` | `false` | Render a close button allowing for manual notification dismissal.                                                    |
+
+#### Instance only
+
+These options can only be passed in as an object on instance creation.
+
+| Property     | Type                                                 | Default             | Description                                                                       |
+| :----------- | :--------------------------------------------------- | :------------------ | :-------------------------------------------------------------------------------- |
+| `parentEl`   | `HTMLElement`                                        | `document.body`     | HTML element in which the instance's element will be inserted as first child.     |
+| `position`   | `["top" \| "bottom", "left" \| "center" \| "right"]` | `["top", "center"]` | Position in the HTML document where the instance's HTML element will be rendered. |
+| `classNames` | `string[]`                                           | `[]`                | Extra classes to add to the instance's HTML element.                              |
+
+#### Notification only
+
+These options can only be passed in as an object on notification creation. `text` is required and may be passed in directly, optionally alongside `variant` (see [.show()](#showtextoroptions-variant)).
+
+| Property     | Type                                           | Default                              | Description                                                                                                                                                                                                                     |
+| :----------- | :--------------------------------------------- | :----------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `variant`    | `string`                                       | `"default"`                          | "Flavor" of notification to show. You can use any variant you desire but when using a custom value you should define some styling for it (see [Sass](#sass)). Default variants are `default`, `success`, `warning` and `error`. |
+| `text`       | `string \| string[]`                           | `undefined` - **required attribute** | Text rendered in the notification as content. Render multiple paragraphs by passing in an array.                                                                                                                                |
+| `title`      | `string`                                       | `undefined`                          | Text rendered in the notification as title.                                                                                                                                                                                     |
+| `titleLevel` | `"h1" \| "h2" \| "h3" \| "h4" \| "h5" \| "h6"` | `"h6"`                               | Heading level used for `title`.                                                                                                                                                                                                 |
 
 <br>
 
 ### Sass
 
-Colors can be customized using Sass variables.
+See `/src/scss/_variables.scss` if you want to inspect the default values.
 
-| Variable name             | Type        | Description                                              |
-| :------------------------ | :---------- | :------------------------------------------------------- |
-| `$notifier-types`         | `Map`       | Notification types.                                      |
-| `$notifier-font-size-base`     | `Dimension` | Base `font-size`. Internal sizing is done relative to this value. Default is `1rem`. |
-| `$notifier-color-opacity` | `Number`    | Opacity applied to the defined colors. Default is `0.9`. |
-| `$notifier-colors`        | `Map`       | Available colors.                                             |
-| `$notifier-text-colors`   | `Map`       | Text color to use with given notification type.          |
-| `$notifier-bg-colors`     | `Map`       | Background color to use with given notification type.    |
+| Variable name     | Type                     | Description                                                           |
+| :---------------- | :----------------------- | :-------------------------------------------------------------------- |
+| `$variants`       | `Sass Map`               | Notification variants.                                                |
+| `$z-index`        | `integer`                | Z-index applied to the instance's HTML element                        |
+| `$colors`         | `Sass Map`               | Available colors.                                                     |
+| `$text-colors`    | `Sass Map`               | Text color to use with the defined notification variants.             |
+| `$bg-colors`      | `Sass Map`               | Background color to use with the defined notification variants.       |
+| `$font-family`    | `string \| custom-ident` | `font-family` used for the notification's text content.               |
+| `$font-size-base` | `dimension`              | Base `font-size`. All internal sizing is done relative to this value. |
 
 <br>
 
 ## Methods
 
-### `.init()`
-
-Initialize a `SimpleNotifier` instance.
-
-<br>
-
-### `.destroy()`
-
-Destroy a `SimpleNotifier` instance.
-
-<br>
-
-### `.show(text, type)`
+### `.show(textOrOptions, variant?)`
 
 Show a notification.
 
 #### Parameters
 
-| Parameter | Type     | Default                                             | Description                                                                                                  |
-| :-------- | :------- | :-------------------------------------------------- | :----------------------------------------------------------------------------------------------------------- |
-| `text`    | `String` | Some dummy text.                                    | Text to show.                                                                                                |
-| `type`    | `String` | `"dummy"` if `text` is `undefined`, else `"default"`| Element's parent. Will be added as class ([BEM modifier](http://getbem.com/naming/)) to the wrapper element. |
+| Parameter       | Type                                        | Description                                                                                                                                                                                              |
+| :-------------- | :------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `textOrOptions` | `string \| string[] \| NotificationOptions` | Text rendered in the notification as content or an object with notification options (see [NotificationOptions](#notification-only)).                                                                     |
+| `variant`       | `string`                                    | "Flavor" of notification to show. May also be passed in as a property of `textOrOptions` which takes preference over this parameter. See [NotificationOptions](#notification-only) for more information. |
 
 <br>
 
-### `.hide(notificationId)`
+### `.hide(notificationId: number)`
 
 Hide a currently shown notification.
 
-If `onlyOneNotification` is set to `true`, passing in a `notificationId` is not required.
+<br>
 
-If `onlyOneNotification` is set to `false`, passing in a `notificationId` will hide that specific notification. Not passing in any `notificationId` will hide all currently shown notifications.
+### `.hideAll()`
+
+Hide all currently shown notifications.
+
+<br>
+
+### `.notificationIds` (getter)
+
+Get the IDs of all currently shown notifications.
 
 <br>
 
 ## Events
 
-| Event                       | Fired when ...                                                |
-| :------------------------   | :------------------------------------------------------------ |
-| `notificationShown`         | The process of showing a notification has fully completed.    |
-| `notificationDestroyed`     | The process of destroying a notification has fully completed. |
-| `allNotificationsDestroyed` | The last visible notification has been destroyed.             |
+| Event       | Fired when ...                                             |
+| :---------- | :--------------------------------------------------------- |
+| `shown`     | The process of showing a notification has fully completed. |
+| `hidden`    | The process of hiding a notification has fully completed.  |
+| `allhidden` | The latest visible notification has been destroyed.        |
 
 <br>
 
 ## License
 
-Mozilla Public License 2.0 © 2024 [Viktor Chin-Kon-Sung](https://github.com/vikputthiscodeongit)
+Mozilla Public License 2.0 © 2025 [Viktor Chin-Kon-Sung](https://github.com/vikputthiscodeongit)
