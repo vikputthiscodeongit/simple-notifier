@@ -1,7 +1,3 @@
-// TODO:
-// * Validate browser support
-// * Clean up README
-
 import { createEl, getPseudoRandomIntBetween, wait } from "@codebundlesbyvik/js-helpers";
 import "../scss/simple-notifier.scss";
 
