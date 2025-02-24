@@ -2,12 +2,7 @@
 // * Validate browser support
 // * Clean up README
 
-import {
-    createEl,
-    getPseudoRandomIntBetween,
-    isMotionAllowed,
-    wait,
-} from "@codebundlesbyvik/js-helpers";
+import { createEl, getPseudoRandomIntBetween, wait } from "@codebundlesbyvik/js-helpers";
 import "../scss/simple-notifier.scss";
 
 enum NotificationState {
@@ -276,15 +271,17 @@ class SN {
                 },
             );
 
-            notificationEl.addEventListener(
-                "animationcancel",
-                () => {
-                    console.info(
-                        `SN show(): Animation of element of notification ${currentNotificationId} cancled.`,
-                    );
-                },
-                { once: true },
-            );
+            if (process.env.NODE_ENV !== "production") {
+                notificationEl.addEventListener(
+                    "animationcancel",
+                    () => {
+                        console.debug(
+                            `SN show(): Animation of element of notification ${currentNotificationId} cancled.`,
+                        );
+                    },
+                    { once: true },
+                );
+            }
         } catch (error) {
             throw error instanceof Error
                 ? error

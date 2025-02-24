@@ -12,107 +12,40 @@ const __dirname = path.dirname(__filename);
 
 const baseConfig = {
     context: path.resolve(__dirname),
-    entry: {
-        main: "./src/ts/index.ts",
-    },
-    output: {
-        clean: true,
-        filename: "./index.js",
-    },
-    stats: {
-        children: true,
-    },
-    resolve: {
-        extensions: [".ts", ".js"],
-    },
+    entry: { main: "./src/ts/index.ts" },
+    output: { clean: true, filename: "./index.js", library: { type: "module" } },
+    stats: { children: true },
+    resolve: { extensions: [".ts", ".js"] },
     plugins: [
-        new ESLintPlugin({
-            configType: "flat",
-        }),
-        new MiniCssExtractPlugin({
-            filename: "./simple-notifier.css",
-        }),
+        new ESLintPlugin({ configType: "flat" }),
+        new MiniCssExtractPlugin({ filename: "./simple-notifier.css" }),
     ],
     module: {
         rules: [
-            {
-                test: /\.js$/,
-                enforce: "pre",
-                use: ["source-map-loader"],
-            },
-            {
-                test: /\.tsx?$/,
-                use: "ts-loader",
-                exclude: /node_modules/,
-            },
+            { test: /\.js$/, enforce: "pre", use: ["source-map-loader"] },
+            { test: /\.tsx?$/, use: "ts-loader", exclude: /node_modules/ },
             {
                 test: /\.(sa|sc|c)ss$/i,
                 use: [
                     { loader: MiniCssExtractPlugin.loader },
                     { loader: "css-loader" },
                     { loader: "postcss-loader" },
+                    { loader: "sass-loader" },
                 ],
             },
         ],
     },
+    experiments: { outputModule: true },
 };
 
 const devConfig = {
     mode: "development",
     devtool: "eval-source-map",
-    output: {
-        library: {
-            name: "SimpleNotifier",
-            type: "umd",
-            export: "default",
-        },
-    },
-    module: {
-        rules: [
-            {
-                test: /\.(sa|sc|c)ss$/i,
-                use: [
-                    {
-                        loader: "sass-loader",
-                        options: {
-                            sassOptions: {
-                                indentWidth: 4,
-                                outputStyle: "expanded",
-                                precision: 6,
-                            },
-                        },
-                    },
-                ],
-            },
-        ],
-    },
 };
 
 const prodConfig = {
     mode: "production",
     devtool: false,
-    output: {
-        library: {
-            type: "module",
-        },
-    },
-    module: {
-        rules: [
-            {
-                test: /\.(sa|sc|c)ss$/i,
-                use: [
-                    {
-                        loader: "sass-loader",
-                        options: {
-                            sassOptions: {
-                                precision: 6,
-                            },
-                        },
-                    },
-                ],
-            },
-        ],
-    },
     optimization: {
         minimize: true,
         minimizer: [
@@ -120,22 +53,16 @@ const prodConfig = {
                 terserOptions: {
                     ecma: "ES2020",
                     module: true,
-                    compress: {
-                        drop_console: ["log", "info", "debug"],
-                        passes: 2,
-                    },
+                    compress: { drop_console: ["log", "info", "debug"], passes: 2 },
                     mangle: false,
                 },
             }),
             new CssMinimizerPlugin(),
         ],
     },
-    experiments: {
-        outputModule: true,
-    },
 };
 
-const activeConfig = process.env.NODE_ENV === "development" ? devConfig : prodConfig;
+const activeConfig = process.env.NODE_ENV === "production" ? prodConfig : devConfig;
 const mergedConfig = merge(baseConfig, activeConfig);
 
 export default mergedConfig;
