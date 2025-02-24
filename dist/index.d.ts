@@ -5,51 +5,48 @@ declare enum NotificationState {
     SHOWN = "SHOWN",
     WAITING_ON_HIDE = "WAITING_ON_HIDE"
 }
-type PositionY = "top" | "bottom";
-type PositionX = "left" | "center" | "right";
 interface SharedOptions {
     hideAfterTime: number;
     hideOlder: boolean;
     dismissable: boolean;
-    animationClasses: [string, string];
-    animationDuration: number;
 }
 interface NotifierOptions extends SharedOptions {
     parentEl: HTMLElement;
-    position: [PositionY, PositionX];
+    position: ["top" | "bottom", "left" | "center" | "right"];
+    classNames: string[];
 }
 interface NotificationContent {
-    text?: string;
+    variant?: string;
+    text: string | string[];
     title?: string;
-    type?: string;
+    titleLevel?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
 }
 interface NotificationOptions extends Partial<SharedOptions>, NotificationContent {
 }
-interface NotificationProps extends SharedOptions, NotificationContent {
+interface ProcessedNotificationOptions extends SharedOptions, Required<Omit<NotificationContent, "text" | "title">> {
+    text: string[];
+    title: string | null;
+}
+interface NotificationProps extends ProcessedNotificationOptions {
     abortController: AbortController;
     el: HTMLDivElement;
-    state?: NotificationState;
+    state: NotificationState;
 }
 declare class SN {
     #private;
-    parentEl: NotifierOptions["parentEl"];
-    position: NotifierOptions["position"];
     hideAfterTime: NotifierOptions["hideAfterTime"];
     hideOlder: NotifierOptions["hideOlder"];
     dismissable: NotifierOptions["dismissable"];
-    animationClasses: NotifierOptions["animationClasses"];
-    animationDuration: NotifierOptions["animationDuration"];
     notifierEl: HTMLDivElement;
     notifications: {
         [id: string]: NotificationProps;
     };
     currentNotificationId: number;
     queuedNotifications: NotificationOptions[];
-    waitingForHideOlderHideAll: boolean;
     instanceId: number;
     constructor(options?: Partial<NotifierOptions>);
     get notificationIds(): number[];
-    show(textOrOptions: string | NotificationOptions, type?: string): void;
+    show(textOrOptions: NotificationOptions["text"] | NotificationOptions, variant?: NotificationOptions["variant"]): void;
     hide(notificationId: number): void;
     hideAll(): void;
 }
