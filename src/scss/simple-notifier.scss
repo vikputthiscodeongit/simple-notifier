@@ -91,10 +91,15 @@
     border-radius: 0.25em;
     box-shadow: 0 0.125em 0.125em 0 rgba(0, 0, 0, 0.333333);
     backdrop-filter: blur(0.25em);
+    animation-duration: settings.$animation-duration;
 
     // 540 px
     @media (min-width: 33.75em) {
         width: 28em; // 448 px
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        animation-duration: 1ms;
     }
 
     @each $variant, $value in settings.$variants {
