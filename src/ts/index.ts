@@ -18,31 +18,26 @@ interface SharedOptions {
     dismissable: boolean;
 }
 
-type PositionY = "top" | "bottom";
-type PositionX = "left" | "center" | "right";
-
 interface NotifierOptions extends SharedOptions {
     parentEl: HTMLElement;
-    position: [PositionY, PositionX];
+    position: ["top" | "bottom", "left" | "center" | "right"];
     classNames: string[];
 }
-
-type HeadingLevel = "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
 
 interface NotificationContent {
     variant?: string;
     text: string | string[];
     title?: string;
-    titleLevel?: HeadingLevel;
+    titleLevel?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
 }
 
 interface NotificationOptions extends Partial<SharedOptions>, NotificationContent {}
 
-interface ProcessedNotificationOptions extends SharedOptions {
-    variant: string;
+interface ProcessedNotificationOptions
+    extends SharedOptions,
+        Required<Omit<NotificationContent, "text" | "title">> {
     text: string[];
     title: string | null;
-    titleLevel: HeadingLevel;
 }
 
 interface NotificationProps extends ProcessedNotificationOptions {
