@@ -1,4 +1,6 @@
-@import "variables";
+@use "sass:color";
+@use "sass:map";
+@use "variables" as settings;
 
 @keyframes fade-in {
     from {
@@ -35,11 +37,11 @@
     position: fixed;
     top: 1.25em;
     left: 50%;
-    z-index: $notifier-z-index;
+    z-index: settings.$z-index;
     margin: -0.75em 0;
     line-height: 1.25;
-    font-size: $notifier-font-size-base;
-    font-family: $notifier-font-family;
+    font-size: settings.$font-size-base;
+    font-family: settings.$font-family;
     transform: translateX(-50%);
 
     @media (min-width: 48em) {
@@ -93,9 +95,9 @@
     width: calc(100vw - 2.5em);
     margin: 0.75em 0;
     padding: 0.75em 1em;
-    color: map-get($notifier-text-colors, "default");
-    background-color: map-get($notifier-bg-colors, "default");
-    border: solid 0.0625em map-get($notifier-bg-colors, "default");
+    color: map.get(settings.$text-colors, "default");
+    background-color: map.get(settings.$bg-colors, "default");
+    border: solid 0.0625em map.get(settings.$bg-colors, "default");
     border-radius: 0.25em;
     box-shadow: 0 0.125em 0.125em 0 rgba(0, 0, 0, 0.333333);
     backdrop-filter: blur(0.25em);
@@ -105,13 +107,13 @@
         width: 28em; // 448 px
     }
 
-    @each $type, $value in $notifier-types {
-        @if $type != "default" {
-            &--#{$type} {
-                color: map-get($notifier-text-colors, $type);
-                background-color: map-get($notifier-bg-colors, $type);
-                border-color: scale-color(
-                    $color: map-get($notifier-bg-colors, $type),
+    @each $variant, $value in settings.$variants {
+        @if $variant != "default" {
+            &--#{$variant} {
+                color: map.get(settings.$text-colors, $variant);
+                background-color: map.get(settings.$bg-colors, $variant);
+                border-color: color.scale(
+                    $color: map.get(settings.$bg-colors, $variant),
                     $lightness: -5%
                 );
             }
@@ -150,7 +152,7 @@
         width: 1.25em;
         height: 1.25em;
         padding: 0;
-        font-size: $notifier-font-size-base;
+        font-size: settings.$font-size-base;
         background-color: transparent;
         border: none;
 
@@ -163,13 +165,13 @@
             content: "";
             position: relative;
             display: block;
-            border-top: solid 0.125em map-get($notifier-text-colors, "default");
+            border-top: solid 0.125em map.get(settings.$text-colors, "default");
             border-radius: 1em;
 
-            @each $type, $value in $notifier-types {
-                @if $type != "default" {
-                    @at-root .simple-notification--#{$type} & {
-                        border-top-color: map-get($notifier-text-colors, $type);
+            @each $variant, $value in settings.$variants {
+                @if $variant != "default" {
+                    @at-root .simple-notification--#{$variant} & {
+                        border-top-color: map.get(settings.$text-colors, $variant);
                     }
                 }
             }

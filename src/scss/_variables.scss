@@ -1,36 +1,38 @@
-// Types
-$notifier-types: ("default", "success", "warning", "error") !default;
+@use "sass:map";
+
+// Variants
+$variants: ("default", "success", "warning", "error") !default;
 
 // Positioning
-$notifier-z-index: 1090 !default;
+$z-index: 1090 !default;
 
 // Colors
-$notifier-color-opactiy: 0.9 !default;
+$color-opactiy: 0.9 !default;
 
-$notifier-colors: (
-    "white": rgba(255, 255, 255, $notifier-color-opactiy),
-    "black": rgba(0, 0, 0, $notifier-color-opactiy),
-    "green": rgba(209, 231, 221, $notifier-color-opactiy),
-    "yellow": rgba(255, 243, 205, $notifier-color-opactiy),
-    "red": rgba(132, 32, 41, $notifier-color-opactiy),
+$colors: (
+    "white": rgba(255, 255, 255, $color-opactiy),
+    "black": rgba(0, 0, 0, $color-opactiy),
+    "green": rgba(209, 231, 221, $color-opactiy),
+    "yellow": rgba(255, 243, 205, $color-opactiy),
+    "red": rgba(132, 32, 41, $color-opactiy),
 ) !default;
 
-$notifier-text-colors: (
-    "default": map-get($notifier-colors, "black"),
-    "success": map-get($notifier-colors, "black"),
-    "warning": map-get($notifier-colors, "black"),
-    "error": map-get($notifier-colors, "white"),
+$text-colors: (
+    "default": map.get($colors, "black"),
+    "success": map.get($colors, "black"),
+    "warning": map.get($colors, "black"),
+    "error": map.get($colors, "white"),
 ) !default;
 
-$notifier-bg-colors: (
-    "default": map-get($notifier-colors, "white"),
-    "success": map-get($notifier-colors, "green"),
-    "warning": map-get($notifier-colors, "yellow"),
-    "error": map-get($notifier-colors, "red"),
+$bg-colors: (
+    "default": map.get($colors, "white"),
+    "success": map.get($colors, "green"),
+    "warning": map.get($colors, "yellow"),
+    "error": map.get($colors, "red"),
 ) !default;
 
 // Typography
-$notifier-font-family:
+$font-family:
     system-ui,
     -apple-system,
     "Segoe UI",
@@ -40,4 +42,4 @@ $notifier-font-family:
     "Liberation Sans",
     Arial,
     sans-serif !default;
-$notifier-font-size-base: 1rem !default;
+$font-size-base: 1rem !default;

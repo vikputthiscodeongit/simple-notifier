@@ -1,5 +1,4 @@
 // TODO:
-// * Check SCSS import in type definition
 // * Validate browser support
 // * Clean up README
 // * 'title' h level should be an option.
