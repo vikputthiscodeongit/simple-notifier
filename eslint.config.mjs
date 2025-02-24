@@ -4,9 +4,7 @@ import tsEslint from "typescript-eslint";
 import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
 
 export default tsEslint.config(
-    {
-        ignores: ["dist/**/*", "**/*.*js"],
-    },
+    { ignores: ["dist/**/*", "**/*.*js"] },
 
     eslintJs.configs.recommended,
 
@@ -16,13 +14,8 @@ export default tsEslint.config(
 
     {
         languageOptions: {
-            globals: {
-                ...globals.browser,
-                ...globals.es2024,
-            },
-            parserOptions: {
-                project: ["tsconfig.json"],
-            },
+            globals: { ...globals.browser, ...globals.es2025 },
+            parserOptions: { project: ["tsconfig.json"] },
         },
     },
 );
