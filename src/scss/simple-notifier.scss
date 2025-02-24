@@ -22,16 +22,6 @@
     }
 }
 
-.fade {
-    &-in {
-        animation-name: fade-in;
-    }
-
-    &-out {
-        animation-name: fade-out;
-    }
-}
-
 .simple-notifier {
     box-sizing: border-box;
     position: fixed;
@@ -48,7 +38,7 @@
         top: 2em;
     }
 
-    &--pos {
+    &--position {
         &-y-bottom {
             top: unset;
             bottom: 1.25em;
@@ -117,6 +107,16 @@
                     $lightness: -5%
                 );
             }
+        }
+    }
+
+    &--animation {
+        &-in {
+            animation-name: fade-in;
+        }
+
+        &-out {
+            animation-name: fade-out;
         }
     }
 

@@ -26,13 +26,13 @@ interface SharedOptions {
     hideAfterTime: number;
     hideOlder: boolean;
     dismissable: boolean;
-    animationClasses: [string, string];
     animationDuration: number;
 }
 
 interface NotifierOptions extends SharedOptions {
     parentEl: HTMLElement;
     position: [PositionY, PositionX];
+    classNames: string[];
 }
 
 interface NotificationContent {
@@ -76,8 +76,8 @@ const DEFAULT_INSTANCE_OPTIONS: NotifierOptions = {
     hideAfterTime: 4000,
     hideOlder: false,
     dismissable: false,
-    animationClasses: ["fade-in", "fade-out"],
     animationDuration: 500,
+    classNames: [],
 };
 
 class SN {
@@ -86,7 +86,6 @@ class SN {
     hideAfterTime: NotifierOptions["hideAfterTime"];
     hideOlder: NotifierOptions["hideOlder"];
     dismissable: NotifierOptions["dismissable"];
-    animationClasses: NotifierOptions["animationClasses"];
     animationDuration: NotifierOptions["animationDuration"];
 
     notifierEl: HTMLDivElement;
@@ -109,13 +108,14 @@ class SN {
             this.hideAfterTime = mergedOptions.hideAfterTime;
             this.hideOlder = mergedOptions.hideOlder;
             this.dismissable = mergedOptions.dismissable;
-            this.animationClasses = mergedOptions.animationClasses;
             this.animationDuration = mergedOptions.animationDuration;
 
             this.notifierEl = createEl("div", {
-                class: `simple-notifier simple-notifier--pos-x-${this.position[1]} simple-notifier--pos-y-${this.position[0]}`,
+                class: `simple-notifier simple-notifier--position-x-${mergedOptions.position[1]} simple-notifier--position-y-${mergedOptions.position[0]}`,
                 ariaLive: "assertive",
             });
+            this.notifierEl.classList.add(...mergedOptions.classNames);
+
             this.notifications = {};
             this.currentNotificationId = 0;
             this.queuedNotifications = [];
@@ -331,7 +331,6 @@ class SN {
             hideAfterTime: notificationOptions?.hideAfterTime ?? this.hideAfterTime,
             hideOlder: notificationOptions?.hideOlder ?? this.hideOlder,
             dismissable: notificationOptions?.dismissable ?? this.dismissable,
-            animationClasses: notificationOptions?.animationClasses ?? this.animationClasses,
             animationDuration: isMotionAllowed() && animationDuration > 0 ? animationDuration : 1,
             text: notificationOptions ? notificationOptions.text : (textOrOptions as string),
             title: notificationOptions?.title,
@@ -344,8 +343,8 @@ class SN {
 
     #makeNotificationEl(id: number, options: ProcessedNotificationOptions) {
         const notificationEl = createEl<HTMLDivElement>("div", {
-            class: `simple-notification simple-notification--${options.type} ${options.animationClasses[0]}`,
             style: `animation-duration: ${options.animationDuration}ms;`,
+            class: `simple-notification simple-notification--${options.variant} simple-notification--animation-in`,
             role: "alert",
             dataNotificationId: id.toString(),
         });
@@ -454,8 +453,8 @@ class SN {
 
             this.notifications[notificationId].state = NotificationState.HIDE_BUSY;
 
-            notificationProps.el.classList.remove(notificationProps.animationClasses[0]);
-            notificationProps.el.classList.add(notificationProps.animationClasses[1]);
+            notificationProps.el.classList.remove("simple-notification--animation-in");
+            notificationProps.el.classList.add("simple-notification--animation-out");
 
             notificationProps.el.addEventListener(
                 "animationend",
