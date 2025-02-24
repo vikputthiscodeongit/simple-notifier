@@ -17,14 +17,14 @@ enum NotificationState {
     WAITING_ON_HIDE = "WAITING_ON_HIDE",
 }
 
-type PositionY = "top" | "bottom";
-type PositionX = "left" | "center" | "right";
-
 interface SharedOptions {
     hideAfterTime: number;
     hideOlder: boolean;
     dismissable: boolean;
 }
+
+type PositionY = "top" | "bottom";
+type PositionX = "left" | "center" | "right";
 
 interface NotifierOptions extends SharedOptions {
     parentEl: HTMLElement;
@@ -35,24 +35,25 @@ interface NotifierOptions extends SharedOptions {
 type HeadingLevel = "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
 
 interface NotificationContent {
+    variant?: string;
     text: string | string[];
     title?: string;
-    type?: string;
     titleLevel?: HeadingLevel;
 }
 
 interface NotificationOptions extends Partial<SharedOptions>, NotificationContent {}
 
-interface ProcessedNotificationOptions extends SharedOptions, Omit<NotificationContent, "type"> {
-    type: string;
+interface ProcessedNotificationOptions extends SharedOptions {
+    variant: string;
     text: string[];
+    title: string | null;
     titleLevel: HeadingLevel;
 }
 
-interface NotificationProps extends SharedOptions, NotificationContent {
+interface NotificationProps extends ProcessedNotificationOptions {
     abortController: AbortController;
     el: HTMLDivElement;
-    state?: NotificationState;
+    state: NotificationState;
 }
 
 const makeInstanceId = (min: number, max: number, excludeIds: number[], tryCount?: number) => {
@@ -137,8 +138,10 @@ class SN {
         return Object.keys(this.notifications).map((key) => Number.parseInt(key));
     }
 
-
-    show(textOrOptions: string | NotificationOptions, type?: string) {
+    show(
+        textOrOptions: NotificationOptions["text"] | NotificationOptions,
+        variant?: NotificationOptions["variant"],
+    ) {
         console.info("SN show() - Running...");
 
         const notificationText =
@@ -152,8 +155,8 @@ class SN {
                     "'textOrOptions' be a `String` or an `Array` of `Strings`, either passed in directly or via an `Object` as `text` value.",
                 );
             }
-            if (type !== undefined && typeof type !== "string") {
-                throw new Error("'type' must be a `String`.");
+            if (variant !== undefined && typeof variant !== "string") {
+                throw new Error("'variant' must be a `String`.");
             }
 
             if (
@@ -229,7 +232,7 @@ class SN {
             console.info("SN show() - Notification ID:", currentNotificationId);
             this.currentNotificationId++;
 
-            const notificationOptions = this.#getNotificationOptions(textOrOptions, type);
+            const notificationOptions = this.#getNotificationOptions(textOrOptions, variant);
             const notificationEl = this.#makeNotificationEl(
                 currentNotificationId,
                 notificationOptions,
@@ -294,8 +297,8 @@ class SN {
     }
 
     #getNotificationOptions(
-        type?: string,
         textOrOptions: NotificationOptions["text"] | NotificationOptions,
+        variant?: NotificationOptions["variant"],
     ): ProcessedNotificationOptions {
         const notificationOptions =
             typeof textOrOptions === "object" && !Array.isArray(textOrOptions)
@@ -308,10 +311,10 @@ class SN {
             hideAfterTime: notificationOptions?.hideAfterTime ?? this.hideAfterTime,
             hideOlder: notificationOptions?.hideOlder ?? this.hideOlder,
             dismissable: notificationOptions?.dismissable ?? this.dismissable,
-            title: notificationOptions?.title,
-            type: notificationOptions?.type ?? type ?? "default",
             text: Array.isArray(notificationText) ? notificationText : [notificationText],
+            title: notificationOptions?.title || null,
             titleLevel: notificationOptions?.titleLevel ?? "h6",
+            variant: notificationOptions?.variant ?? variant ?? "default",
         };
         console.debug("SN #getNotificationOptions() - mergedOptions:", mergedOptions);
 
