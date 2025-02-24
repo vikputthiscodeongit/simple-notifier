@@ -1,7 +1,6 @@
 // TODO:
 // * Validate browser support
 // * Clean up README
-// * 'text' should be able to take in an array with each item representing a paragraph.
 
 import {
     createEl,
@@ -36,7 +35,7 @@ interface NotifierOptions extends SharedOptions {
 type HeadingLevel = "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
 
 interface NotificationContent {
-    text?: string;
+    text: string | string[];
     title?: string;
     type?: string;
     titleLevel?: HeadingLevel;
@@ -46,6 +45,7 @@ interface NotificationOptions extends Partial<SharedOptions>, NotificationConten
 
 interface ProcessedNotificationOptions extends SharedOptions, Omit<NotificationContent, "type"> {
     type: string;
+    text: string[];
     titleLevel: HeadingLevel;
 }
 
@@ -92,7 +92,6 @@ class SN {
     notifications: { [id: string]: NotificationProps };
     currentNotificationId: number;
     queuedNotifications: NotificationOptions[];
-    waitingForHideOlderHideAll: boolean;
 
     instanceId: number;
 
@@ -118,7 +117,6 @@ class SN {
             this.notifications = {};
             this.currentNotificationId = 0;
             this.queuedNotifications = [];
-            this.waitingForHideOlderHideAll = false;
 
             this.instanceId = makeInstanceId(100000, 1000000, SN.#instanceIds);
             SN.#instanceIds.push(this.instanceId);
@@ -178,10 +176,15 @@ class SN {
     show(textOrOptions: string | NotificationOptions, type?: string) {
         console.info("SN show() - Running...");
 
+        const notificationText =
+            typeof textOrOptions === "string" || Array.isArray(textOrOptions)
+                ? textOrOptions
+                : textOrOptions.text;
+
         try {
-            if (typeof textOrOptions !== "object" && typeof textOrOptions !== "string") {
+            if (typeof notificationText !== "string" && !Array.isArray(notificationText)) {
                 throw new Error(
-                    "'textOrOptions' is required and must be a `String` or an `Object`.",
+                    "'textOrOptions' be a `String` or an `Array` of `Strings`, either passed in directly or via an `Object` as `text` value.",
                 );
             }
             if (type !== undefined && typeof type !== "string") {
@@ -189,16 +192,19 @@ class SN {
             }
 
             if (
-                typeof textOrOptions === "object" &&
-                ((textOrOptions.hideOlder && Object.keys(this.notifications).length > 0) ||
-                    this.queuedNotifications.length > 0)
+                (typeof textOrOptions === "object" &&
+                    !Array.isArray(textOrOptions) &&
+                    textOrOptions.hideOlder &&
+                    Object.keys(this.notifications).length > 0) ||
+                this.queuedNotifications.length > 0
             ) {
-                this.queuedNotifications.push(textOrOptions);
-                console.info("SN show() - Notification added to queue:", textOrOptions);
+                const notificationOptions =
+                    typeof textOrOptions === "string" || Array.isArray(textOrOptions)
+                        ? { variant, text: textOrOptions }
+                        : textOrOptions;
+                this.queuedNotifications.push(notificationOptions);
+                console.info("SN show() - Notification added to queue:", notificationOptions);
 
-                if (this.waitingForHideOlderHideAll) return;
-
-                this.waitingForHideOlderHideAll = true;
                 this.hideAll();
 
                 this.notifierEl.addEventListener(
@@ -206,7 +212,10 @@ class SN {
                     () => {
                         console.info("SN show() - Processing queued notifications...");
 
-                        this.waitingForHideOlderHideAll = false;
+                        if (this.queuedNotifications.length === 0) {
+                            console.info("SN show() - No notifications in queue.");
+                            return;
+                        }
 
                         // Make a copy of the queue because it's possible to continuously trigger
                         // new notifications. Any notifications triggered after a copy of the queue
@@ -320,18 +329,23 @@ class SN {
     }
 
     #getNotificationOptions(
-        textOrOptions: NotificationOptions | string,
         type?: string,
+        textOrOptions: NotificationOptions["text"] | NotificationOptions,
     ): ProcessedNotificationOptions {
-        const notificationOptions = typeof textOrOptions === "object" ? textOrOptions : undefined;
-
+        const notificationOptions =
+            typeof textOrOptions === "object" && !Array.isArray(textOrOptions)
+                ? textOrOptions
+                : undefined;
+        const notificationText = notificationOptions
+            ? notificationOptions.text
+            : (textOrOptions as string | string[]);
         const mergedOptions = {
             hideAfterTime: notificationOptions?.hideAfterTime ?? this.hideAfterTime,
             hideOlder: notificationOptions?.hideOlder ?? this.hideOlder,
             dismissable: notificationOptions?.dismissable ?? this.dismissable,
-            text: notificationOptions ? notificationOptions.text : (textOrOptions as string),
             title: notificationOptions?.title,
             type: notificationOptions?.type ?? type ?? "default",
+            text: Array.isArray(notificationText) ? notificationText : [notificationText],
             titleLevel: notificationOptions?.titleLevel ?? "h6",
         };
         console.debug("SN #getNotificationOptions() - mergedOptions:", mergedOptions);
@@ -359,14 +373,11 @@ class SN {
             contentEl.append(titleEl);
         }
 
-        if (options.text) {
-            const messageEl = createEl("p", {
-                class: "simple-notification__message",
-                textContent: options.text,
-            });
+        options.text.forEach((line) => {
+            const textEl = createEl("p", { class: "simple-notification__text", textContent: line });
 
-            contentEl.append(messageEl);
-        }
+            contentEl.append(textEl);
+        });
 
         notificationEl.append(contentEl);
 

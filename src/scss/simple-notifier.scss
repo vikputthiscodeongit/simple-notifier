@@ -133,21 +133,21 @@
     }
 
     &__title,
-    &__message {
-        font-size: 1em;
-    }
-
-    &__title {
+    &__text {
         margin-top: 0;
-        margin-bottom: 0.5em;
+        font-size: 1em;
 
         &:last-child {
             margin-bottom: 0;
         }
     }
 
-    &__message {
-        margin: 0;
+    &__title {
+        margin-bottom: 0.5em;
+    }
+
+    &__text {
+        margin-bottom: 0.25em;
         font-weight: 400;
     }
 
