@@ -83,8 +83,6 @@ const DEFAULT_INSTANCE_OPTIONS: NotifierOptions = {
 };
 
 class SN {
-    parentEl: NotifierOptions["parentEl"];
-    position: NotifierOptions["position"];
     hideAfterTime: NotifierOptions["hideAfterTime"];
     hideOlder: NotifierOptions["hideOlder"];
     dismissable: NotifierOptions["dismissable"];
@@ -98,13 +96,8 @@ class SN {
 
     constructor(options: Partial<NotifierOptions> = {}) {
         try {
-            const mergedOptions = {
-                ...DEFAULT_INSTANCE_OPTIONS,
-                ...options,
-            };
+            const mergedOptions = { ...DEFAULT_INSTANCE_OPTIONS, ...options };
 
-            this.parentEl = mergedOptions.parentEl;
-            this.position = mergedOptions.position;
             this.hideAfterTime = mergedOptions.hideAfterTime;
             this.hideOlder = mergedOptions.hideOlder;
             this.dismissable = mergedOptions.dismissable;
@@ -122,7 +115,10 @@ class SN {
             this.instanceId = makeInstanceId(100000, 1000000, SN.#instanceIds);
             SN.#instanceIds.push(this.instanceId);
 
-            this.parentEl.insertBefore(this.notifierEl, this.parentEl.firstElementChild);
+            mergedOptions.parentEl.insertBefore(
+                this.notifierEl,
+                mergedOptions.parentEl.firstElementChild,
+            );
 
             console.info(`SimpleNotifier instance ${this.instanceId} initiated.`);
         } catch (error) {
