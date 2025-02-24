@@ -26,7 +26,6 @@ interface SharedOptions {
     hideAfterTime: number;
     hideOlder: boolean;
     dismissable: boolean;
-    animationDuration: number;
 }
 
 interface NotifierOptions extends SharedOptions {
@@ -76,7 +75,6 @@ const DEFAULT_INSTANCE_OPTIONS: NotifierOptions = {
     hideAfterTime: 4000,
     hideOlder: false,
     dismissable: false,
-    animationDuration: 500,
     classNames: [],
 };
 
@@ -86,7 +84,6 @@ class SN {
     hideAfterTime: NotifierOptions["hideAfterTime"];
     hideOlder: NotifierOptions["hideOlder"];
     dismissable: NotifierOptions["dismissable"];
-    animationDuration: NotifierOptions["animationDuration"];
 
     notifierEl: HTMLDivElement;
     notifications: { [id: string]: NotificationProps };
@@ -108,7 +105,6 @@ class SN {
             this.hideAfterTime = mergedOptions.hideAfterTime;
             this.hideOlder = mergedOptions.hideOlder;
             this.dismissable = mergedOptions.dismissable;
-            this.animationDuration = mergedOptions.animationDuration;
 
             this.notifierEl = createEl("div", {
                 class: `simple-notifier simple-notifier--position-x-${mergedOptions.position[1]} simple-notifier--position-y-${mergedOptions.position[0]}`,
@@ -326,12 +322,10 @@ class SN {
     ): ProcessedNotificationOptions {
         const notificationOptions = typeof textOrOptions === "object" ? textOrOptions : undefined;
 
-        const animationDuration = notificationOptions?.animationDuration ?? this.animationDuration;
         const mergedOptions = {
             hideAfterTime: notificationOptions?.hideAfterTime ?? this.hideAfterTime,
             hideOlder: notificationOptions?.hideOlder ?? this.hideOlder,
             dismissable: notificationOptions?.dismissable ?? this.dismissable,
-            animationDuration: isMotionAllowed() && animationDuration > 0 ? animationDuration : 1,
             text: notificationOptions ? notificationOptions.text : (textOrOptions as string),
             title: notificationOptions?.title,
             type: notificationOptions?.type ?? type ?? "default",
@@ -343,7 +337,6 @@ class SN {
 
     #makeNotificationEl(id: number, options: ProcessedNotificationOptions) {
         const notificationEl = createEl<HTMLDivElement>("div", {
-            style: `animation-duration: ${options.animationDuration}ms;`,
             class: `simple-notification simple-notification--${options.variant} simple-notification--animation-in`,
             role: "alert",
             dataNotificationId: id.toString(),
