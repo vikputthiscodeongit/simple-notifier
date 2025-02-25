@@ -384,11 +384,6 @@ class SN {
                 throw new Error("'notificationId' must be a `Number`.");
             }
 
-            if (this.notifications[notificationId].state === NotificationState.HIDE_BUSY) {
-                console.warn(`Already hiding notification ${notificationId}.`);
-                return;
-            }
-
             const notificationProps = this.notifications[notificationId];
 
             if (!notificationProps) {
@@ -396,9 +391,14 @@ class SN {
                 return;
             }
 
+            if (notificationProps.state === NotificationState.HIDE_BUSY) {
+                console.warn(`Already hiding notification ${notificationId}.`);
+                return;
+            }
+
             if (
-                this.notifications[notificationId].state === NotificationState.SHOW_BUSY ||
-                this.notifications[notificationId].state === NotificationState.WAITING_ON_HIDE
+                notificationProps.state === NotificationState.SHOW_BUSY ||
+                notificationProps.state === NotificationState.WAITING_ON_HIDE
             ) {
                 console.info(
                     `SN hide(): Notification ${notificationId} in show action or waiting on hide action. Aborting any scheduled function calls...`,
