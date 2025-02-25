@@ -244,11 +244,11 @@ class SN {
         for (const notificationOptions of queueCopyReversed) {
             count++;
 
-            if (!notificationOptions.hideOlder) continue;
+            if (notificationOptions.hideOlder) {
+                notificationsToShowReversed = queueCopyReversed.slice(0, count);
 
-            notificationsToShowReversed = queueCopyReversed.slice(0, count);
-
-            break;
+                break;
+            }
         }
 
         console.debug(
