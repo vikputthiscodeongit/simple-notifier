@@ -81,8 +81,6 @@
 .simple-notification {
     display: flex;
     gap: 0.5em;
-    min-width: 17.5em; // 280 px
-    width: calc(100vw - 2.5em);
     margin: 0.75em 0;
     padding: 0.75em 1em;
     color: map.get(settings.$text-colors, "default");
@@ -92,6 +90,16 @@
     box-shadow: 0 0.125em 0.125em 0 rgba(0, 0, 0, 0.333333);
     backdrop-filter: blur(0.25em);
     animation-duration: settings.$animation-duration;
+
+    // 319.98 px
+    @media (max-width: 21.99875em) {
+        min-width: calc(100vw - 2em);
+    }
+
+    // 352 px
+    @media (min-width: 22em) {
+        width: 20em; // 320 px
+    }
 
     // 540 px
     @media (min-width: 33.75em) {
