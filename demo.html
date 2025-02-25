@@ -222,17 +222,13 @@
                         `Notification ${e.detail.notificationId} of instance ${e.detail.instanceId} shown.`,
                     ),
                 );
-                el.addEventListener(
-                    "hidden",
-                    (e) => (e) =>
-                        console.log(
-                            `Notification ${e.detail.notificationId} of instance ${e.detail.instanceId} hidden.`,
-                        ),
+                el.addEventListener("hidden", (e) =>
+                    console.log(
+                        `Notification ${e.detail.notificationId} of instance ${e.detail.instanceId} hidden.`,
+                    ),
                 );
-                el.addEventListener(
-                    "allhidden",
-                    (e) => (e) =>
-                        console.log(`All notifications of instance ${e.detail.instanceId} hidden.`),
+                el.addEventListener("allhidden", (e) =>
+                    console.log(`All notifications of instance ${e.detail.instanceId} hidden.`),
                 );
             });
         </script>
