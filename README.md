@@ -7,17 +7,14 @@
 
 A fully featured yet easy to use & lightweight notification library.
 
-__[Demo page (interactive)](https://rawcdn.githack.com/vikputthiscodeongit/simple-notifier/07b291aa0688c0d92eab0f60c12f8653db14e531/demo.html)__
+__[Demo page (interactive)](https://rawcdn.githack.com/vikputthiscodeongit/simple-notifier/1db6513f2033fca96313a32b8b246d871987b391/demo.html)__
 
 <br>
 
 ## Table of Contents
 1. [Unique features](#unique-features)
-2. [Basic usage](#basic-usage)
+4. [Usage](#usage)
 3. [Browser support](#browser-support)
-4. [Installation](#installation)
-    * I.  [Usage with a module bundler](#usage-with-a-module-bundler)
-    * II. [Usage as a standalone package](#usage-as-a-standalone-package)
 5. [Options](#options)
     * [JavaScript](#javascript)
     * [Sass](#sass)
@@ -36,28 +33,46 @@ __[Demo page (interactive)](https://rawcdn.githack.com/vikputthiscodeongit/simpl
 * Show multiple notifications simultaneously, and/or
 * Hide older notifications before showing one or more new notifications.
 * Fully accessible.
+* Module-based.
 
 Check out [options](#options) for a complete overview of all features.
 
 <br>
 
-## Basic usage
+## Usage
+
+For this example I assume the main JavaScript file is processed by a module bundler and Sass is installed.
+
+``` shell
+// Install package from npm
+npm install @codebundlesbyvik/simple-notifier
+```
+
+``` scss
+// style.scss
+@import "@codebundlesbyvik/simple-notifier";
+```
+
 ``` javascript
+// index.js
+import SimpleNotifier from "@codebundlesbyvik/simple-notifier";
+import "./style.scss";
+
 const notifier = new SimpleNotifier();
 
-notifier.init();
-
-// The following element is inserted as first child of <body>:
+// The following element is inserted as the first child of <body>:
 // <div class="simple-notifier simple-notifier--position-y-top simple-notifier--position-x-center">
 // </div>
 
-const message = "This is an example notification.";
+const text = "This is an example notification.";
 const variant = "success";
 
-notifier.show(message, variant);
+notifier.show(text, variant);
 
 // Notification is shown for 4000 ms.
 ```
+
+If you're not using a module bundler then either [download the latest release from the GitHub releases page](https://github.com/vikputthiscodeongit/simple-notifier/releases/latest) or [load the JavaScript](https://cdn.jsdelivr.net/npm/@codebundlesbyvik/simple-notifier@2.0.0) [and the CSS](https://cdn.jsdelivr.net/npm/@codebundlesbyvik/simple-notifier@2.0.0/dist/simple-notifier.css) via the jsdelivr CDN. Then in your HTML link to the CSS stylesheet and import the JavaScript as a module.
 
 <br>
 
@@ -73,48 +88,6 @@ The CSS distributables are prefixed with the following [`browserslist`](https://
 "last 3 versions and not dead",
 "Firefox ESR"
 ```
-
-<br>
-
-## Installation
-### Usage with a module bundler
-
-``` shell
-// Install package from npm
-npm install @codebundlesbyvik/simple-notifier
-```
-
-<br>
-
-``` javascript
-// Import the module
-import SimpleNotifier from "@codebundlesbyvik/simple-notifier";
-```
-
-<br>
-
-``` css
-/* Import the stylesheet */
-@import "@codebundlesbyvik/simple-notifier";
-```
-
-<br>
-
-### Usage as a standalone package
-
-[Download the latest release](https://github.com/vikputthiscodeongit/simple-notifier/releases/latest) from the GitHub releases page.
-
-``` html
-<!-- Load the module -->
-<script type="module">
-    import SimpleNotifier from "./dist/index.js";
-</script>
-
-<!-- Load the stylesheet -->
-<link href="./dist/simple-notifier.css" rel="stylesheet" />
-```
-
-Alternatively you can load the module via the [jsdelivr CDN](https://cdn.jsdelivr.net/npm/@codebundlesbyvik/simple-notifier@2.0.0) (don't forget to add the `crossorigin="anonymous"` attribute).
 
 <br>
 
@@ -204,7 +177,7 @@ Get the IDs of all currently shown notifications.
 
 ## Events
 
-| Event       | Fired when ...                                             |
+| Event       | Fired when...                                              |
 | :---------- | :--------------------------------------------------------- |
 | `shown`     | The process of showing a notification has fully completed. |
 | `hidden`    | The process of hiding a notification has fully completed.  |
