@@ -229,9 +229,8 @@ class SN {
         // Make a copy of the queue because it's possible to continuously trigger
         // new notifications. Any notifications triggered after a copy of the queue
         // is made are processed on the next run.
-        // Reverse the queue because all notifications older than the oldest one
-        // that has `hideOlder` set should be ignored. Processing the queue from back
-        // to front makes this easier.
+        // Process the queue in reverse because all notifications older than the
+        // oldest one that has `hideOlder` set should be ignored.
         const queueCopyReversed = [...this.queuedNotifications].reverse();
         console.debug(
             "SN #processQueuedNotifications() - Queued notifications (newest first):",
