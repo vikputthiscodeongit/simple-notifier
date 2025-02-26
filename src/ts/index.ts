@@ -74,7 +74,7 @@ class SN {
     dismissable: NotifierOptions["dismissable"];
 
     notifierEl: HTMLDivElement;
-    notifications: { [id: string]: NotificationProps };
+    notifications: Map<number, NotificationProps>;
     currentNotificationId: number;
     queuedNotifications: NotificationOptions[];
 
@@ -94,7 +94,7 @@ class SN {
             });
             this.notifierEl.classList.add(...mergedOptions.classNames);
 
-            this.notifications = {};
+            this.notifications = new Map<number, NotificationProps>();
             this.currentNotificationId = 0;
             this.queuedNotifications = [];
 
@@ -117,7 +117,7 @@ class SN {
     static #instanceIds: number[] = [];
 
     get notificationIds() {
-        return Object.keys(this.notifications).map((key) => Number.parseInt(key));
+        return [...this.notifications.keys()];
     }
 
     #getNotificationOptions(
@@ -204,11 +204,16 @@ class SN {
     async #scheduleHide(id: number) {
         console.info(`SN #scheduleHide(): Running on notification ${id}...`);
 
-        this.notifications[id].state = NotificationState.WAITING_ON_HIDE;
-
-        const notificationProps = this.notifications[id];
-
         try {
+            const notificationProps = this.notifications.get(id);
+
+            if (!notificationProps) {
+                console.warn(`Notification ${id} doesn't exist.`);
+                return;
+            }
+
+            notificationProps.state = NotificationState.WAITING_ON_HIDE;
+
             console.info(
                 `SN #scheduleHide(): hide() will be called on notification ${id} in ${notificationProps.hideAfterTime} ms...`,
             );
@@ -296,9 +301,7 @@ class SN {
             }
 
             if (
-                (userOptions &&
-                    textOrOptions.hideOlder &&
-                    Object.keys(this.notifications).length > 0) ||
+                (userOptions && textOrOptions.hideOlder && this.notifications.size > 0) ||
                 this.queuedNotifications.length > 0
             ) {
                 const notificationOptions =
@@ -333,7 +336,7 @@ class SN {
                 el: notificationEl,
                 abortController: new AbortController(),
             };
-            this.notifications[currentNotificationId] = notificationProps;
+            this.notifications.set(currentNotificationId, notificationProps);
 
             this.notifierEl.append(notificationEl);
             console.info(
@@ -347,7 +350,7 @@ class SN {
                         `SN show(): Animation of element of notification ${currentNotificationId} completed.`,
                     );
 
-                    this.notifications[currentNotificationId].state = NotificationState.SHOWN;
+                    notificationProps.state = NotificationState.SHOWN;
 
                     const notificationShownEvent = new CustomEvent("shown", {
                         detail: {
@@ -393,7 +396,7 @@ class SN {
                 throw new Error("'notificationId' must be a `number`.");
             }
 
-            const notificationProps = this.notifications[notificationId];
+            const notificationProps = this.notifications.get(notificationId);
 
             if (!notificationProps) {
                 console.warn(`Notification ${notificationId} doesn't exist.`);
@@ -416,7 +419,7 @@ class SN {
                 notificationProps.abortController.abort();
             }
 
-            this.notifications[notificationId].state = NotificationState.HIDE_BUSY;
+            notificationProps.state = NotificationState.HIDE_BUSY;
 
             notificationProps.el.classList.remove("simple-notification--animation-in");
             notificationProps.el.classList.add("simple-notification--animation-out");
@@ -433,7 +436,7 @@ class SN {
                         `SN hide(): Element of notification ${notificationId} removed from DOM.`,
                     );
 
-                    delete this.notifications[notificationId];
+                    this.notifications.delete(notificationId);
 
                     const notificationHiddenEvent = new CustomEvent("hidden", {
                         detail: { instanceId: this.instanceId, notificationId },
@@ -463,9 +466,14 @@ class SN {
     hideAll() {
         console.info("SN hideAll(): Running...");
 
-        const notificationIdsToHide = this.notificationIds.filter(
-            (id) => this.notifications[id].state !== NotificationState.HIDE_BUSY,
-        );
+        const notificationIdsToHide = [];
+
+        for (const [id, props] of this.notifications.entries()) {
+            if (props.state === NotificationState.HIDE_BUSY) continue;
+
+            notificationIdsToHide.push(id);
+        }
+
         console.info("SN hideAll() - notifications to hide:", notificationIdsToHide);
 
         if (notificationIdsToHide.length === 0) return;

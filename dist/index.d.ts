@@ -38,9 +38,7 @@ declare class SN {
     hideOlder: NotifierOptions["hideOlder"];
     dismissable: NotifierOptions["dismissable"];
     notifierEl: HTMLDivElement;
-    notifications: {
-        [id: string]: NotificationProps;
-    };
+    notifications: Map<number, NotificationProps>;
     currentNotificationId: number;
     queuedNotifications: NotificationOptions[];
     instanceId: number;
