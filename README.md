@@ -146,12 +146,14 @@ Show a notification.
 
 **All options listed in the 2 tables below can be provided in a `NotificationOptions` object as the `textOrOptions` parameter.**
 
-| Property                  | Type                                                               | Default     | Description                                                                                                                          |
-| :-------------------------| :----------------------------------------------------------------- | :---------- | :----------------------------------------------------------------------------------------------------------------------------------- |
-| `variant`                 | `"default"` \| `"success"` \| `"warning"` \| `"error"` \| `string` | `"default"` | Variant (colorway) of notification to render. If you set a custom variant you should define some styling for it (see [Sass](#sass)). |
-| **! REQUIRED !** - `text` | `string` \| `string[]`                                             | `undefined` | Text to render as notification content. Render multiple paragraphs by passing in an array.                                           |
-| `title`                   | `string`                                                           | `undefined` | Text to render as notification title.                                                                                                |
-| `titleLevel`              | `"h1"` \| `"h2"` \| `"h3"` \| `"h4"` \| `"h5"` \| `"h6"`           | `"h6"`      | `title` [heading level](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Heading_Elements).                                 |
+Either `text` or `title` must be defined.
+
+| Property     | Type                                                               | Default     | Description                                                                                                                          |
+| :----------- | :----------------------------------------------------------------- | :---------- | :----------------------------------------------------------------------------------------------------------------------------------- |
+| `variant`    | `"default"` \| `"success"` \| `"warning"` \| `"error"` \| `string` | `"default"` | Variant (colorway) of notification to render. If you set a custom variant you should define some styling for it (see [Sass](#sass)). |
+| `text`       | `string` \| `string[]`                                             | `undefined` | Text to render as notification content. Render multiple paragraphs by passing in an array.                                           |
+| `title`      | `string`                                                           | `undefined` | Text to render as notification title.                                                                                                |
+| `titleLevel` | `"h1"` \| `"h2"` \| `"h3"` \| `"h4"` \| `"h5"` \| `"h6"`           | `"h6"`      | `title` [heading level](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Heading_Elements).                                 |
 
 Options below can also be provided via [`NotifierOptions`](#javascript), but those will never take preference.
 

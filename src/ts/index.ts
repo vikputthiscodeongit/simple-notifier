@@ -22,7 +22,7 @@ interface NotifierOptions extends SharedOptions {
 
 interface NotificationContent {
     variant?: string;
-    text: string | string[];
+    text?: string | string[];
     title?: string;
     titleLevel?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
 }
@@ -32,7 +32,7 @@ interface NotificationOptions extends Partial<SharedOptions>, NotificationConten
 interface ProcessedNotificationOptions
     extends SharedOptions,
         Required<Omit<NotificationContent, "text" | "title">> {
-    text: string[];
+    text: string[] | null;
     title: string | null;
 }
 
@@ -130,12 +130,15 @@ class SN {
                 : undefined;
         const notificationText = notificationOptions
             ? notificationOptions.text
-            : (textOrOptions as string | string[]);
+            : (textOrOptions as string | string[] | undefined);
         const mergedOptions = {
             hideAfterTime: notificationOptions?.hideAfterTime ?? this.hideAfterTime,
             hideOlder: notificationOptions?.hideOlder ?? this.hideOlder,
             dismissable: notificationOptions?.dismissable ?? this.dismissable,
-            text: Array.isArray(notificationText) ? notificationText : [notificationText],
+            text:
+                typeof notificationText === "string"
+                    ? [notificationText]
+                    : notificationText || null,
             title: notificationOptions?.title || null,
             titleLevel: notificationOptions?.titleLevel ?? "h6",
             variant: notificationOptions?.variant ?? variant ?? "default",
@@ -165,11 +168,16 @@ class SN {
             contentEl.append(titleEl);
         }
 
-        options.text.forEach((line) => {
-            const textEl = createEl("p", { class: "simple-notification__text", textContent: line });
+        if (options.text) {
+            options.text.forEach((line) => {
+                const textEl = createEl("p", {
+                    class: "simple-notification__text",
+                    textContent: line,
+                });
 
-            contentEl.append(textEl);
-        });
+                contentEl.append(textEl);
+            });
+        }
 
         notificationEl.append(contentEl);
 
@@ -269,24 +277,26 @@ class SN {
     ) {
         console.info("SN show() - Running...");
 
-        const notificationText =
-            typeof textOrOptions === "string" || Array.isArray(textOrOptions)
-                ? textOrOptions
-                : textOrOptions.text;
-
         try {
-            if (typeof notificationText !== "string" && !Array.isArray(notificationText)) {
+            const userOptions = typeof textOrOptions === "object" && !Array.isArray(textOrOptions);
+
+            if (
+                textOrOptions === undefined ||
+                (userOptions &&
+                    textOrOptions.text === undefined &&
+                    textOrOptions.title === undefined)
+            ) {
                 throw new Error(
-                    "'textOrOptions' be a `String` or an `Array` of `Strings`, either passed in directly or via an `Object` as `text` value.",
+                    "`text` or `title` must be defined. `text` may be provided as `string` or `string[]` or via an `object` as `text` value.",
                 );
             }
+
             if (variant !== undefined && typeof variant !== "string") {
-                throw new Error("'variant' must be a `String`.");
+                throw new Error("'variant' must be a `string`.");
             }
 
             if (
-                (typeof textOrOptions === "object" &&
-                    !Array.isArray(textOrOptions) &&
+                (userOptions &&
                     textOrOptions.hideOlder &&
                     Object.keys(this.notifications).length > 0) ||
                 this.queuedNotifications.length > 0
@@ -380,7 +390,7 @@ class SN {
 
         try {
             if (typeof notificationId !== "number") {
-                throw new Error("'notificationId' must be a `Number`.");
+                throw new Error("'notificationId' must be a `number`.");
             }
 
             const notificationProps = this.notifications[notificationId];
