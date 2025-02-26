@@ -17,14 +17,14 @@ interface NotifierOptions extends SharedOptions {
 }
 interface NotificationContent {
     variant?: string;
-    text: string | string[];
+    text?: string | string[];
     title?: string;
     titleLevel?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
 }
 interface NotificationOptions extends Partial<SharedOptions>, NotificationContent {
 }
 interface ProcessedNotificationOptions extends SharedOptions, Required<Omit<NotificationContent, "text" | "title">> {
-    text: string[];
+    text: string[] | null;
     title: string | null;
 }
 interface NotificationProps extends ProcessedNotificationOptions {

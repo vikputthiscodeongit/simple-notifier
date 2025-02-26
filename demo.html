@@ -72,20 +72,24 @@
                         </div>
 
                         <div>
+                            <p><strong>Notification variants</strong></p>
+
                             <div>
-                                <button id="button-1-default">Default</button>
+                                <button id="button-instance-1-default">Default</button>
 
-                                <button id="button-1-error">Error</button>
+                                <button id="button-instance-1-error">Error</button>
 
-                                <button id="button-1-warning">Warning</button>
+                                <button id="button-instance-1-error-2">Error 2</button>
 
-                                <button id="button-1-success">Success</button>
+                                <button id="button-instance-1-warning">Warning</button>
+
+                                <button id="button-instance-1-success">Success</button>
                             </div>
 
                             <div>
-                                <button id="button-1-hide-all">Hide all</button>
+                                <button id="button-instance-1-hide-all">Hide all</button>
 
-                                <button id="button-1-hide-0">Hide notification 0</button>
+                                <button id="button-instance-1-hide-0">Hide notification 0</button>
                             </div>
                         </div>
                     </div>
@@ -116,18 +120,22 @@
                         </div>
 
                         <div>
+                            <p><strong>Notification variants</strong></p>
+
                             <div>
-                                <button id="button-2-default">Default</button>
+                                <button id="button-instance-2-default">Default</button>
 
-                                <button id="button-2-error">Error</button>
+                                <button id="button-instance-2-error">Error</button>
 
-                                <button id="button-2-warning">Warning</button>
+                                <button id="button-instance-2-error-2">Error 2</button>
 
-                                <button id="button-2-success">Success</button>
+                                <button id="button-instance-2-warning">Warning</button>
+
+                                <button id="button-instance-2-success">Success</button>
                             </div>
 
                             <div>
-                                <button id="button-2-hide-all">Hide all</button>
+                                <button id="button-instance-2-hide-all">Hide all</button>
                             </div>
                         </div>
                     </div>
@@ -146,13 +154,19 @@
                 dismissable: true,
             });
 
-            document.querySelector("#button-1-default").addEventListener("click", () => {
+            document.querySelector("#button-instance-1-default").addEventListener("click", () => {
                 instanceOne.show("This is a notification of instance 1.");
             });
-            document.querySelector("#button-1-error").addEventListener("click", () => {
+            document.querySelector("#button-instance-1-error").addEventListener("click", () => {
                 instanceOne.show("This notification is of the 'error' variant.", "error");
             });
-            document.querySelector("#button-1-warning").addEventListener("click", () => {
+            document.querySelector("#button-instance-1-error-2").addEventListener("click", () => {
+                instanceOne.show({
+                    title: "This is a notification only has a title and is of the 'error' variant.",
+                    variant: "error",
+                });
+            });
+            document.querySelector("#button-instance-1-warning").addEventListener("click", () => {
                 instanceOne.show({
                     title: "This is notification has a title",
                     text: "... and will be hidden in 5 seconds.",
@@ -160,7 +174,7 @@
                     hideAfterTime: 5000,
                 });
             });
-            document.querySelector("#button-1-success").addEventListener("click", () => {
+            document.querySelector("#button-instance-1-success").addEventListener("click", () => {
                 instanceOne.show({
                     title: "This notification is configured to hide all older notifications before it'll be shown",
                     text: [
@@ -172,10 +186,10 @@
                     hideOlder: true,
                 });
             });
-            document.querySelector("#button-1-hide-all").addEventListener("click", () => {
+            document.querySelector("#button-instance-1-hide-all").addEventListener("click", () => {
                 instanceOne.hideAll();
             });
-            document.querySelector("#button-1-hide-0").addEventListener("click", () => {
+            document.querySelector("#button-instance-1-hide-0").addEventListener("click", () => {
                 instanceOne.hide(0);
             });
 
@@ -186,13 +200,19 @@
                 classNames: ["extra-html-class", "another-extra-html-class"],
             });
 
-            document.querySelector("#button-2-default").addEventListener("click", () => {
+            document.querySelector("#button-instance-2-default").addEventListener("click", () => {
                 instanceTwo.show("This is a notification of the second instance.");
             });
-            document.querySelector("#button-2-error").addEventListener("click", () => {
+            document.querySelector("#button-instance-2-error").addEventListener("click", () => {
                 instanceTwo.show("This notification is of the 'error' variant.", "error");
             });
-            document.querySelector("#button-2-warning").addEventListener("click", () => {
+            document.querySelector("#button-instance-2-error-2").addEventListener("click", () => {
+                instanceTwo.show({
+                    title: "This is a notification only has a title and is of the 'error' variant.",
+                    variant: "error",
+                });
+            });
+            document.querySelector("#button-instance-2-warning").addEventListener("click", () => {
                 instanceTwo.show({
                     title: "This is notification has a title",
                     text: "... and unlike all others of this instance won't automatically be hidden.",
@@ -200,7 +220,7 @@
                     hideAfterTime: 0,
                 });
             });
-            document.querySelector("#button-2-success").addEventListener("click", () => {
+            document.querySelector("#button-instance-2-success").addEventListener("click", () => {
                 instanceTwo.show({
                     title: "This notification is configured to hide all older notifications before it'll be shown",
                     text: [
@@ -212,7 +232,7 @@
                     hideOlder: true,
                 });
             });
-            document.querySelector("#button-2-hide-all").addEventListener("click", () => {
+            document.querySelector("#button-instance-2-hide-all").addEventListener("click", () => {
                 instanceTwo.hideAll();
             });
 
