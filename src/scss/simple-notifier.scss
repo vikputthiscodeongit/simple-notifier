@@ -31,7 +31,6 @@
     margin: -0.75em 0;
     line-height: 1.25;
     font-size: settings.$font-size-base;
-    font-family: settings.$font-family;
     transform: translateX(-50%);
 
     @media (min-width: 48em) {
@@ -144,6 +143,7 @@
     &__text {
         margin-top: 0;
         font-size: 1em;
+        font-family: settings.$font-family;
 
         &:last-child {
             margin-bottom: 0;
