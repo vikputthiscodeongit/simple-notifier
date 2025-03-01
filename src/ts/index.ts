@@ -136,7 +136,7 @@ class SN {
             hideOlder: notificationOptions?.hideOlder ?? this.hideOlder,
             dismissable: notificationOptions?.dismissable ?? this.dismissable,
             text:
-                typeof notificationText === "string"
+                typeof notificationText === "string" && notificationText !== ""
                     ? [notificationText]
                     : notificationText || null,
             title: notificationOptions?.title || null,
