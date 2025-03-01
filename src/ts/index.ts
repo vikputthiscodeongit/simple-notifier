@@ -300,14 +300,12 @@ class SN {
                 throw new Error("'variant' must be a `string`.");
             }
 
-            if (
-                (userOptions && textOrOptions.hideOlder && this.notifications.size > 0) ||
-                this.queuedNotifications.length > 0
-            ) {
-                const notificationOptions =
-                    typeof textOrOptions === "string" || Array.isArray(textOrOptions)
-                        ? { variant, text: textOrOptions }
-                        : textOrOptions;
+            const hideOlder = (userOptions && textOrOptions.hideOlder) ?? this.hideOlder;
+
+            if ((hideOlder && this.notifications.size > 0) || this.queuedNotifications.length > 0) {
+                const notificationOptions = !userOptions
+                    ? { text: textOrOptions, variant, hideOlder }
+                    : textOrOptions;
                 this.queuedNotifications.push(notificationOptions);
                 console.info("SN show() - Notification added to queue:", notificationOptions);
 
