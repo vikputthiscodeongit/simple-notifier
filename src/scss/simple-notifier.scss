@@ -29,7 +29,6 @@
     left: 50%;
     z-index: settings.$z-index;
     margin: -0.75em 0;
-    line-height: 1.25;
     font-size: settings.$font-size-base;
     transform: translateX(-50%);
 
@@ -140,10 +139,16 @@
     }
 
     &__title,
-    &__text {
-        margin-top: 0;
+    &__text,
+    &__hide-button {
+        line-height: 1.25;
         font-size: 1em;
         font-family: settings.$font-family;
+    }
+
+    &__title,
+    &__text {
+        margin-top: 0;
 
         &:last-child {
             margin-bottom: 0;
@@ -165,7 +170,6 @@
         width: 1.25em;
         height: 1.25em;
         padding: 0;
-        font-size: settings.$font-size-base;
         background-color: transparent;
         border: none;
 
