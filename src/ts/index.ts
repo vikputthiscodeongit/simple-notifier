@@ -261,13 +261,15 @@ class SN {
                     textOrOptions.text === undefined &&
                     textOrOptions.title === undefined)
             ) {
-                throw new Error(
+                console.warn(
                     "`text` or `title` must be defined. `text` may be provided as `string` or `string[]` or via an `object` as `text` value.",
                 );
+                return;
             }
 
             if (variant !== undefined && typeof variant !== "string") {
-                throw new Error("'variant' must be a `string`.");
+                console.warn("`variant` must be a `string`.");
+                return;
             }
 
             const hideOlder = (userOptions && textOrOptions.hideOlder) ?? this.hideOlder;
@@ -380,7 +382,8 @@ class SN {
 
         try {
             if (typeof notificationId !== "number") {
-                throw new Error("'notificationId' must be a `number`.");
+                console.warn("`notificationId` must be a `number`.");
+                return;
             }
 
             const notificationProps = this.notifications.get(notificationId);
