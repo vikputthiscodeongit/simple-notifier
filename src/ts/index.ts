@@ -201,36 +201,6 @@ class SN {
         return notificationEl;
     }
 
-    async #scheduleHide(id: number) {
-        console.info(`SN #scheduleHide(): Running on notification ${id}...`);
-
-        try {
-            const notificationProps = this.notifications.get(id);
-
-            if (!notificationProps) {
-                console.warn(`Notification ${id} doesn't exist.`);
-                return;
-            }
-
-            notificationProps.state = NotificationState.WAITING_ON_HIDE;
-
-            console.info(
-                `SN #scheduleHide(): hide() will be called on notification ${id} in ${notificationProps.hideAfterTime} ms...`,
-            );
-            await wait(
-                notificationProps.hideAfterTime,
-                true,
-                notificationProps.abortController.signal,
-            );
-
-            this.hide(id);
-        } catch {
-            console.info(
-                `SN #scheduleHide(): Scheduled hide() call of notification ${id} aborted.`,
-            );
-        }
-    }
-
     #processQueuedNotifications() {
         console.info("SN #processQueuedNotifications(): Running...");
 
@@ -361,7 +331,26 @@ class SN {
                     console.info(`SN show(): Notification ${currentNotificationId} shown.`);
 
                     if (notificationOptions.hideAfterTime > 0) {
-                        const fn = async () => await this.#scheduleHide(currentNotificationId);
+                        const fn = async () => {
+                            try {
+                                notificationProps.state = NotificationState.WAITING_ON_HIDE;
+
+                                console.info(
+                                    `SN show(): hide() will be called on notification ${currentNotificationId} in ${notificationProps.hideAfterTime} ms...`,
+                                );
+                                await wait(
+                                    notificationProps.hideAfterTime,
+                                    true,
+                                    notificationProps.abortController.signal,
+                                );
+
+                                this.hide(currentNotificationId);
+                            } catch {
+                                console.info(
+                                    `SN show(): Scheduled hide() call of notification ${currentNotificationId} aborted.`,
+                                );
+                            }
+                        };
                         fn().catch((reason) => console.info(reason));
                     }
                 },
