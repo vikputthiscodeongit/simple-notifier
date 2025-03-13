@@ -35,7 +35,7 @@
     ".": {
       "module": "./dist/index.js",
       "types": "./dist/index.d.ts",
-      "style": "./dist/simple-notifier.css"
+      "style": "./dist/style.css"
     }
   },
   "type": "module",
@@ -62,8 +62,6 @@
     "postcss": "^8.5.3",
     "postcss-loader": "^8.1.1",
     "prettier": "^3.5.3",
-    "sass": "^1.85.1",
-    "sass-loader": "^16.0.5",
     "source-map-loader": "^5.0.0",
     "terser-webpack-plugin": "^5.3.14",
     "ts-loader": "^9.5.2",

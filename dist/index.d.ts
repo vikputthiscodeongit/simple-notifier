@@ -1,4 +1,4 @@
-import "../scss/simple-notifier.scss";
+import "./style.css";
 declare enum NotificationState {
     HIDE_BUSY = "HIDE_BUSY",
     SHOW_BUSY = "SHOW_BUSY",

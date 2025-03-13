@@ -12,25 +12,24 @@ const __dirname = path.dirname(__filename);
 
 const baseConfig = {
     context: path.resolve(__dirname),
-    entry: { main: "./src/ts/index.ts" },
+    entry: { main: "./src/index.ts" },
     output: { clean: true, filename: "./index.js", library: { type: "module" } },
     stats: { children: true },
     resolve: { extensions: [".ts", ".js"] },
     plugins: [
         new ESLintPlugin({ configType: "flat" }),
-        new MiniCssExtractPlugin({ filename: "./simple-notifier.css" }),
+        new MiniCssExtractPlugin({ filename: "./style.css" }),
     ],
     module: {
         rules: [
             { test: /\.js$/, enforce: "pre", use: ["source-map-loader"] },
             { test: /\.tsx?$/, use: "ts-loader", exclude: /node_modules/ },
             {
-                test: /\.(sa|sc|c)ss$/i,
+                test: /\.css$/,
                 use: [
                     { loader: MiniCssExtractPlugin.loader },
                     { loader: "css-loader" },
                     { loader: "postcss-loader" },
-                    { loader: "sass-loader" },
                 ],
             },
         ],

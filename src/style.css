@@ -1,0 +1,202 @@
+.simple-notifier {
+    --simple-notifier-z-index: 1090;
+    --simple-notifier-font-family:
+        system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans",
+        "Liberation Sans", Arial, sans-serif;
+    --simple-notifier-font-size: 1rem;
+    --simple-notifier-color-opacity: 0.9;
+    --simple-notifier-color-white: rgba(255, 255, 255, var(--simple-notifier-color-opacity));
+    --simple-notifier-color-black: rgba(0, 0, 0, var(--simple-notifier-color-opacity));
+    --simple-notifier-color-green: rgba(209, 231, 221, var(--simple-notifier-color-opacity));
+    --simple-notifier-color-yellow: rgba(255, 243, 205, var(--simple-notifier-color-opacity));
+    --simple-notifier-color-red: rgba(132, 32, 41, var(--simple-notifier-color-opacity));
+    --simple-notifier-animation-duration: 500ms;
+
+    box-sizing: border-box;
+    position: fixed;
+    top: 1.25em;
+    left: 50%;
+    z-index: var(--simple-notifier-z-index);
+    margin: -0.75em 0;
+    font-size: var(--simple-notifier-font-size);
+    transform: translateX(-50%);
+}
+
+.simple-notifier--position-y-bottom {
+    top: unset;
+    bottom: 1.25em;
+}
+
+.simple-notifier *,
+.simple-notifier *::before,
+.simple-notifier *::after {
+    box-sizing: border-box;
+}
+
+.simple-notification {
+    display: flex;
+    gap: 0.5em;
+    width: calc(100vw - 2em);
+    margin: 0.75em 0;
+    padding: 0.75em 1em;
+    color: var(--simple-notifier-color-black);
+    background-color: var(--simple-notifier-color-white);
+    border: solid 0.0625em var(--simple-notifier-color-white);
+    border-radius: 0.25em;
+    box-shadow: 0 0.125em 0.125em 0 rgba(0, 0, 0, 0.333333);
+    backdrop-filter: blur(0.25em);
+    animation-duration: var(--simple-notifier-animation-duration);
+}
+
+.simple-notification--success {
+    background-color: var(--simple-notifier-color-green);
+    border-color: var(--simple-notifier-color-green);
+}
+
+.simple-notification--warning {
+    background-color: var(--simple-notifier-color-yellow);
+    border-color: var(--simple-notifier-color-yellow);
+}
+
+.simple-notification--error {
+    color: var(--simple-notifier-color-white);
+    background-color: var(--simple-notifier-color-red);
+    border-color: var(--simple-notifier-color-red);
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fade-out {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+.simple-notification--animation-in {
+    animation-name: fade-in;
+}
+
+.simple-notification--animation-out {
+    animation-name: fade-out;
+}
+
+.simple-notification__part--main {
+    flex-grow: 1;
+    overflow-x: hidden;
+}
+
+.simple-notification__title,
+.simple-notification__text,
+.simple-notification__hide-button {
+    line-height: 1.25;
+    font-size: 1em;
+    font-family: var(--simple-notifier-font-family);
+}
+
+.simple-notification__title,
+.simple-notification__text {
+    margin-top: 0;
+}
+
+.simple-notification__title:last-child,
+.simple-notification__text:last-child {
+    margin-bottom: 0;
+}
+
+.simple-notification__title {
+    margin-bottom: 0.5em;
+}
+
+.simple-notification__text {
+    margin-bottom: 0.25em;
+    font-weight: 400;
+}
+
+.simple-notification__hide-button {
+    position: relative;
+    display: block;
+    width: 1.25em;
+    height: 1.25em;
+    padding: 0;
+    background-color: transparent;
+    border: none;
+}
+
+.simple-notification__hide-button:hover {
+    cursor: pointer;
+}
+
+.simple-notification__hide-button::before,
+.simple-notification__hide-button::after {
+    content: "";
+    position: relative;
+    display: block;
+    border-top: solid 0.125em var(--simple-notifier-color-black);
+    border-radius: 1em;
+}
+
+.simple-notification__hide-button::before {
+    top: 0.0625em;
+    transform: rotate(45deg);
+}
+
+.simple-notification__hide-button::after {
+    bottom: 0.0625em;
+    transform: rotate(-45deg);
+}
+
+.simple-notification--error .simple-notification__hide-button::before,
+.simple-notification--error .simple-notification__hide-button::after {
+    border-top-color: var(--simple-notifier-color-white);
+}
+
+/* 480 px */
+@media (min-width: 30em) {
+    .simple-notification {
+        /* 448 px */
+        width: 28em;
+    }
+}
+
+/* 768 px */
+@media (min-width: 48em) {
+    .simple-notifier {
+        top: 2em;
+    }
+
+    .simple-notifier--position-y-bottom {
+        bottom: 2em;
+    }
+
+    .simple-notifier--position-x-left,
+    .simple-notifier--position-x-right {
+        transform: unset;
+    }
+
+    .simple-notifier--position-x-left {
+        left: 2em;
+    }
+
+    .simple-notifier--position-x-right {
+        left: unset;
+        right: 2em;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .simple-notification {
+        animation-duration: 1ms;
+    }
+}
