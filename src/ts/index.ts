@@ -81,37 +81,31 @@ class SN {
     instanceId: number;
 
     constructor(options: Partial<NotifierOptions> = {}) {
-        try {
-            const mergedOptions = { ...DEFAULT_INSTANCE_OPTIONS, ...options };
+        const mergedOptions = { ...DEFAULT_INSTANCE_OPTIONS, ...options };
 
-            this.hideAfterTime = mergedOptions.hideAfterTime;
-            this.hideOlder = mergedOptions.hideOlder;
-            this.dismissable = mergedOptions.dismissable;
+        this.hideAfterTime = mergedOptions.hideAfterTime;
+        this.hideOlder = mergedOptions.hideOlder;
+        this.dismissable = mergedOptions.dismissable;
 
-            this.notifierEl = createEl("div", {
-                class: `simple-notifier simple-notifier--position-x-${mergedOptions.position[1]} simple-notifier--position-y-${mergedOptions.position[0]}`,
-                ariaLive: "assertive",
-            });
-            this.notifierEl.classList.add(...mergedOptions.classNames);
+        this.notifierEl = createEl("div", {
+            class: `simple-notifier simple-notifier--position-x-${mergedOptions.position[1]} simple-notifier--position-y-${mergedOptions.position[0]}`,
+            ariaLive: "assertive",
+        });
+        this.notifierEl.classList.add(...mergedOptions.classNames);
 
-            this.notifications = new Map<number, NotificationProps>();
-            this.currentNotificationId = 0;
-            this.queuedNotifications = [];
+        this.notifications = new Map<number, NotificationProps>();
+        this.currentNotificationId = 0;
+        this.queuedNotifications = [];
 
-            this.instanceId = makeInstanceId(100000, 1000000, SN.#instanceIds);
-            SN.#instanceIds.push(this.instanceId);
+        this.instanceId = makeInstanceId(100000, 1000000, SN.#instanceIds);
+        SN.#instanceIds.push(this.instanceId);
 
-            mergedOptions.parentEl.insertBefore(
-                this.notifierEl,
-                mergedOptions.parentEl.firstElementChild,
-            );
+        mergedOptions.parentEl.insertBefore(
+            this.notifierEl,
+            mergedOptions.parentEl.firstElementChild,
+        );
 
-            console.info(`SimpleNotifier instance ${this.instanceId} initiated.`);
-        } catch (error) {
-            throw error instanceof Error
-                ? error
-                : new Error("Unknown error during instance initialization!");
-        }
+        console.info(`SimpleNotifier instance ${this.instanceId} initiated.`);
     }
 
     static #instanceIds: number[] = [];
@@ -252,205 +246,188 @@ class SN {
     ) {
         console.info("SN show() - Running...");
 
-        try {
-            const userOptions = typeof textOrOptions === "object" && !Array.isArray(textOrOptions);
+        const userOptions = typeof textOrOptions === "object" && !Array.isArray(textOrOptions);
 
-            if (
-                textOrOptions === undefined ||
-                (userOptions &&
-                    textOrOptions.text === undefined &&
-                    textOrOptions.title === undefined)
-            ) {
-                console.warn(
-                    "`text` or `title` must be defined. `text` may be provided as `string` or `string[]` or via an `object` as `text` value.",
-                );
-                return;
-            }
-
-            if (variant !== undefined && typeof variant !== "string") {
-                console.warn("`variant` must be a `string`.");
-                return;
-            }
-
-            const hideOlder = (userOptions && textOrOptions.hideOlder) ?? this.hideOlder;
-
-            if ((hideOlder && this.notifications.size > 0) || this.queuedNotifications.length > 0) {
-                const notificationOptions = !userOptions
-                    ? { text: textOrOptions, variant, hideOlder }
-                    : textOrOptions;
-                this.queuedNotifications.push(notificationOptions);
-                console.info("SN show() - Notification added to queue:", notificationOptions);
-
-                this.hideAll();
-
-                this.notifierEl.addEventListener(
-                    "allhidden",
-                    () => this.#processQueuedNotifications(),
-                    { once: true },
-                );
-
-                return;
-            }
-
-            const currentNotificationId = this.currentNotificationId;
-            this.currentNotificationId++;
-
-            const notificationOptions = this.#getNotificationOptions(textOrOptions, variant);
-            const notificationEl = this.#makeNotificationEl(
-                currentNotificationId,
-                notificationOptions,
+        if (
+            textOrOptions === undefined ||
+            (userOptions && textOrOptions.text === undefined && textOrOptions.title === undefined)
+        ) {
+            console.warn(
+                "`text` or `title` must be defined. `text` may be provided as `string` or `string[]` or via an `object` as `text` value.",
             );
-            const notificationProps = {
-                ...notificationOptions,
-                state: NotificationState.SHOW_BUSY,
-                el: notificationEl,
-                abortController: new AbortController(),
-            };
-            this.notifications.set(currentNotificationId, notificationProps);
+            return;
+        }
 
-            this.notifierEl.append(notificationEl);
-            console.info(
-                `SN show(): Element of notification ${currentNotificationId} appended to DOM.`,
+        if (variant !== undefined && typeof variant !== "string") {
+            console.warn("`variant` must be a `string`.");
+            return;
+        }
+
+        const hideOlder = (userOptions && textOrOptions.hideOlder) ?? this.hideOlder;
+
+        if ((hideOlder && this.notifications.size > 0) || this.queuedNotifications.length > 0) {
+            const notificationOptions = !userOptions
+                ? { text: textOrOptions, variant, hideOlder }
+                : textOrOptions;
+            this.queuedNotifications.push(notificationOptions);
+            console.info("SN show() - Notification added to queue:", notificationOptions);
+
+            this.hideAll();
+
+            this.notifierEl.addEventListener(
+                "allhidden",
+                () => this.#processQueuedNotifications(),
+                { once: true },
             );
 
+            return;
+        }
+
+        const currentNotificationId = this.currentNotificationId;
+        this.currentNotificationId++;
+
+        const notificationOptions = this.#getNotificationOptions(textOrOptions, variant);
+        const notificationEl = this.#makeNotificationEl(currentNotificationId, notificationOptions);
+        const notificationProps = {
+            ...notificationOptions,
+            state: NotificationState.SHOW_BUSY,
+            el: notificationEl,
+            abortController: new AbortController(),
+        };
+        this.notifications.set(currentNotificationId, notificationProps);
+
+        this.notifierEl.append(notificationEl);
+        console.info(
+            `SN show(): Element of notification ${currentNotificationId} appended to DOM.`,
+        );
+
+        notificationEl.addEventListener(
+            "animationend",
+            () => {
+                console.debug(
+                    `SN show(): Animation of element of notification ${currentNotificationId} completed.`,
+                );
+
+                notificationProps.state = NotificationState.SHOWN;
+
+                const notificationShownEvent = new CustomEvent("shown", {
+                    detail: {
+                        instanceId: this.instanceId,
+                        notificationId: currentNotificationId,
+                    },
+                });
+                this.notifierEl.dispatchEvent(notificationShownEvent);
+
+                console.info(`SN show(): Notification ${currentNotificationId} shown.`);
+
+                if (notificationOptions.hideAfterTime > 0) {
+                    const fn = async () => {
+                        try {
+                            notificationProps.state = NotificationState.WAITING_ON_HIDE;
+
+                            console.info(
+                                `SN show(): hide() will be called on notification ${currentNotificationId} in ${notificationProps.hideAfterTime} ms...`,
+                            );
+                            await wait(
+                                notificationProps.hideAfterTime,
+                                true,
+                                notificationProps.abortController.signal,
+                            );
+
+                            this.hide(currentNotificationId);
+                        } catch {
+                            console.info(
+                                `SN show(): Scheduled hide() call of notification ${currentNotificationId} aborted.`,
+                            );
+                        }
+                    };
+                    fn().catch((reason) => console.info(reason));
+                }
+            },
+            { once: true, signal: notificationProps.abortController.signal },
+        );
+
+        if (process.env.NODE_ENV !== "production") {
             notificationEl.addEventListener(
-                "animationend",
+                "animationcancel",
                 () => {
                     console.debug(
-                        `SN show(): Animation of element of notification ${currentNotificationId} completed.`,
+                        `SN show(): Animation of element of notification ${currentNotificationId} cancled.`,
                     );
-
-                    notificationProps.state = NotificationState.SHOWN;
-
-                    const notificationShownEvent = new CustomEvent("shown", {
-                        detail: {
-                            instanceId: this.instanceId,
-                            notificationId: currentNotificationId,
-                        },
-                    });
-                    this.notifierEl.dispatchEvent(notificationShownEvent);
-
-                    console.info(`SN show(): Notification ${currentNotificationId} shown.`);
-
-                    if (notificationOptions.hideAfterTime > 0) {
-                        const fn = async () => {
-                            try {
-                                notificationProps.state = NotificationState.WAITING_ON_HIDE;
-
-                                console.info(
-                                    `SN show(): hide() will be called on notification ${currentNotificationId} in ${notificationProps.hideAfterTime} ms...`,
-                                );
-                                await wait(
-                                    notificationProps.hideAfterTime,
-                                    true,
-                                    notificationProps.abortController.signal,
-                                );
-
-                                this.hide(currentNotificationId);
-                            } catch {
-                                console.info(
-                                    `SN show(): Scheduled hide() call of notification ${currentNotificationId} aborted.`,
-                                );
-                            }
-                        };
-                        fn().catch((reason) => console.info(reason));
-                    }
                 },
-                { once: true, signal: notificationProps.abortController.signal },
+                { once: true },
             );
-
-            if (process.env.NODE_ENV !== "production") {
-                notificationEl.addEventListener(
-                    "animationcancel",
-                    () => {
-                        console.debug(
-                            `SN show(): Animation of element of notification ${currentNotificationId} cancled.`,
-                        );
-                    },
-                    { once: true },
-                );
-            }
-        } catch (error) {
-            throw error instanceof Error
-                ? error
-                : new Error("Unknown error during notification show!");
         }
     }
 
     hide(notificationId: number) {
         console.info(`SN hide(): Running on notification ${notificationId}...`);
 
-        try {
-            if (typeof notificationId !== "number") {
-                console.warn("`notificationId` must be a `number`.");
-                return;
-            }
+        if (typeof notificationId !== "number") {
+            console.warn("`notificationId` must be a `number`.");
+            return;
+        }
 
-            const notificationProps = this.notifications.get(notificationId);
+        const notificationProps = this.notifications.get(notificationId);
 
-            if (!notificationProps) {
-                console.warn(`Notification ${notificationId} doesn't exist.`);
-                return;
-            }
+        if (!notificationProps) {
+            console.warn(`Notification ${notificationId} doesn't exist.`);
+            return;
+        }
 
-            if (notificationProps.state === NotificationState.HIDE_BUSY) {
-                console.warn(`Already hiding notification ${notificationId}.`);
-                return;
-            }
+        if (notificationProps.state === NotificationState.HIDE_BUSY) {
+            console.warn(`Already hiding notification ${notificationId}.`);
+            return;
+        }
 
-            if (
-                notificationProps.state === NotificationState.SHOW_BUSY ||
-                notificationProps.state === NotificationState.WAITING_ON_HIDE
-            ) {
+        if (
+            notificationProps.state === NotificationState.SHOW_BUSY ||
+            notificationProps.state === NotificationState.WAITING_ON_HIDE
+        ) {
+            console.info(
+                `SN hide(): Notification ${notificationId} in show action or waiting on hide action. Aborting any scheduled function calls...`,
+            );
+
+            notificationProps.abortController.abort();
+        }
+
+        notificationProps.state = NotificationState.HIDE_BUSY;
+
+        notificationProps.el.classList.remove("simple-notification--animation-in");
+        notificationProps.el.classList.add("simple-notification--animation-out");
+
+        notificationProps.el.addEventListener(
+            "animationend",
+            () => {
                 console.info(
-                    `SN hide(): Notification ${notificationId} in show action or waiting on hide action. Aborting any scheduled function calls...`,
+                    `SN hide(): Animation of element of notification ${notificationId} completed.`,
                 );
 
-                notificationProps.abortController.abort();
-            }
+                notificationProps.el.remove();
+                console.info(
+                    `SN hide(): Element of notification ${notificationId} removed from DOM.`,
+                );
 
-            notificationProps.state = NotificationState.HIDE_BUSY;
+                this.notifications.delete(notificationId);
 
-            notificationProps.el.classList.remove("simple-notification--animation-in");
-            notificationProps.el.classList.add("simple-notification--animation-out");
+                const notificationHiddenEvent = new CustomEvent("hidden", {
+                    detail: { instanceId: this.instanceId, notificationId },
+                });
+                this.notifierEl.dispatchEvent(notificationHiddenEvent);
 
-            notificationProps.el.addEventListener(
-                "animationend",
-                () => {
-                    console.info(
-                        `SN hide(): Animation of element of notification ${notificationId} completed.`,
-                    );
+                console.info(`SN hide(): Notification ${notificationId} hidden.`);
 
-                    notificationProps.el.remove();
-                    console.info(
-                        `SN hide(): Element of notification ${notificationId} removed from DOM.`,
-                    );
+                if (this.notificationIds.length === 0) {
+                    console.info(`SN hide(): All notifications hidden.`);
 
-                    this.notifications.delete(notificationId);
-
-                    const notificationHiddenEvent = new CustomEvent("hidden", {
-                        detail: { instanceId: this.instanceId, notificationId },
+                    const allNotificationsHiddenEvent = new CustomEvent("allhidden", {
+                        detail: { instanceId: this.instanceId },
                     });
-                    this.notifierEl.dispatchEvent(notificationHiddenEvent);
-
-                    console.info(`SN hide(): Notification ${notificationId} hidden.`);
-
-                    if (this.notificationIds.length === 0) {
-                        console.info(`SN hide(): All notifications hidden.`);
-
-                        const allNotificationsHiddenEvent = new CustomEvent("allhidden", {
-                            detail: { instanceId: this.instanceId },
-                        });
-                        this.notifierEl.dispatchEvent(allNotificationsHiddenEvent);
-                    }
-                },
-                { once: true },
-            );
-        } catch (error) {
-            throw error instanceof Error
-                ? error
-                : new Error("Unknown error during notification hide!");
-        }
+                    this.notifierEl.dispatchEvent(allNotificationsHiddenEvent);
+                }
+            },
+            { once: true },
+        );
     }
 
     hideAll() {
