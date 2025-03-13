@@ -19,7 +19,7 @@ __[Demo page (interactive)](https://rawcdn.githack.com/vikputthiscodeongit/simpl
 3. [Browser support](#browser-support)
 5. [Instance options](#instance-options)
     * [JavaScript](#javascript)
-    * [Sass](#sass)
+    * [CSS](#css)
 6. [Methods](#methods)
     * [`.show()`](#showtextoroptions-variant)
     * [`.hide()`](#hidenotificationid-number)
@@ -44,22 +44,22 @@ Skip to [Instance options](#instance-options) to get a complete overview of all 
 
 ## Usage
 
-For this example I assume the main JavaScript file is processed by a module bundler and Sass is installed.
+For this example I assume the main JavaScript file is processed by a module bundler that can process CSS files.
 
 ``` shell
 # Install package from npm
 npm install @codebundlesbyvik/simple-notifier
 ```
 
-``` scss
-// style.scss
+``` css
+/* style.css */
 @import "@codebundlesbyvik/simple-notifier";
 ```
 
 ``` javascript
 // index.js
+import "./style.css";
 import SimpleNotifier from "@codebundlesbyvik/simple-notifier";
-import "./style.scss";
 
 const notifier = new SimpleNotifier();
 
@@ -75,7 +75,12 @@ notifier.show(text, variant);
 // Notification is shown for 4000 ms.
 ```
 
-If you're not using a module bundler then either [download the latest release from the GitHub releases page](https://github.com/vikputthiscodeongit/simple-notifier/releases/latest) or [load the JavaScript](https://cdn.jsdelivr.net/npm/@codebundlesbyvik/simple-notifier@2.0.0) [and the CSS](https://cdn.jsdelivr.net/npm/@codebundlesbyvik/simple-notifier@2.0.0/dist/simple-notifier.css) via the jsdelivr CDN. Then in your HTML link to the CSS stylesheet and import the JavaScript as a module.
+If you're not using a module bundler then either:
+
+* [Download the latest release from the GitHub releases page](https://github.com/vikputthiscodeongit/simple-notifier/releases/latest), or
+* [Load the JavaScript](https://cdn.jsdelivr.net/npm/@codebundlesbyvik/simple-notifier@2.0.0) [and the CSS](https://cdn.jsdelivr.net/npm/@codebundlesbyvik/simple-notifier@2.0.0/dist/simple-notifier.css) via the jsdelivr CDN
+
+In your HTML file, link to the CSS stylesheet and import the JavaScript as a module.
 
 <br>
 
@@ -113,19 +118,16 @@ Options below can also be provided via [NotificationOptions](#notificationoption
 | `hideOlder`     | `boolean` | `false` | Hide all previously shown (to be exact, triggered) notifications before showing the one most recently created.                                                                         |
 | `dismissable`   | `boolean` | `false` | Render a close button allowing for manual notification dismissal.                                                                                                                      |
 
-### Sass
+### CSS
 
-See `/src/scss/_variables.scss` if you want to inspect the default values.
-
-| Variable name     | Type                       | Description                                                           |
-| :---------------- | :------------------------  | :-------------------------------------------------------------------- |
-| `$variants`       | `Sass Map`                 | Notification variants.                                                |
-| `$z-index`        | `integer`                  | Z-index applied to the instance's HTML element                        |
-| `$colors`         | `Sass Map`                 | Available colors.                                                     |
-| `$text-colors`    | `Sass Map`                 | Text color to use with the defined notification variants.             |
-| `$bg-colors`      | `Sass Map`                 | Background color to use with the defined notification variants.       |
-| `$font-family`    | `string` \| `custom-ident` | `font-family` used for the notification's text content.               |
-| `$font-size-base` | `dimension`                | Base `font-size`. All internal sizing is done relative to this value. |
+| Variable name                          | Type                                                                                            | Default                                                                                  | Description                                                |
+| :------------------------------------- | :---------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------- |:---------------------------------------------------------- |
+| `--simple-notifier-z-index`            | `<integer>` \| `auto`                                                                           | `1090`                                                                                   | Z-index applied to the instance's HTML element             |
+| `--simple-notifier-font-family`        | [See `font-family` values](https://developer.mozilla.org/en-US/docs/Web/CSS/font-family#values) | [Native font stack](https://getbootstrap.com/docs/5.3/content/reboot/#native-font-stack) | Font family used for all notification content.             |
+| `--simple-notifier-font-size`          | [See `font-size` values](https://developer.mozilla.org/en-US/docs/Web/CSS/font-size#values)     | `1rem`                                                                                   | Base font size by which all internal sizes are calculated. |
+| `--simple-notifier-color-opacity`      | `<alpha-value>`                                                                                 | `0.9`                                                                                    | Opacity applied to all available colors                    |
+| `--simple-notifier-color-x`            | `<color>` \| `currentColor`                                                                     | White, black, green, yellow & red (see `/src/style.css` for exact values)                | Available colors.                                          |
+| `--simple-notifier-animation-duration` | `<time>` \| `auto`                                                                              | `500 ms`                                                                                 |Animation duration applied to all animations.               |
 
 <br>
 
@@ -148,12 +150,12 @@ Show a notification.
 
 Either `text` or `title` must be defined.
 
-| Property     | Type                                                               | Default     | Description                                                                                                                          |
-| :----------- | :----------------------------------------------------------------- | :---------- | :----------------------------------------------------------------------------------------------------------------------------------- |
-| `variant`    | `"default"` \| `"success"` \| `"warning"` \| `"error"` \| `string` | `"default"` | Variant (colorway) of notification to render. If you set a custom variant you should define some styling for it (see [Sass](#sass)). |
-| `text`       | `string` \| `string[]`                                             | `undefined` | Text to render as notification content. Render multiple paragraphs by passing in an array.                                           |
-| `title`      | `string`                                                           | `undefined` | Text to render as notification title.                                                                                                |
-| `titleLevel` | `"h1"` \| `"h2"` \| `"h3"` \| `"h4"` \| `"h5"` \| `"h6"`           | `"h6"`      | `title` [heading level](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Heading_Elements).                                 |
+| Property     | Type                                                               | Default     | Description                                                                                                                        |
+| :----------- | :----------------------------------------------------------------- | :---------- | :--------------------------------------------------------------------------------------------------------------------------------- |
+| `variant`    | `"default"` \| `"success"` \| `"warning"` \| `"error"` \| `string` | `"default"` | Variant (colorway) of notification to render. If you set a custom variant then you'll probably want to define some styling for it. |
+| `text`       | `string` \| `string[]`                                             | `undefined` | Text to render as notification content. Render multiple paragraphs by passing in an array.                                         |
+| `title`      | `string`                                                           | `undefined` | Text to render as notification title.                                                                                              |
+| `titleLevel` | `"h1"` \| `"h2"` \| `"h3"` \| `"h4"` \| `"h5"` \| `"h6"`           | `"h6"`      | `title` [heading level](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Heading_Elements).                               |
 
 Options below can also be provided via [`NotifierOptions`](#javascript), but those will never take preference.
 

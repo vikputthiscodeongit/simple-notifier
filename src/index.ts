@@ -1,5 +1,5 @@
 import { createEl, getPseudoRandomIntBetween, wait } from "@codebundlesbyvik/js-helpers";
-import "../scss/simple-notifier.scss";
+import "./style.css";
 
 enum NotificationState {
     HIDE_BUSY = "HIDE_BUSY",
