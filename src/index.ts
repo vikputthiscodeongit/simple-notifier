@@ -238,6 +238,8 @@ class SN {
         notificationsToShowReversed.reverse().forEach((notificationOptions) => {
             this.show(notificationOptions);
         });
+
+        return;
     }
 
     show(
@@ -329,6 +331,8 @@ class SN {
                         .then(() => this.hide(currentNotificationId))
                         .catch((abortReason) => console.info(abortReason));
                 }
+
+                return;
             },
             { once: true, signal: notificationProps.abortController.signal },
         );
@@ -340,10 +344,13 @@ class SN {
                     console.debug(
                         `SN show: Animation of element of notification ${currentNotificationId} cancled.`,
                     );
+                    return;
                 },
                 { once: true },
             );
         }
+
+        return;
     }
 
     hide(notificationId: number) {
@@ -413,9 +420,13 @@ class SN {
                     });
                     this.notifierEl.dispatchEvent(allNotificationsHiddenEvent);
                 }
+
+                return;
             },
             { once: true },
         );
+
+        return;
     }
 
     hideAll() {
@@ -434,6 +445,8 @@ class SN {
         if (notificationIdsToHide.length === 0) return;
 
         notificationIdsToHide.forEach((notificationId) => this.hide(notificationId));
+
+        return;
     }
 }
 
