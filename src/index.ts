@@ -321,27 +321,15 @@ class SN {
                 console.info(`SN show(): Notification ${currentNotificationId} shown.`);
 
                 if (notificationOptions.hideAfterTime > 0) {
-                    const fn = async () => {
-                        try {
-                            notificationProps.state = NotificationState.WAITING_ON_HIDE;
+                    notificationProps.state = NotificationState.WAITING_ON_HIDE;
 
-                            console.info(
-                                `SN show(): hide() will be called on notification ${currentNotificationId} in ${notificationProps.hideAfterTime} ms...`,
-                            );
-                            await wait(
-                                notificationProps.hideAfterTime,
-                                true,
-                                notificationProps.abortController.signal,
-                            );
-
-                            this.hide(currentNotificationId);
-                        } catch {
-                            console.info(
-                                `SN show(): Scheduled hide() call of notification ${currentNotificationId} aborted.`,
-                            );
-                        }
-                    };
-                    fn().catch((reason) => console.info(reason));
+                    wait(
+                        notificationProps.hideAfterTime,
+                        true,
+                        notificationProps.abortController.signal,
+                    )
+                        .then(() => this.hide(currentNotificationId))
+                        .catch((abortReason) => console.info(abortReason));
                 }
             },
             { once: true, signal: notificationProps.abortController.signal },
@@ -384,11 +372,13 @@ class SN {
             notificationProps.state === NotificationState.SHOW_BUSY ||
             notificationProps.state === NotificationState.WAITING_ON_HIDE
         ) {
-            console.info(
+            console.debug(
                 `SN hide(): Notification ${notificationId} in show action or waiting on hide action. Aborting any scheduled function calls...`,
             );
 
-            notificationProps.abortController.abort();
+            notificationProps.abortController.abort(
+                `Scheduled hide or active show action of notification ${notificationId} aborted.`,
+            );
         }
 
         notificationProps.state = NotificationState.HIDE_BUSY;
