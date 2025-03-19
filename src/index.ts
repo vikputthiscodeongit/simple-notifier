@@ -268,7 +268,7 @@ class SN {
         if ((hideOlder && this.notifications.size > 0) || this.queuedNotifications.length > 0) {
             const notificationOptions = !userOptions
                 ? { text: textOrOptions, variant, hideOlder }
-                : textOrOptions;
+                : { ...textOrOptions, hideOlder };
             this.queuedNotifications.push(notificationOptions);
             console.info("SN show() - Notification added to queue:", notificationOptions);
 
