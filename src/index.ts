@@ -137,7 +137,7 @@ class SN {
             titleLevel: notificationOptions?.titleLevel ?? "h6",
             variant: notificationOptions?.variant ?? variant ?? "default",
         };
-        console.debug("SN #getNotificationOptions() - mergedOptions:", mergedOptions);
+        console.debug("SN #getNotificationOptions - mergedOptions:", mergedOptions);
 
         return mergedOptions;
     }
@@ -190,16 +190,16 @@ class SN {
             notificationEl.append(sideContentEl);
         }
 
-        console.debug("SN #makeNotificationEl() - notificationEl:", notificationEl);
+        console.debug("SN #makeNotificationEl - notificationEl:", notificationEl);
 
         return notificationEl;
     }
 
     #processQueuedNotifications() {
-        console.info("SN #processQueuedNotifications(): Running...");
+        console.debug("SN #processQueuedNotifications: Running...");
 
         if (this.queuedNotifications.length === 0) {
-            console.info("SN #processQueuedNotifications() - No notifications in queue.");
+            console.debug("SN #processQueuedNotifications - No notifications in queue.");
             return;
         }
 
@@ -210,7 +210,7 @@ class SN {
         // oldest one that has `hideOlder` set should be ignored.
         const queueCopyReversed = [...this.queuedNotifications].reverse();
         console.debug(
-            "SN #processQueuedNotifications() - Queued notifications (newest first):",
+            "SN #processQueuedNotifications - Queued notifications (newest first):",
             queueCopyReversed,
         );
         this.queuedNotifications = [];
@@ -229,7 +229,7 @@ class SN {
         }
 
         console.debug(
-            "SN #processQueuedNotifications() - Queued notifications to show (newest first):",
+            "SN #processQueuedNotifications - Queued notifications to show (newest first):",
             notificationsToShowReversed,
         );
 
@@ -244,7 +244,7 @@ class SN {
         textOrOptions: NotificationOptions["text"] | NotificationOptions,
         variant?: NotificationOptions["variant"],
     ) {
-        console.info("SN show() - Running...");
+        console.debug("SN show - Running...");
 
         const userOptions = typeof textOrOptions === "object" && !Array.isArray(textOrOptions);
 
@@ -270,7 +270,7 @@ class SN {
                 ? { text: textOrOptions, variant, hideOlder }
                 : { ...textOrOptions, hideOlder };
             this.queuedNotifications.push(notificationOptions);
-            console.info("SN show() - Notification added to queue:", notificationOptions);
+            console.debug("SN show - Notification added to queue:", notificationOptions);
 
             this.hideAll();
 
@@ -297,15 +297,13 @@ class SN {
         this.notifications.set(currentNotificationId, notificationProps);
 
         this.notifierEl.append(notificationEl);
-        console.info(
-            `SN show(): Element of notification ${currentNotificationId} appended to DOM.`,
-        );
+        console.debug(`SN show: Element of notification ${currentNotificationId} appended to DOM.`);
 
         notificationEl.addEventListener(
             "animationend",
             () => {
                 console.debug(
-                    `SN show(): Animation of element of notification ${currentNotificationId} completed.`,
+                    `SN show: Animation of element of notification ${currentNotificationId} completed.`,
                 );
 
                 notificationProps.state = NotificationState.SHOWN;
@@ -318,7 +316,7 @@ class SN {
                 });
                 this.notifierEl.dispatchEvent(notificationShownEvent);
 
-                console.info(`SN show(): Notification ${currentNotificationId} shown.`);
+                console.debug(`SN show: Notification ${currentNotificationId} shown.`);
 
                 if (notificationOptions.hideAfterTime > 0) {
                     notificationProps.state = NotificationState.WAITING_ON_HIDE;
@@ -340,7 +338,7 @@ class SN {
                 "animationcancel",
                 () => {
                     console.debug(
-                        `SN show(): Animation of element of notification ${currentNotificationId} cancled.`,
+                        `SN show: Animation of element of notification ${currentNotificationId} cancled.`,
                     );
                 },
                 { once: true },
@@ -349,7 +347,7 @@ class SN {
     }
 
     hide(notificationId: number) {
-        console.info(`SN hide(): Running on notification ${notificationId}...`);
+        console.debug(`SN hide: Running on notification ${notificationId}...`);
 
         if (typeof notificationId !== "number") {
             console.warn("`notificationId` must be a `number`.");
@@ -373,7 +371,7 @@ class SN {
             notificationProps.state === NotificationState.WAITING_ON_HIDE
         ) {
             console.debug(
-                `SN hide(): Notification ${notificationId} in show action or waiting on hide action. Aborting any scheduled function calls...`,
+                `SN hide: Notification ${notificationId} in show action or waiting on hide action. Aborting any scheduled function calls...`,
             );
 
             notificationProps.abortController.abort(
@@ -389,13 +387,13 @@ class SN {
         notificationProps.el.addEventListener(
             "animationend",
             () => {
-                console.info(
-                    `SN hide(): Animation of element of notification ${notificationId} completed.`,
+                console.debug(
+                    `SN hide: Animation of element of notification ${notificationId} completed.`,
                 );
 
                 notificationProps.el.remove();
-                console.info(
-                    `SN hide(): Element of notification ${notificationId} removed from DOM.`,
+                console.debug(
+                    `SN hide: Element of notification ${notificationId} removed from DOM.`,
                 );
 
                 this.notifications.delete(notificationId);
@@ -405,10 +403,10 @@ class SN {
                 });
                 this.notifierEl.dispatchEvent(notificationHiddenEvent);
 
-                console.info(`SN hide(): Notification ${notificationId} hidden.`);
+                console.debug(`SN hide: Notification ${notificationId} hidden.`);
 
                 if (this.notifications.size === 0) {
-                    console.debug(`SN hide(): All notifications hidden.`);
+                    console.debug(`SN hide: All notifications hidden.`);
 
                     const allNotificationsHiddenEvent = new CustomEvent("allhidden", {
                         detail: { instanceId: this.instanceId },
@@ -421,7 +419,7 @@ class SN {
     }
 
     hideAll() {
-        console.info("SN hideAll(): Running...");
+        console.debug("SN hideAll: Running...");
 
         const notificationIdsToHide = [];
 
@@ -431,7 +429,7 @@ class SN {
             notificationIdsToHide.push(id);
         }
 
-        console.info("SN hideAll() - notifications to hide:", notificationIdsToHide);
+        console.debug("SN hideAll - notifications to hide:", notificationIdsToHide);
 
         if (notificationIdsToHide.length === 0) return;
 
