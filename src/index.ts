@@ -407,8 +407,8 @@ class SN {
 
                 console.info(`SN hide(): Notification ${notificationId} hidden.`);
 
-                if (this.notificationIds.length === 0) {
-                    console.info(`SN hide(): All notifications hidden.`);
+                if (this.notifications.size === 0) {
+                    console.debug(`SN hide(): All notifications hidden.`);
 
                     const allNotificationsHiddenEvent = new CustomEvent("allhidden", {
                         detail: { instanceId: this.instanceId },
