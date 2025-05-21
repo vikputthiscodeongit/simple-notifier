@@ -78,7 +78,7 @@ notifier.show(text, variant);
 If you're not using a module bundler then either:
 
 * [Download the latest release from the GitHub releases page](https://github.com/vikputthiscodeongit/simple-notifier/releases/latest), or
-* [Load the JavaScript](https://cdn.jsdelivr.net/npm/@codebundlesbyvik/simple-notifier@2.2.1) [and the CSS](https://cdn.jsdelivr.net/npm/@codebundlesbyvik/simple-notifier@2.2.1/dist/simple-notifier.css) via the jsdelivr CDN.
+* [Load the JavaScript](https://cdn.jsdelivr.net/npm/@codebundlesbyvik/simple-notifier@2.2.2) [and the CSS](https://cdn.jsdelivr.net/npm/@codebundlesbyvik/simple-notifier@2.2.2/dist/simple-notifier.css) via the jsdelivr CDN.
 
 In your HTML file, link to the CSS stylesheet and import the JavaScript as a module.
 
