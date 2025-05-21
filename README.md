@@ -78,7 +78,7 @@ notifier.show(text, variant);
 If you're not using a module bundler then either:
 
 * [Download the latest release from the GitHub releases page](https://github.com/vikputthiscodeongit/simple-notifier/releases/latest), or
-* [Load the JavaScript](https://cdn.jsdelivr.net/npm/@codebundlesbyvik/simple-notifier@2.0.0) [and the CSS](https://cdn.jsdelivr.net/npm/@codebundlesbyvik/simple-notifier@2.0.0/dist/simple-notifier.css) via the jsdelivr CDN
+* [Load the JavaScript](https://cdn.jsdelivr.net/npm/@codebundlesbyvik/simple-notifier@2.2.1) [and the CSS](https://cdn.jsdelivr.net/npm/@codebundlesbyvik/simple-notifier@2.2.1/dist/simple-notifier.css) via the jsdelivr CDN.
 
 In your HTML file, link to the CSS stylesheet and import the JavaScript as a module.
 
@@ -86,16 +86,9 @@ In your HTML file, link to the CSS stylesheet and import the JavaScript as a mod
 
 ## Browser support
 
+Requires an ECMAScript 2022 (ES13) compatible browser as the latest JavaScript feature used is [static fields](https://caniuse.com/mdn-javascript_classes_static_class_fields).
+
 Practically speaking, all browsers released in 2021 and onwards are fully supported.
-
-The newest JavaScript feature used is [static fields](https://caniuse.com/mdn-javascript_classes_static_class_fields).
-
-The CSS distributables are prefixed with the following [`browserslist`](https://github.com/browserslist/browserslist):
-```
-"> 0.2%",
-"last 3 versions and not dead",
-"Firefox ESR"
-```
 
 <br>
 
@@ -194,8 +187,6 @@ Events are fired on the instance element `.simple-notifier`. The `Event` object 
 | `shown`     | The process of showing a notification has completed. |
 | `hidden`    | The process of hiding a notification has completed.  |
 | `allhidden` | The last shown notification has been hidden.         |
-
-<br>
 
 <br>
 
