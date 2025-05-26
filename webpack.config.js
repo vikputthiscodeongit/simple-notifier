@@ -12,29 +12,50 @@ const __dirname = path.dirname(__filename);
 
 const baseConfig = {
     context: path.resolve(__dirname),
-    entry: { main: "./src/index.ts" },
-    output: { clean: true, filename: "./index.js", library: { type: "module" } },
-    stats: { children: true },
-    resolve: { extensions: [".ts", ".js"] },
+    entry: {
+        main: "./src/index.ts",
+    },
+    output: {
+        clean: true,
+        filename: "./index.js",
+        library: {
+            type: "module",
+        },
+    },
+    stats: {
+        children: true,
+    },
+    resolve: {
+        extensions: [".ts", ".js"],
+    },
     plugins: [
         new ESLintPlugin({ configType: "flat" }),
         new MiniCssExtractPlugin({ filename: "./style.css" }),
     ],
     module: {
         rules: [
-            { test: /\.js$/, enforce: "pre", use: ["source-map-loader"] },
-            { test: /\.tsx?$/, use: "ts-loader", exclude: /node_modules/ },
+            {
+                test: /\.js$/,
+                enforce: "pre",
+                use: "source-map-loader",
+                resolve: {
+                    fullySpecified: false,
+                },
+            },
+            {
+                test: /\.tsx?$/,
+                use: "ts-loader",
+                exclude: /node_modules/,
+            },
             {
                 test: /\.css$/,
-                use: [
-                    { loader: MiniCssExtractPlugin.loader },
-                    { loader: "css-loader" },
-                    { loader: "postcss-loader" },
-                ],
+                use: [MiniCssExtractPlugin.loader, "css-loader", "postcss-loader"],
             },
         ],
     },
-    experiments: { outputModule: true },
+    experiments: {
+        outputModule: true,
+    },
 };
 
 const devConfig = {
@@ -50,9 +71,12 @@ const prodConfig = {
         minimizer: [
             new TerserPlugin({
                 terserOptions: {
-                    ecma: "ES2020",
-                    module: true,
-                    compress: { drop_console: ["log", "info", "debug"], passes: 2 },
+                    compress: {
+                        drop_console: ["debug", "log", "info"],
+                        ecma: "ES2022",
+                        module: true,
+                        passes: 2,
+                    },
                     mangle: false,
                 },
             }),
