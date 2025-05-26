@@ -78,7 +78,7 @@ notifier.show(text, variant);
 If you're not using a module bundler then either:
 
 * [Download the latest release from the GitHub releases page](https://github.com/vikputthiscodeongit/simple-notifier/releases/latest), or
-* [Load the JavaScript](https://cdn.jsdelivr.net/npm/@codebundlesbyvik/simple-notifier@2.2.2) [and the CSS](https://cdn.jsdelivr.net/npm/@codebundlesbyvik/simple-notifier@2.2.2/dist/simple-notifier.css) via the jsdelivr CDN.
+* [Load the JavaScript](https://cdn.jsdelivr.net/npm/@codebundlesbyvik/simple-notifier@2.2.3/dist/index.js) [and the CSS](https://cdn.jsdelivr.net/npm/@codebundlesbyvik/simple-notifier@2.2.3/dist/style.css) via the jsdelivr CDN.
 
 In your HTML file, link to the CSS stylesheet and import the JavaScript as a module.
 
@@ -86,9 +86,7 @@ In your HTML file, link to the CSS stylesheet and import the JavaScript as a mod
 
 ## Browser support
 
-Requires an ECMAScript 2022 (ES13) compatible browser as the latest JavaScript feature used is [static fields](https://caniuse.com/mdn-javascript_classes_static_class_fields).
-
-Practically speaking, all browsers released in 2021 and onwards are fully supported.
+Requires an ECMAScript 2022 (ES13) compatible browser. Practically speaking, all browsers released in 2021 and onwards are fully supported.
 
 <br>
 
