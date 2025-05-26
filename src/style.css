@@ -14,7 +14,7 @@
 
     box-sizing: border-box;
     position: fixed;
-    top: 1.25em;
+    top: 1em;
     left: 50%;
     z-index: var(--simple-notifier-z-index);
     margin: -0.75em 0;
@@ -24,7 +24,7 @@
 
 .simple-notifier--position-y-bottom {
     top: unset;
-    bottom: 1.25em;
+    bottom: 1em;
 }
 
 .simple-notifier *,
@@ -174,11 +174,11 @@
 /* 768 px */
 @media (min-width: 48em) {
     .simple-notifier {
-        top: 2em;
+        top: 1.5em;
     }
 
     .simple-notifier--position-y-bottom {
-        bottom: 2em;
+        bottom: 1.5em;
     }
 
     .simple-notifier--position-x-left,
@@ -187,12 +187,12 @@
     }
 
     .simple-notifier--position-x-left {
-        left: 2em;
+        left: 1.5em;
     }
 
     .simple-notifier--position-x-right {
         left: unset;
-        right: 2em;
+        right: 1.5em;
     }
 }
 
