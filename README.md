@@ -8,7 +8,7 @@
 
 A fully featured yet easy to use & lightweight notification library.
 
-__[Demo page (interactive)](https://rawcdn.githack.com/vikputthiscodeongit/simple-notifier/ebf06ef82a2e12d3b1cb7799c87106a0d9644242/demo.html)__
+__[Demo page (interactive)](https://rawcdn.githack.com/vikputthiscodeongit/simple-notifier/3f37f99eb940c04da75dd21dd8cbf97e859225ba/demo.html)__
 
 <br>
 
