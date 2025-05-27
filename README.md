@@ -51,6 +51,13 @@ For this example I assume the main JavaScript file is processed by a module bund
 npm install @codebundlesbyvik/simple-notifier
 ```
 
+If you're not using a module bundler then either:
+
+* [Download the latest release from the GitHub releases page](https://github.com/vikputthiscodeongit/simple-notifier/releases/latest), or
+* [Load the JavaScript](https://cdn.jsdelivr.net/npm/@codebundlesbyvik/simple-notifier@2.2.3/dist/index.js) [and the CSS](https://cdn.jsdelivr.net/npm/@codebundlesbyvik/simple-notifier@2.2.3/dist/style.css) via the jsdelivr CDN.
+
+For the example below I assume the main JavaScript file is processed by a module bundler.
+
 ``` css
 /* style.css */
 @import "@codebundlesbyvik/simple-notifier";
@@ -74,13 +81,6 @@ notifier.show(text, variant);
 
 // Notification is shown for 4000 ms.
 ```
-
-If you're not using a module bundler then either:
-
-* [Download the latest release from the GitHub releases page](https://github.com/vikputthiscodeongit/simple-notifier/releases/latest), or
-* [Load the JavaScript](https://cdn.jsdelivr.net/npm/@codebundlesbyvik/simple-notifier@2.2.3/dist/index.js) [and the CSS](https://cdn.jsdelivr.net/npm/@codebundlesbyvik/simple-notifier@2.2.3/dist/style.css) via the jsdelivr CDN.
-
-In your HTML file, link to the CSS stylesheet and import the JavaScript as a module.
 
 <br>
 
