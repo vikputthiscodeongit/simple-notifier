@@ -27,10 +27,15 @@ interface ProcessedNotificationOptions extends SharedOptions, Required<Omit<Noti
     text: string[] | null;
     title: string | null;
 }
-interface NotificationProps extends ProcessedNotificationOptions {
-    abortController: AbortController;
-    el: HTMLDivElement;
+interface NotificationInternal {
+    abortControllers: {
+        hideButtonElEvent: AbortController;
+        waitForHide: AbortController;
+    };
     state: NotificationState;
+}
+interface Notification extends ProcessedNotificationOptions, NotificationInternal {
+    el: HTMLDivElement;
 }
 declare class SN {
     #private;
@@ -38,7 +43,7 @@ declare class SN {
     hideOlder: NotifierOptions["hideOlder"];
     dismissable: NotifierOptions["dismissable"];
     notifierEl: HTMLDivElement;
-    notifications: Map<number, NotificationProps>;
+    notifications: Map<number, Notification>;
     currentNotificationId: number;
     queuedNotifications: NotificationOptions[];
     instanceId: number;
