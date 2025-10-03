@@ -112,6 +112,8 @@ class SN {
         );
 
         console.info(`SimpleNotifier instance ${this.instanceId} initiated.`);
+
+        return;
     }
 
     static #instanceIds: number[] = [];
