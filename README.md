@@ -8,7 +8,7 @@
 
 A fully featured yet easy to use & lightweight notification library.
 
-__[Demo page (interactive)](https://rawcdn.githack.com/vikputthiscodeongit/simple-notifier/3f37f99eb940c04da75dd21dd8cbf97e859225ba/demo.html)__
+__[Demo page (interactive)](https://rawcdn.githack.com/vikputthiscodeongit/simple-notifier/204de93b29d497c6280e2ea0d2e85d8726d72bf2/demo.html)__
 
 <br>
 
@@ -54,7 +54,7 @@ npm install @codebundlesbyvik/simple-notifier
 If you're not using a module bundler then either:
 
 * [Download the latest release from the GitHub releases page](https://github.com/vikputthiscodeongit/simple-notifier/releases/latest), or
-* [Load the JavaScript](https://cdn.jsdelivr.net/npm/@codebundlesbyvik/simple-notifier@2.2.3/dist/index.js) [and the CSS](https://cdn.jsdelivr.net/npm/@codebundlesbyvik/simple-notifier@2.2.3/dist/style.css) via the jsdelivr CDN.
+* [Load the JavaScript](https://cdn.jsdelivr.net/npm/@codebundlesbyvik/simple-notifier@2.2.4/dist/index.js) [and the CSS](https://cdn.jsdelivr.net/npm/@codebundlesbyvik/simple-notifier@2.2.4/dist/style.css) via the jsdelivr CDN.
 
 For the example below I assume the main JavaScript file is processed by a module bundler.
 
