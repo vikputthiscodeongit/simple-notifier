@@ -179,7 +179,7 @@ Get the IDs of all currently shown notifications.
 
 ## Events
 
-Events are fired on the instance element `.simple-notifier`. The `Event` object contains the `notificationId` of the notification it was fired for and the `instanceId` it belongs to.
+Events are fired on the instance element `.simple-notifier`. The `details` property of the `Event` object contains the `notificationId` of the notification it was fired for.
 
 | Event       | Fired when...                                        |
 | :---------- | :--------------------------------------------------- |

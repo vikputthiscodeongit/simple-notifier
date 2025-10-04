@@ -240,17 +240,13 @@
             const instanceEls = document.querySelectorAll(".simple-notifier");
             instanceEls.forEach((el) => {
                 el.addEventListener("shown", (e) =>
-                    console.log(
-                        `Notification ${e.detail.notificationId} of instance ${e.detail.instanceId} shown.`,
-                    ),
+                    console.log(`Notification ${e.detail.notificationId} shown.`),
                 );
                 el.addEventListener("hidden", (e) =>
-                    console.log(
-                        `Notification ${e.detail.notificationId} of instance ${e.detail.instanceId} hidden.`,
-                    ),
+                    console.log(`Notification ${e.detail.notificationId} hidden.`),
                 );
                 el.addEventListener("allhidden", (e) =>
-                    console.log(`All notifications of instance ${e.detail.instanceId} hidden.`),
+                    console.log(`All notifications of instance hidden.`),
                 );
             });
         </script>
