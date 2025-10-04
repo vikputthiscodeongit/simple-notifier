@@ -16,7 +16,7 @@ interface SharedOptions {
 
 interface NotifierOptions extends SharedOptions {
     parentEl: HTMLElement;
-    position: ["top" | "bottom", "left" | "center" | "right"];
+    position: ["start" | "end", "start" | "center" | "end"];
     classNames: string[];
     hideButtonElAriaLabelText?: string;
 }
@@ -51,7 +51,7 @@ interface Notification extends ProcessedNotificationOptions, NotificationInterna
 
 const DEFAULT_INSTANCE_OPTIONS: NotifierOptions = {
     parentEl: document.body,
-    position: ["top", "center"],
+    position: ["start", "center"],
     hideAfterTime: 4000,
     hideOlder: false,
     dismissable: false,

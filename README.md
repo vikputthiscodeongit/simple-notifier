@@ -71,7 +71,7 @@ import SimpleNotifier from "@codebundlesbyvik/simple-notifier";
 const notifier = new SimpleNotifier();
 
 // The following element is inserted as the first child of <body>:
-// <div class="simple-notifier simple-notifier--position-y-top simple-notifier--position-x-center">
+// <div class="simple-notifier simple-notifier--position-y-start simple-notifier--position-x-center">
 // </div>
 
 const text = "This is an example notification.";
