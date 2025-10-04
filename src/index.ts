@@ -1,4 +1,4 @@
-import { createEl, getPseudoRandomIntBetween, wait } from "@codebundlesbyvik/js-helpers";
+import { createEl, wait } from "@codebundlesbyvik/js-helpers";
 import "./style.css";
 
 enum NotificationState {
@@ -49,23 +49,6 @@ interface Notification extends ProcessedNotificationOptions, NotificationInterna
     el: HTMLDivElement;
 }
 
-const makeInstanceId = (min: number, max: number, excludeIds: number[], tryCount?: number) => {
-    const MAX_TRY_COUNT = 3;
-
-    tryCount = tryCount || 1;
-    const id = getPseudoRandomIntBetween(min, max);
-
-    if (excludeIds.includes(id)) {
-        if (tryCount > MAX_TRY_COUNT) {
-            throw new Error(`Failed to generate a unique instanceId ${MAX_TRY_COUNT} times!`);
-        }
-
-        makeInstanceId(min, max, excludeIds, ++tryCount);
-    }
-
-    return id;
-};
-
 const DEFAULT_INSTANCE_OPTIONS: NotifierOptions = {
     parentEl: document.body,
     position: ["top", "center"],
@@ -86,8 +69,6 @@ class SN {
     queuedNotifications: NotificationOptions[];
     #hideButtonElAriaLabelText: string;
 
-    instanceId: number;
-
     constructor(options: Partial<NotifierOptions> = {}) {
         const mergedOptions = { ...DEFAULT_INSTANCE_OPTIONS, ...options };
 
@@ -107,20 +88,13 @@ class SN {
         this.#hideButtonElAriaLabelText =
             mergedOptions.hideButtonElAriaLabelText ?? "Dismiss notification";
 
-        this.instanceId = makeInstanceId(100000, 1000000, SN.#instanceIds);
-        SN.#instanceIds.push(this.instanceId);
-
         mergedOptions.parentEl.insertBefore(
             this.notifierEl,
             mergedOptions.parentEl.firstElementChild,
         );
 
-        console.info(`SimpleNotifier instance ${this.instanceId} initiated.`);
-
         return;
     }
-
-    static #instanceIds: number[] = [];
 
     get notificationIds() {
         return [...this.notifications.keys()];
@@ -336,7 +310,6 @@ class SN {
 
                 const notificationShownEvent = new CustomEvent("shown", {
                     detail: {
-                        instanceId: this.instanceId,
                         notificationId: currentNotificationId,
                     },
                 });
@@ -421,7 +394,7 @@ class SN {
                 this.notifications.delete(notificationId);
 
                 const notificationHiddenEvent = new CustomEvent("hidden", {
-                    detail: { instanceId: this.instanceId, notificationId },
+                    detail: { notificationId },
                 });
                 this.notifierEl.dispatchEvent(notificationHiddenEvent);
 
@@ -430,9 +403,7 @@ class SN {
                 if (this.notifications.size === 0) {
                     console.debug(`SN hide: All notifications hidden.`);
 
-                    const allNotificationsHiddenEvent = new CustomEvent("allhidden", {
-                        detail: { instanceId: this.instanceId },
-                    });
+                    const allNotificationsHiddenEvent = new CustomEvent("allhidden");
                     this.notifierEl.dispatchEvent(allNotificationsHiddenEvent);
                 }
 
