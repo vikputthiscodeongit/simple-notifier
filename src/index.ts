@@ -18,6 +18,7 @@ interface NotifierOptions extends SharedOptions {
     parentEl: HTMLElement;
     position: ["top" | "bottom", "left" | "center" | "right"];
     classNames: string[];
+    hideButtonElAriaLabelText?: string;
 }
 
 interface NotificationContent {
@@ -83,6 +84,7 @@ class SN {
     notifications: Map<number, Notification>;
     currentNotificationId: number;
     queuedNotifications: NotificationOptions[];
+    #hideButtonElAriaLabelText: string;
 
     instanceId: number;
 
@@ -102,6 +104,8 @@ class SN {
         this.notifications = new Map<number, Notification>();
         this.currentNotificationId = 0;
         this.queuedNotifications = [];
+        this.#hideButtonElAriaLabelText =
+            mergedOptions.hideButtonElAriaLabelText ?? "Dismiss notification";
 
         this.instanceId = makeInstanceId(100000, 1000000, SN.#instanceIds);
         SN.#instanceIds.push(this.instanceId);
@@ -190,7 +194,7 @@ class SN {
             const hideButtonEl = createEl("button", {
                 type: "button",
                 class: "simple-notification__hide-button",
-                ariaLabel: "Dismiss notification",
+                ariaLabel: this.#hideButtonElAriaLabelText,
             });
             hideButtonEl.addEventListener("click", () => this.hide(id), {
                 once: true,

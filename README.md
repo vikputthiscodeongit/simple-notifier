@@ -95,11 +95,12 @@ Requires an ECMAScript 2022 (ES13) compatible browser. Practically speaking, all
 
 **All options listed in the 2 tables below can be provided in a `NotifierOptions` object as parameter on instance creation.**
 
-| Property     | Type                                                 | Default             | Description                                                                   |
-| :----------- | :--------------------------------------------------- | :------------------ | :---------------------------------------------------------------------------- |
-| `parentEl`   | `HTMLElement`                                        | `document.body`     | HTML element in which the instance's element will be inserted as first child. |
-| `position`   | `["top" \| "bottom", "left" \| "center" \| "right"]` | `["top", "center"]` | Position in the HTML document to render the instance's HTML element.          |
-| `classNames` | `string[]`                                           | `[]`                | Extra classes to add to the instance's HTML element.                          |
+| Property                    | Type                                               | Default                  | Description                                                                   |
+| :-------------------------- | :------------------------------------------------- | :----------------------- | :---------------------------------------------------------------------------- |
+| `parentEl`                  | `HTMLElement`                                      | `document.body`          | HTML element in which the instance's element will be inserted as first child. |
+| `position`                  | `["start" \| "end", "start" \| "center" \| "end"]` | `["start", "center"]`    | Logical position in the HTML document to render the instance's HTML element.  |
+| `classNames`                | `string[]`                                         | `[]`                     | Extra classes to add to the instance's HTML element.                          |
+| `hideButtonElAriaLabelText` | `string`                                           | `"Dismiss notification"` | Text used as `aria-label` for the notification hide button.                   |
 
 Options below can also be provided via [NotificationOptions](#notificationoptions) and if done so will take preference.
 
