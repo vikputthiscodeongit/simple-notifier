@@ -260,11 +260,6 @@ class SN {
             return;
         }
 
-        if (variant !== undefined && typeof variant !== "string") {
-            console.warn("`variant` must be a `string`.");
-            return;
-        }
-
         const hideOlder = (userOptions && textOrOptions.hideOlder) ?? this.hideOlder;
 
         if ((hideOlder && this.notifications.size > 0) || this.queuedNotifications.length > 0) {
@@ -344,11 +339,6 @@ class SN {
 
     hide(notificationId: number) {
         console.debug(`SN hide: Running on notification ${notificationId}...`);
-
-        if (typeof notificationId !== "number") {
-            console.warn("`notificationId` must be a `number`.");
-            return;
-        }
 
         const notification = this.notifications.get(notificationId);
 
