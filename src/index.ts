@@ -209,10 +209,6 @@ class SN {
         // Process the queue in reverse because all notifications older than the
         // oldest one that has `hideOlder` set should be ignored.
         const queueCopyReversed = [...this.queuedNotifications].reverse();
-        console.debug(
-            "SN #processQueuedNotifications - Queued notifications (newest first):",
-            queueCopyReversed,
-        );
         this.queuedNotifications.length = 0;
 
         let notificationsToShowReversed: NotificationOptions[] = [];
@@ -228,11 +224,6 @@ class SN {
             }
         }
 
-        console.debug(
-            "SN #processQueuedNotifications - Queued notifications to show (newest first):",
-            notificationsToShowReversed,
-        );
-
         // Reverse the queue again so that the oldest notification is the one
         // shown first.
         notificationsToShowReversed
@@ -246,7 +237,7 @@ class SN {
         textOrOptions: NotificationOptions["text"] | NotificationOptions,
         variant?: NotificationOptions["variant"],
     ) {
-        console.debug("SN show - Running...");
+        console.info("SN show: Running...");
 
         const userOptions = typeof textOrOptions === "object" && !Array.isArray(textOrOptions);
 
@@ -254,9 +245,7 @@ class SN {
             textOrOptions === undefined ||
             (userOptions && textOrOptions.text === undefined && textOrOptions.title === undefined)
         ) {
-            console.warn(
-                "`text` or `title` must be defined. `text` may be provided as `string` or `string[]` or via an `object` as `text` value.",
-            );
+            console.info("Nothing to show as neither `text` nor `title` is defined.");
             return;
         }
 
@@ -338,17 +327,17 @@ class SN {
     }
 
     hide(notificationId: number) {
-        console.debug(`SN hide: Running on notification ${notificationId}...`);
+        console.info(`SN hide: Running on notification ${notificationId}...`);
 
         const notification = this.notifications.get(notificationId);
 
         if (!notification) {
-            console.warn(`Notification ${notificationId} doesn't exist.`);
+            console.info(`Notification ${notificationId} doesn't exist.`);
             return;
         }
 
         if (notification.state === NotificationState.HIDE_BUSY) {
-            console.warn(`Already hiding notification ${notificationId}.`);
+            console.info(`Already hiding notification ${notificationId}.`);
             return;
         }
 
@@ -382,9 +371,6 @@ class SN {
 
                 notification.el.innerHTML = "";
                 notification.el.remove();
-                console.debug(
-                    `SN hide: Element of notification ${notificationId} removed from DOM.`,
-                );
 
                 this.notifications.delete(notificationId);
 
@@ -396,10 +382,9 @@ class SN {
                 console.debug(`SN hide: Notification ${notificationId} hidden.`);
 
                 if (this.notifications.size === 0) {
-                    console.debug(`SN hide: All notifications hidden.`);
-
                     const allNotificationsHiddenEvent = new CustomEvent("allhidden");
                     this.notifierEl.dispatchEvent(allNotificationsHiddenEvent);
+                    console.debug(`SN hide: All notifications hidden.`);
                 }
 
                 return;
@@ -411,7 +396,7 @@ class SN {
     }
 
     hideAll() {
-        console.debug("SN hideAll: Running...");
+        console.info("SN hideAll: Running...");
 
         const notificationIdsToHide = [];
 
