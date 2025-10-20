@@ -23,9 +23,8 @@ interface NotifierOptions extends SharedOptions {
 
 interface NotificationContent {
     variant?: string;
-    text?: string | string[];
-    title?: string;
-    titleLevel?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+    text?: string | [string, string] | [string, string][];
+    title?: string | [string, string];
 }
 
 interface NotificationOptions extends Partial<SharedOptions>, NotificationContent {}
@@ -33,19 +32,16 @@ interface NotificationOptions extends Partial<SharedOptions>, NotificationConten
 interface ProcessedNotificationOptions
     extends SharedOptions,
         Required<Omit<NotificationContent, "text" | "title">> {
-    text: string[] | null;
-    title: string | null;
+    text: [string, string][] | null;
+    title: [string, string] | null;
 }
 
-interface NotificationInternal {
+interface Notification extends ProcessedNotificationOptions {
     abortControllers: {
         hideButtonElEvent: AbortController;
         waitForHide: AbortController;
     };
     state: NotificationState;
-}
-
-interface Notification extends ProcessedNotificationOptions, NotificationInternal {
     el: HTMLDivElement;
 }
 
@@ -65,9 +61,9 @@ class SN {
 
     notifierEl: HTMLDivElement;
     notifications: Map<number, Notification>;
-    currentNotificationId: number;
     queuedNotifications: NotificationOptions[];
     #hideButtonElAriaLabelText: string;
+    #currentNotificationId: number;
 
     constructor(options: Partial<NotifierOptions> = {}) {
         const mergedOptions = { ...DEFAULT_INSTANCE_OPTIONS, ...options };
@@ -83,7 +79,7 @@ class SN {
         this.notifierEl.classList.add(...mergedOptions.classNames);
 
         this.notifications = new Map<number, Notification>();
-        this.currentNotificationId = 0;
+        this.#currentNotificationId = 0;
         this.queuedNotifications = [];
         this.#hideButtonElAriaLabelText =
             mergedOptions.hideButtonElAriaLabelText ?? "Dismiss notification";
@@ -94,6 +90,10 @@ class SN {
         );
 
         return;
+    }
+
+    get currentNotificationId() {
+        return this.#currentNotificationId;
     }
 
     get notificationIds() {
@@ -110,17 +110,28 @@ class SN {
                 : undefined;
         const notificationText = notificationOptions
             ? notificationOptions.text
-            : (textOrOptions as string | string[] | undefined);
+            : (textOrOptions as NotificationOptions["text"]);
+        const text =
+            typeof notificationText === "string"
+                ? [[notificationText, "p"]]
+                : Array.isArray(notificationText) && typeof notificationText[0] === "string"
+                  ? [notificationText]
+                  : notificationText || null;
+        const title =
+            notificationOptions && typeof notificationOptions.title === "string"
+                ? [notificationOptions.title, "h6"]
+                : notificationOptions &&
+                    Array.isArray(notificationOptions.title) &&
+                    notificationOptions.title.length === 2
+                  ? notificationOptions.title
+                  : null;
         const mergedOptions = {
             hideAfterTime: notificationOptions?.hideAfterTime ?? this.hideAfterTime,
             hideOlder: notificationOptions?.hideOlder ?? this.hideOlder,
             dismissable: notificationOptions?.dismissable ?? this.dismissable,
-            text:
-                typeof notificationText === "string" && notificationText !== ""
-                    ? [notificationText]
-                    : notificationText || null,
-            title: notificationOptions?.title || null,
-            titleLevel: notificationOptions?.titleLevel ?? "h6",
+            // TODO 20251004: Remove type assertions
+            text: text as [string, string][] | null,
+            title: title as [string, string] | null,
             variant: notificationOptions?.variant ?? variant ?? "default",
         };
         console.debug("SN #getNotificationOptions - mergedOptions:", mergedOptions);
@@ -140,19 +151,19 @@ class SN {
         });
 
         if (notificationWithoutEl.title) {
-            const titleEl = createEl(notificationWithoutEl.titleLevel, {
+            const titleEl = createEl(notificationWithoutEl.title[1], {
                 class: "simple-notification__title",
-                textContent: notificationWithoutEl.title,
+                textContent: notificationWithoutEl.title[0],
             });
 
             contentEl.append(titleEl);
         }
 
         if (notificationWithoutEl.text) {
-            notificationWithoutEl.text.forEach((line) => {
-                const textEl = createEl("p", {
+            notificationWithoutEl.text.forEach((block) => {
+                const textEl = createEl(block[1], {
                     class: "simple-notification__text",
-                    textContent: line,
+                    textContent: block[0],
                 });
 
                 contentEl.append(textEl);
@@ -274,32 +285,26 @@ class SN {
             return;
         }
 
-        const currentNotificationId = this.currentNotificationId;
-        this.currentNotificationId++;
+        const currentNotificationId = this.#currentNotificationId;
+        this.#currentNotificationId++;
 
-        const notificationOptions = this.#getNotificationOptions(textOrOptions, variant);
         const notificationWithoutEl = {
-            ...notificationOptions,
+            ...this.#getNotificationOptions(textOrOptions, variant),
             state: NotificationState.SHOW_BUSY,
             abortControllers: {
                 hideButtonElEvent: new AbortController(),
                 waitForHide: new AbortController(),
             },
         };
-        const notificationEl = this.#makeNotificationEl(
-            currentNotificationId,
-            notificationWithoutEl,
-        );
         const notification = {
             ...notificationWithoutEl,
-            el: notificationEl,
+            el: this.#makeNotificationEl(currentNotificationId, notificationWithoutEl),
         };
         this.notifications.set(currentNotificationId, notification);
 
-        this.notifierEl.append(notificationEl);
-        console.debug(`SN show: Element of notification ${currentNotificationId} appended to DOM.`);
+        this.notifierEl.append(notification.el);
 
-        notificationEl.addEventListener(
+        notification.el.addEventListener(
             "animationend",
             () => {
                 console.debug(
@@ -317,7 +322,7 @@ class SN {
 
                 console.debug(`SN show: Notification ${currentNotificationId} shown.`);
 
-                if (notificationOptions.hideAfterTime > 0) {
+                if (notification.hideAfterTime > 0) {
                     notification.state = NotificationState.WAITING_ON_HIDE;
 
                     wait(
