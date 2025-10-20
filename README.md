@@ -140,7 +140,7 @@ Show a notification.
 
 **All options listed in the 2 tables below can be provided in a `NotificationOptions` object as the `textOrOptions` parameter.**
 
-Either `text` or `title` must be defined.
+Notifications are only shown if either `text` or `title` is defined.
 
 | Property     | Type                                                               | Default     | Description                                                                                                                                                            |
 | :----------- | :----------------------------------------------------------------- | :---------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -160,7 +160,7 @@ Options below can also be provided via [`NotifierOptions`](#javascript), but tho
 
 ### `.hide(notificationId: number)`
 
-Hide a currently shown notification by its ID. A `notificationId` can be retrieved via an [`Event` object](#events) of the instance element `.simple-notifier` or the `data-notification-id` attribute on the notification element `.simple-notification`.
+Hide a currently shown notification by its ID. A `notificationId` can be retrieved via the [`event`](#events) fired on the instance element on notification show or the `data-notification-id` attribute on the notification element.
 
 <br>
 
@@ -190,10 +190,10 @@ Events are fired on the instance element `.simple-notifier`. The `details` prope
 
 ## Quick migration from version 1
 
-If you were using the previous version as a JavaScript module and want to perform a quick update keeping everything as is, all you need to do is:
+If you want to perform a quick update from version 1 keeping everything as is, all you need to do is:
 
 1. Change `new SimpleNotifier()` to `new SimpleNotifier({ hideAfterTime: 3500, hideOlder: true })`.
-2. Remove call to `.init()` since instance initialization is now done when constructing the class.
+2. Remove call to `.init()` as the instance is now fully initialized in the class constructor.
 
 <br>
 

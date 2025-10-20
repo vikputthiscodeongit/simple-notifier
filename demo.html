@@ -201,7 +201,9 @@
             });
 
             document.querySelector("#button-instance-2-default").addEventListener("click", () => {
-                instanceTwo.show("This is a notification of the second instance.");
+                instanceTwo.show(
+                    "Notifications of this second instance will be hidden after 6 seconds.",
+                );
             });
             document.querySelector("#button-instance-2-error").addEventListener("click", () => {
                 instanceTwo.show("This notification is of the 'error' variant.", "error");
