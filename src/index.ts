@@ -59,11 +59,11 @@ class SN {
     hideOlder: NotifierOptions["hideOlder"];
     dismissable: NotifierOptions["dismissable"];
 
-    notifierEl: HTMLDivElement;
-    notifications: Map<number, Notification>;
-    queuedNotifications: NotificationOptions[];
-    #hideButtonElAriaLabelText: string;
+    readonly notifierEl: HTMLDivElement;
+    readonly notifications: Map<number, Notification>;
     #currentNotificationId: number;
+    readonly queuedNotifications: NotificationOptions[];
+    hideButtonElAriaLabelText: string;
 
     constructor(options: Partial<NotifierOptions> = {}) {
         const mergedOptions = { ...DEFAULT_INSTANCE_OPTIONS, ...options };
@@ -81,7 +81,7 @@ class SN {
         this.notifications = new Map<number, Notification>();
         this.#currentNotificationId = 0;
         this.queuedNotifications = [];
-        this.#hideButtonElAriaLabelText =
+        this.hideButtonElAriaLabelText =
             mergedOptions.hideButtonElAriaLabelText ?? "Dismiss notification";
 
         mergedOptions.parentEl.insertBefore(
@@ -179,7 +179,7 @@ class SN {
             const hideButtonEl = createEl("button", {
                 type: "button",
                 class: "simple-notification__hide-button",
-                ariaLabel: this.#hideButtonElAriaLabelText,
+                ariaLabel: this.hideButtonElAriaLabelText,
             });
             hideButtonEl.addEventListener("click", () => this.hide(id), {
                 once: true,
@@ -213,7 +213,7 @@ class SN {
             "SN #processQueuedNotifications - Queued notifications (newest first):",
             queueCopyReversed,
         );
-        this.queuedNotifications = [];
+        this.queuedNotifications.length = 0;
 
         let notificationsToShowReversed: NotificationOptions[] = [];
         let count = 0;
