@@ -142,12 +142,11 @@ Show a notification.
 
 Either `text` or `title` must be defined.
 
-| Property     | Type                                                               | Default     | Description                                                                                                                        |
-| :----------- | :----------------------------------------------------------------- | :---------- | :--------------------------------------------------------------------------------------------------------------------------------- |
-| `variant`    | `"default"` \| `"success"` \| `"warning"` \| `"error"` \| `string` | `"default"` | Variant (colorway) of notification to render. If you set a custom variant then you'll probably want to define some styling for it. |
-| `text`       | `string` \| `string[]`                                             | `undefined` | Text to render as notification content. Render multiple paragraphs by passing in an array.                                         |
-| `title`      | `string`                                                           | `undefined` | Text to render as notification title.                                                                                              |
-| `titleLevel` | `"h1"` \| `"h2"` \| `"h3"` \| `"h4"` \| `"h5"` \| `"h6"`           | `"h6"`      | `title` [heading level](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Heading_Elements).                               |
+| Property     | Type                                                               | Default     | Description                                                                                                                                                            |
+| :----------- | :----------------------------------------------------------------- | :---------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `variant`    | `"default"` \| `"success"` \| `"warning"` \| `"error"` \| `string` | `"default"` | Variant (colorway) of notification to render. If you set a custom variant then you'll probably want to define some styling for it.                                     |
+| `text`       | `string` \| `[string, string]` \| `[string, string][]`             | `undefined` | Text to render as notification content. Accepts text as string, an array with text and the HTML element tag to render the text in or an array of either of the former. |
+| `title`      | `string`                                                           | `undefined` | Text to render as notification title. Accepts text as string or an array with text and the HTML element tag to render the text in.                                     |
 
 Options below can also be provided via [`NotifierOptions`](#javascript), but those will never take preference.
 

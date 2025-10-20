@@ -222,11 +222,14 @@
             });
             document.querySelector("#button-instance-2-success").addEventListener("click", () => {
                 instanceTwo.show({
-                    title: "This notification is configured to hide all older notifications before it'll be shown",
+                    title: [
+                        "This notification is configured to hide all older notifications before it'll be shown",
+                        "h5",
+                    ],
                     text: [
-                        "The text content spans multiple paragraphs.",
-                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam aliquet vel ligula a porttitor.",
-                        "Nulla tincidunt massa urna, a fringilla est tristique sed. Phasellus at convallis sem.",
+                        ["Its title is one size larger than default.", "p"],
+                        ["This is line is rendered in italics...", "em"],
+                        ["...and this line is bold.", "strong"],
                     ],
                     variant: "success",
                     hideOlder: true,
