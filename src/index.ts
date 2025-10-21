@@ -21,17 +21,14 @@ interface NotifierOptions extends SharedOptions {
     hideButtonElAriaLabelText?: string;
 }
 
-interface NotificationContent {
+interface NotificationOptions extends Partial<SharedOptions> {
+    text?: string | { content: string; el: string } | (string | { content: string; el: string })[];
+    title?: string | { content: string; el: string };
     variant?: string;
-    text?: string | [string, string] | [string, string][];
-    title?: string | [string, string];
 }
 
-interface NotificationOptions extends Partial<SharedOptions>, NotificationContent {}
-
 interface ProcessedNotificationOptions
-    extends SharedOptions,
-        Required<Omit<NotificationContent, "text" | "title">> {
+    extends Required<Omit<NotificationOptions, "text" | "title">> {
     text: [string, string][] | null;
     title: [string, string] | null;
 }
@@ -100,41 +97,31 @@ class SN {
         return [...this.notifications.keys()];
     }
 
-    #getNotificationOptions(
-        textOrOptions: NotificationOptions["text"] | NotificationOptions,
-        variant?: NotificationOptions["variant"],
-    ): ProcessedNotificationOptions {
-        const notificationOptions =
-            typeof textOrOptions === "object" && !Array.isArray(textOrOptions)
-                ? textOrOptions
-                : undefined;
-        const notificationText = notificationOptions
-            ? notificationOptions.text
-            : (textOrOptions as NotificationOptions["text"]);
-        const text =
-            typeof notificationText === "string"
-                ? [[notificationText, "p"]]
-                : Array.isArray(notificationText) && typeof notificationText[0] === "string"
-                  ? [notificationText]
-                  : notificationText || null;
-        const title =
-            notificationOptions && typeof notificationOptions.title === "string"
-                ? [notificationOptions.title, "h6"]
-                : notificationOptions &&
-                    Array.isArray(notificationOptions.title) &&
-                    notificationOptions.title.length === 2
-                  ? notificationOptions.title
-                  : null;
+    #getMergedOptions(options: NotificationOptions): ProcessedNotificationOptions {
+        const text = !options?.text
+            ? null
+            : Array.isArray(options.text)
+              ? options.text.map((line) =>
+                    typeof line !== "string" ? [line.content, line.el] : [line, "p"],
+                )
+              : typeof options.text !== "string"
+                ? [[options.text.content, options.text.el]]
+                : [[options.text, "p"]];
+        const title = !options?.title
+            ? null
+            : typeof options.title !== "string"
+              ? [options.title.content, options.title.el]
+              : [options.title, "h6"];
         const mergedOptions = {
-            hideAfterTime: notificationOptions?.hideAfterTime ?? this.hideAfterTime,
-            hideOlder: notificationOptions?.hideOlder ?? this.hideOlder,
-            dismissable: notificationOptions?.dismissable ?? this.dismissable,
+            hideAfterTime: options?.hideAfterTime ?? this.hideAfterTime,
+            hideOlder: options?.hideOlder ?? this.hideOlder,
+            dismissable: options?.dismissable ?? this.dismissable,
             // TODO 20251004: Remove type assertions
             text: text as [string, string][] | null,
             title: title as [string, string] | null,
-            variant: notificationOptions?.variant ?? variant ?? "default",
+            variant: options?.variant ?? "default",
         };
-        console.debug("SN #getNotificationOptions - mergedOptions:", mergedOptions);
+        console.debug("SN #getMergedOptions - mergedOptions:", mergedOptions);
 
         return mergedOptions;
     }
@@ -160,10 +147,10 @@ class SN {
         }
 
         if (notificationWithoutEl.text) {
-            notificationWithoutEl.text.forEach((block) => {
-                const textEl = createEl(block[1], {
+            notificationWithoutEl.text.forEach((line) => {
+                const textEl = createEl(line[1], {
                     class: "simple-notification__text",
-                    textContent: block[0],
+                    textContent: line[0],
                 });
 
                 contentEl.append(textEl);
@@ -239,32 +226,31 @@ class SN {
     ) {
         console.info("SN show: Running...");
 
-        const userOptions = typeof textOrOptions === "object" && !Array.isArray(textOrOptions);
+        const textOrOptionsAsOptions =
+            typeof textOrOptions === "string" ||
+            (typeof textOrOptions === "object" && "el" in textOrOptions) ||
+            Array.isArray(textOrOptions)
+                ? { text: textOrOptions, variant }
+                : { ...textOrOptions, variant: variant ?? textOrOptions?.variant };
 
-        if (
-            textOrOptions === undefined ||
-            (userOptions && textOrOptions.text === undefined && textOrOptions.title === undefined)
-        ) {
-            console.info("Nothing to show as neither `text` nor `title` is defined.");
+        if (!textOrOptionsAsOptions) {
+            console.warn("Nothing to show as no parameters were provided.");
             return;
         }
 
-        const hideOlder = (userOptions && textOrOptions.hideOlder) ?? this.hideOlder;
+        const options = this.#getMergedOptions(textOrOptionsAsOptions);
 
-        if ((hideOlder && this.notifications.size > 0) || this.queuedNotifications.length > 0) {
-            const notificationOptions = !userOptions
-                ? { text: textOrOptions, variant, hideOlder }
-                : { ...textOrOptions, hideOlder };
-            this.queuedNotifications.push(notificationOptions);
-            console.debug("SN show - Notification added to queue:", notificationOptions);
+        if (!options.text && !options.title) {
+            console.warn("Nothing to show as neither text nor title is provided.");
+            return;
+        }
 
+        if ((options.hideOlder && this.notifications.size > 0) || this.queue.length > 0) {
+            this.queue.push(textOrOptionsAsOptions);
+            this.el.addEventListener("allhidden", () => this.#processQueuedNotifications(), {
+                once: true,
+            });
             this.hideAll();
-
-            this.notifierEl.addEventListener(
-                "allhidden",
-                () => this.#processQueuedNotifications(),
-                { once: true },
-            );
 
             return;
         }
@@ -273,7 +259,7 @@ class SN {
         this.#currentNotificationId++;
 
         const notificationWithoutEl = {
-            ...this.#getNotificationOptions(textOrOptions, variant),
+            ...options,
             state: NotificationState.SHOW_BUSY,
             abortControllers: {
                 hideButtonElEvent: new AbortController(),
