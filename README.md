@@ -131,10 +131,10 @@ Show a notification.
 
 #### Parameters
 
-| Parameter                        | Type                                                                    | Description                                                                              |
-| :------------------------------- | :---------------------------------------------------------------------- | :--------------------------------------------------------------------------------------- |
-| **! REQUIRED !** `textOrOptions` | `string` \| `string[]` \| [`NotificationOptions`](#notificationoptions) | Text to render as notification content or [`NotificationOptions`](#notificationoptions). |
-| `variant`                        | See [`NotificationOptions`](#notificationoptions) below.                |
+| Parameter                         | Type                                                                                                                                              | Description                                                                                                                                                                      |
+| :-------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `textOrOptions` <br> **Required** | `string` \| `{ content: string; el: string }` \| `(string \| { content: string; el: string })[]` \| [`NotificationOptions`](#notificationoptions) | Text to render as notification content or [`NotificationOptions`](#notificationoptions).                                                                                         |
+| `variant`                         | See [`NotificationOptions`](#notificationoptions) below.                                                                                          | Colorway of notification to render. Appended as BEM modifier to notification class list. Takes preference over `variant` provided in `NotificationOptions` if both are provided. |
 
 ##### `NotificationOptions`
 
@@ -142,19 +142,14 @@ Show a notification.
 
 Notifications are only shown if either `text` or `title` is defined.
 
-| Property     | Type                                                               | Default     | Description                                                                                                                                                            |
-| :----------- | :----------------------------------------------------------------- | :---------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `variant`    | `"default"` \| `"success"` \| `"warning"` \| `"error"` \| `string` | `"default"` | Variant (colorway) of notification to render. If you set a custom variant then you'll probably want to define some styling for it.                                     |
-| `text`       | `string` \| `[string, string]` \| `[string, string][]`             | `undefined` | Text to render as notification content. Accepts text as string, an array with text and the HTML element tag to render the text in or an array of either of the former. |
-| `title`      | `string`                                                           | `undefined` | Text to render as notification title. Accepts text as string or an array with text and the HTML element tag to render the text in.                                     |
-
-Options below can also be provided via [`NotifierOptions`](#javascript), but those will never take preference.
-
-| Property        | Type      | Default | Description                                                                                                                                                                           |
-| :-------------- | :-------- | :------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `hideAfterTime` | `number`  | `4000`  | Time in milliseconds after which [`.hide()`](#hidenotificationid-number) is automatically called. Set to `0` to show notification until `.hide()` or `.hideAll()` is manually called. |
-| `hideOlder`     | `boolean` | `false` | Hide all previously shown (to be exact, triggered) notifications before showing the one just created.                                                                                 |
-| `dismissable`   | `boolean` | `false` | Render a close button allowing for manual notification dismissal.                                                                                                                     |
+| Property        | Type                                                                                             | Default     | Description                                                                                                                                                                              |
+| :-------------- | :----------------------------------------------------------------------------------------------- | :---------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `text`          | `string` \| `{ content: string; el: string }` \| `(string \| { content: string; el: string })[]` | `undefined` | Text to render as notification content.                                                                                                                                                  |
+| `title`         | `string` \| `{ content: string; el: string }`                                                    | `undefined` | Text to render as notification title.                                                                                                                                                    |
+| `variant`       | `"default"` \| `"success"` \| `"warning"` \| `"error"` \| `string`                               | `"default"` | Colorway of notification to render. Appended as BEM modifier to notification class list. Overwritten if `variant` is also provided as [`.show()`](#showtextoroptions-variant) parameter. |
+| `hideAfterTime` | `number`                                                                                         | `4000`      | Time in milliseconds after which [`.hide()`](#hidenotificationid-number) is automatically called. Set to `0` to disable this behavior.                                                   |
+| `hideOlder`     | `boolean`                                                                                        | `false`     | Hide all currently shown notifications before showing the next.                                                                                                                          |
+| `dismissible`   | `boolean`                                                                                        | `false`     | Render a close button which if pressed calls [`.hide()`](#hidenotificationid-number).                                                                                                    |
 
 <br>
 
