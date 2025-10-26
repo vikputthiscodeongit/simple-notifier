@@ -108,7 +108,7 @@ Options below can also be provided via [NotificationOptions](#notificationoption
 | :-------------- | :-------- | :------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `hideAfterTime` | `number`  | `4000`  | Time in milliseconds after which [`.hide()`](#hidenotificationid-number) is automatically called. Set to `0` to show notifications until `.hide()` or `.hideAll()` is manually called. |
 | `hideOlder`     | `boolean` | `false` | Hide all previously shown (to be exact, triggered) notifications before showing the one most recently created.                                                                         |
-| `dismissable`   | `boolean` | `false` | Render a close button allowing for manual notification dismissal.                                                                                                                      |
+| `dismissible`   | `boolean` | `false` | Render a close button which if pressed calls [`.hide()`](#hidenotificationid-number).                                                  |
 
 ### CSS
 

@@ -11,7 +11,7 @@ enum NotificationState {
 interface SharedOptions {
     hideAfterTime: number;
     hideOlder: boolean;
-    dismissable: boolean;
+    dismissible: boolean;
 }
 
 interface NotifierOptions extends SharedOptions {
@@ -47,14 +47,14 @@ const DEFAULT_INSTANCE_OPTIONS: NotifierOptions = {
     position: ["start", "center"],
     hideAfterTime: 4000,
     hideOlder: false,
-    dismissable: false,
+    dismissible: false,
     classNames: [],
 };
 
 class SN {
     hideAfterTime: NotifierOptions["hideAfterTime"];
     hideOlder: NotifierOptions["hideOlder"];
-    dismissable: NotifierOptions["dismissable"];
+    dismissible: NotifierOptions["dismissible"];
 
     readonly notifierEl: HTMLDivElement;
     readonly notifications: Map<number, Notification>;
@@ -67,7 +67,7 @@ class SN {
 
         this.hideAfterTime = mergedOptions.hideAfterTime;
         this.hideOlder = mergedOptions.hideOlder;
-        this.dismissable = mergedOptions.dismissable;
+        this.dismissible = mergedOptions.dismissible;
 
         this.notifierEl = createEl("div", {
             class: `simple-notifier simple-notifier--position-x-${mergedOptions.position[1]} simple-notifier--position-y-${mergedOptions.position[0]}`,
@@ -115,7 +115,7 @@ class SN {
         const mergedOptions = {
             hideAfterTime: options?.hideAfterTime ?? this.hideAfterTime,
             hideOlder: options?.hideOlder ?? this.hideOlder,
-            dismissable: options?.dismissable ?? this.dismissable,
+            dismissible: options?.dismissible ?? this.dismissible,
             // TODO 20251004: Remove type assertions
             text: text as [string, string][] | null,
             title: title as [string, string] | null,
@@ -159,7 +159,7 @@ class SN {
 
         notificationEl.append(contentEl);
 
-        if (notificationWithoutEl.dismissable) {
+        if (notificationWithoutEl.dismissible) {
             const sideContentEl = createEl("div", {
                 class: "simple-notification__part simple-notification__part--side",
             });
