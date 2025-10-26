@@ -35,7 +35,7 @@ __[Demo page (interactive)](https://rawcdn.githack.com/vikputthiscodeongit/simpl
 
 * Show multiple notifications simultaneously, and/or
 * Hide older notifications before showing one or more new notifications.
-* Fully accessible.
+* Great accessibility.
 * Module-based.
 
 Skip to [Instance options](#instance-options) to get a complete overview of all features!
@@ -102,12 +102,12 @@ Requires an ECMAScript 2022 (ES13) compatible browser. Practically speaking, all
 | `classNames`                | `string[]`                                         | `[]`                     | Extra classes to add to the instance's HTML element.                          |
 | `hideButtonElAriaLabelText` | `string`                                           | `"Dismiss notification"` | Text used as `aria-label` for the notification hide button.                   |
 
-Options below can also be provided via [NotificationOptions](#notificationoptions) and if done so will take preference.
+Options below can also be provided via [`NotificationOptions`](#notificationoptions) and if done so take preference.
 
-| Property        | Type      | Default | Description                                                                                                                                                                            |
-| :-------------- | :-------- | :------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `hideOlder`     | `boolean` | `false` | Hide all previously shown (to be exact, triggered) notifications before showing the one most recently created.                                                                         |
+| Property        | Type      | Default | Description                                                                                                                            |
+| :-------------- | :-------- | :------ | :------------------------------------------------------------------------------------------------------------------------------------- |
 | `hideAfterTime` | `number`  | `4000`  | Time in milliseconds after which [`.hide()`](#hideid-number) is automatically called. Set to `0` to disable this behavior. |
+| `hideOlder`     | `boolean` | `false` | Hide all currently shown notifications before showing the next.                                                                        |
 | `dismissible`   | `boolean` | `false` | Render a close button which if pressed calls [`.hide()`](#hideid-number).                                                  |
 
 ### CSS
@@ -119,7 +119,7 @@ Options below can also be provided via [NotificationOptions](#notificationoption
 | `--simple-notifier-font-size`          | [See `font-size` values](https://developer.mozilla.org/en-US/docs/Web/CSS/font-size#values)     | `1rem`                                                                                   | Base font size by which all internal sizes are calculated. |
 | `--simple-notifier-color-opacity`      | `<alpha-value>`                                                                                 | `0.9`                                                                                    | Opacity applied to all available colors                    |
 | `--simple-notifier-color-x`            | `<color>` \| `currentColor`                                                                     | White, black, green, yellow & red (see `/src/style.css` for exact values)                | Available colors.                                          |
-| `--simple-notifier-animation-duration` | `<time>` \| `auto`                                                                              | `500 ms`                                                                                 |Animation duration applied to all animations.               |
+| `--simple-notifier-animation-duration` | `<time>` \| `auto`                                                                              | `500 ms`                                                                                 | Animation duration applied to all animations.              |
 
 <br>
 
@@ -138,7 +138,7 @@ Show a notification.
 
 ##### `NotificationOptions`
 
-**All options listed in the 2 tables below can be provided in a `NotificationOptions` object as the `textOrOptions` parameter.**
+`NotificationOptions` always take preference over `NotifierOptions`.
 
 Notifications are only shown if either `text` or `title` is defined.
 
@@ -179,11 +179,11 @@ Get the IDs of all currently shown notifications.
 
 Events are fired on the instance element `.simple-notifier`. The `details` property of the `Event` object contains the `id` of the notification it was fired for.
 
-| Event       | Fired when...                                        |
-| :---------- | :--------------------------------------------------- |
-| `shown`     | The process of showing a notification has completed. |
-| `hidden`    | The process of hiding a notification has completed.  |
-| `allhidden` | The last shown notification has been hidden.         |
+| Event       | Fired after...                     |
+| :---------- | :--------------------------------- |
+| `shown`     | Notification is shown.             |
+| `hidden`    | Hotification is hidden.            |
+| `allhidden` | Last shown notification is hidden. |
 
 <br>
 
