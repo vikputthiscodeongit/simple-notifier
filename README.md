@@ -26,7 +26,7 @@ __[Demo page (interactive)](https://rawcdn.githack.com/vikputthiscodeongit/simpl
     * [`.hideAll()`](#hideall)
     * [`.ids`](#ids)
 7. [Events](#events)
-8. [Quick migration from version 1](#quick-migration-from-version-1)
+8. [Upgrading from 2.x.x](#upgrading-from-2xx)
 9. [License](#license)
 
 <br>
@@ -187,12 +187,16 @@ Events are fired on the instance element `.simple-notifier`. The `details` prope
 
 <br>
 
-## Quick migration from version 1
+## Upgrading from 2.x.x
 
-If you want to perform a quick update from version 1 keeping everything as is, all you need to do is:
+The following changes are breaking:
+* Removed `instanceId`.
+* `dismissable` spelling error corrected to `dismissible`.
+* `titleLevel` must now be provided as `title.el` - see [`NotificationOptions`](#notificationoptions).
+* If `variant` is provided both as `.show()` parameter and `NotificationOptions` value, `.show()` now takes preference.
+* Shortened `notificationId` to `id`. Effects getters, event `detail` renamed to `id`.
+* Modified undocumented but public class field names, visibility & mutability.
 
-1. Change `new SimpleNotifier()` to `new SimpleNotifier({ hideAfterTime: 3500, hideOlder: true })`.
-2. Remove call to `.init()` as the instance is now fully initialized in the class constructor.
 
 <br>
 
