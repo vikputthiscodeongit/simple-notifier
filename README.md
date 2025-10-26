@@ -22,9 +22,9 @@ __[Demo page (interactive)](https://rawcdn.githack.com/vikputthiscodeongit/simpl
     * [CSS](#css)
 6. [Methods](#methods)
     * [`.show()`](#showtextoroptions-variant)
-    * [`.hide()`](#hidenotificationid-number)
+    * [`.hide()`](#hideid-number)
     * [`.hideAll()`](#hideall)
-    * [`.notificationIds` (getter)](#notificationids-getter)
+    * [`.ids`](#ids)
 7. [Events](#events)
 8. [Quick migration from version 1](#quick-migration-from-version-1)
 9. [License](#license)
@@ -106,9 +106,9 @@ Options below can also be provided via [NotificationOptions](#notificationoption
 
 | Property        | Type      | Default | Description                                                                                                                                                                            |
 | :-------------- | :-------- | :------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `hideAfterTime` | `number`  | `4000`  | Time in milliseconds after which [`.hide()`](#hidenotificationid-number) is automatically called. Set to `0` to show notifications until `.hide()` or `.hideAll()` is manually called. |
 | `hideOlder`     | `boolean` | `false` | Hide all previously shown (to be exact, triggered) notifications before showing the one most recently created.                                                                         |
-| `dismissible`   | `boolean` | `false` | Render a close button which if pressed calls [`.hide()`](#hidenotificationid-number).                                                  |
+| `hideAfterTime` | `number`  | `4000`  | Time in milliseconds after which [`.hide()`](#hideid-number) is automatically called. Set to `0` to disable this behavior. |
+| `dismissible`   | `boolean` | `false` | Render a close button which if pressed calls [`.hide()`](#hideid-number).                                                  |
 
 ### CSS
 
@@ -147,15 +147,15 @@ Notifications are only shown if either `text` or `title` is defined.
 | `text`          | `string` \| `{ content: string; el: string }` \| `(string \| { content: string; el: string })[]` | `undefined` | Text to render as notification content.                                                                                                                                                  |
 | `title`         | `string` \| `{ content: string; el: string }`                                                    | `undefined` | Text to render as notification title.                                                                                                                                                    |
 | `variant`       | `"default"` \| `"success"` \| `"warning"` \| `"error"` \| `string`                               | `"default"` | Colorway of notification to render. Appended as BEM modifier to notification class list. Overwritten if `variant` is also provided as [`.show()`](#showtextoroptions-variant) parameter. |
-| `hideAfterTime` | `number`                                                                                         | `4000`      | Time in milliseconds after which [`.hide()`](#hidenotificationid-number) is automatically called. Set to `0` to disable this behavior.                                                   |
+| `hideAfterTime` | `number`                                                                                         | `4000`      | Time in milliseconds after which [`.hide()`](#hideid-number) is automatically called. Set to `0` to disable this behavior.                                                   |
 | `hideOlder`     | `boolean`                                                                                        | `false`     | Hide all currently shown notifications before showing the next.                                                                                                                          |
-| `dismissible`   | `boolean`                                                                                        | `false`     | Render a close button which if pressed calls [`.hide()`](#hidenotificationid-number).                                                                                                    |
+| `dismissible`   | `boolean`                                                                                        | `false`     | Render a close button which if pressed calls [`.hide()`](#hideid-number).                                                                                                    |
 
 <br>
 
-### `.hide(notificationId: number)`
+### `.hide(id: number)`
 
-Hide a currently shown notification by its ID. A `notificationId` can be retrieved via the [`event`](#events) fired on the instance element on notification show or the `data-notification-id` attribute on the notification element.
+Hide a currently shown notification by its ID. An `id` can be retrieved via the [`event`](#events) fired on the instance element on notification show or the `data-notification-id` attribute on the notification element.
 
 <br>
 
@@ -165,7 +165,11 @@ Hide all currently shown notifications.
 
 <br>
 
-### `.notificationIds` (getter)
+### `.currentId`
+
+Get the current ID, i.e. the one that'll be used for the next notification.
+
+### `.ids`
 
 Get the IDs of all currently shown notifications.
 
@@ -173,7 +177,7 @@ Get the IDs of all currently shown notifications.
 
 ## Events
 
-Events are fired on the instance element `.simple-notifier`. The `details` property of the `Event` object contains the `notificationId` of the notification it was fired for.
+Events are fired on the instance element `.simple-notifier`. The `details` property of the `Event` object contains the `id` of the notification it was fired for.
 
 | Event       | Fired when...                                        |
 | :---------- | :--------------------------------------------------- |
