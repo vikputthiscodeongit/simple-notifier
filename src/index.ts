@@ -56,10 +56,10 @@ class SN {
     hideOlder: NotifierOptions["hideOlder"];
     dismissible: NotifierOptions["dismissible"];
 
-    readonly notifierEl: HTMLDivElement;
+    readonly el: HTMLDivElement;
     readonly notifications: Map<number, Notification>;
-    #currentNotificationId: number;
-    readonly queuedNotifications: NotificationOptions[];
+    #currentId: number;
+    readonly queue: NotificationOptions[];
     hideButtonElAriaLabelText: string;
 
     constructor(options: Partial<NotifierOptions> = {}) {
@@ -69,31 +69,28 @@ class SN {
         this.hideOlder = mergedOptions.hideOlder;
         this.dismissible = mergedOptions.dismissible;
 
-        this.notifierEl = createEl("div", {
+        this.el = createEl("div", {
             class: `simple-notifier simple-notifier--position-x-${mergedOptions.position[1]} simple-notifier--position-y-${mergedOptions.position[0]}`,
             ariaLive: "assertive",
         });
-        this.notifierEl.classList.add(...mergedOptions.classNames);
+        this.el.classList.add(...mergedOptions.classNames);
 
         this.notifications = new Map<number, Notification>();
-        this.#currentNotificationId = 0;
-        this.queuedNotifications = [];
+        this.#currentId = 0;
+        this.queue = [];
         this.hideButtonElAriaLabelText =
             mergedOptions.hideButtonElAriaLabelText ?? "Dismiss notification";
 
-        mergedOptions.parentEl.insertBefore(
-            this.notifierEl,
-            mergedOptions.parentEl.firstElementChild,
-        );
+        mergedOptions.parentEl.insertBefore(this.el, mergedOptions.parentEl.firstElementChild);
 
         return;
     }
 
-    get currentNotificationId() {
-        return this.#currentNotificationId;
+    get currentId() {
+        return this.#currentId;
     }
 
-    get notificationIds() {
+    get ids() {
         return [...this.notifications.keys()];
     }
 
@@ -126,7 +123,7 @@ class SN {
         return mergedOptions;
     }
 
-    #makeNotificationEl(id: number, notificationWithoutEl: Omit<Notification, "el">) {
+    #makeDomEl(id: number, notificationWithoutEl: Omit<Notification, "el">) {
         const notificationEl = createEl<HTMLDivElement>("div", {
             class: `simple-notification simple-notification--${notificationWithoutEl.variant} simple-notification--animation-in`,
             role: "alert",
@@ -177,16 +174,16 @@ class SN {
             notificationEl.append(sideContentEl);
         }
 
-        console.debug("SN #makeNotificationEl - notificationEl:", notificationEl);
+        console.debug("SN #makeDomEl - notificationEl:", notificationEl);
 
         return notificationEl;
     }
 
-    #processQueuedNotifications() {
-        console.debug("SN #processQueuedNotifications: Running...");
+    #processQueue() {
+        console.debug("SN #processQueue: Running...");
 
-        if (this.queuedNotifications.length === 0) {
-            console.debug("SN #processQueuedNotifications - No notifications in queue.");
+        if (this.queue.length === 0) {
+            console.debug("SN #processQueue - No notifications in queue.");
             return;
         }
 
@@ -195,8 +192,8 @@ class SN {
         // is made are processed on the next run.
         // Process the queue in reverse because all notifications older than the
         // oldest one that has `hideOlder` set should be ignored.
-        const queueCopyReversed = [...this.queuedNotifications].reverse();
-        this.queuedNotifications.length = 0;
+        const queueCopyReversed = [...this.queue].reverse();
+        this.queue.length = 0;
 
         let notificationsToShowReversed: NotificationOptions[] = [];
         let count = 0;
@@ -213,9 +210,7 @@ class SN {
 
         // Reverse the queue again so that the oldest notification is the one
         // shown first.
-        notificationsToShowReversed
-            .reverse()
-            .forEach((notificationOptions) => this.show(notificationOptions));
+        notificationsToShowReversed.reverse().forEach((options) => this.show(options));
 
         return;
     }
@@ -247,7 +242,7 @@ class SN {
 
         if ((options.hideOlder && this.notifications.size > 0) || this.queue.length > 0) {
             this.queue.push(textOrOptionsAsOptions);
-            this.el.addEventListener("allhidden", () => this.#processQueuedNotifications(), {
+            this.el.addEventListener("allhidden", () => this.#processQueue(), {
                 once: true,
             });
             this.hideAll();
@@ -255,8 +250,8 @@ class SN {
             return;
         }
 
-        const currentNotificationId = this.#currentNotificationId;
-        this.#currentNotificationId++;
+        const currentId = this.#currentId;
+        this.#currentId++;
 
         const notificationWithoutEl = {
             ...options,
@@ -268,29 +263,29 @@ class SN {
         };
         const notification = {
             ...notificationWithoutEl,
-            el: this.#makeNotificationEl(currentNotificationId, notificationWithoutEl),
+            el: this.#makeDomEl(currentId, notificationWithoutEl),
         };
-        this.notifications.set(currentNotificationId, notification);
+        this.notifications.set(currentId, notification);
 
-        this.notifierEl.append(notification.el);
+        this.el.append(notification.el);
 
         notification.el.addEventListener(
             "animationend",
             () => {
                 console.debug(
-                    `SN show: Animation of element of notification ${currentNotificationId} completed.`,
+                    `SN show: Animation of element of notification ${currentId} completed.`,
                 );
 
                 notification.state = NotificationState.SHOWN;
 
                 const notificationShownEvent = new CustomEvent("shown", {
                     detail: {
-                        notificationId: currentNotificationId,
+                        id: currentId,
                     },
                 });
-                this.notifierEl.dispatchEvent(notificationShownEvent);
+                this.el.dispatchEvent(notificationShownEvent);
 
-                console.debug(`SN show: Notification ${currentNotificationId} shown.`);
+                console.debug(`SN show: Notification ${currentId} shown.`);
 
                 if (notification.hideAfterTime > 0) {
                     notification.state = NotificationState.WAITING_ON_HIDE;
@@ -300,8 +295,8 @@ class SN {
                         true,
                         notification.abortControllers.waitForHide.signal,
                     )
-                        .then(() => this.hide(currentNotificationId))
-                        .catch((abortReason) => console.info(abortReason));
+                        .then(() => this.hide(currentId))
+                        .catch((abortReason) => console.debug(abortReason));
                 }
 
                 return;
@@ -312,18 +307,18 @@ class SN {
         return;
     }
 
-    hide(notificationId: number) {
-        console.info(`SN hide: Running on notification ${notificationId}...`);
+    hide(id: number) {
+        console.info(`SN hide: Running on notification ${id}...`);
 
-        const notification = this.notifications.get(notificationId);
+        const notification = this.notifications.get(id);
 
         if (!notification) {
-            console.info(`Notification ${notificationId} doesn't exist.`);
+            console.info(`Notification ${id} doesn't exist.`);
             return;
         }
 
         if (notification.state === NotificationState.HIDE_BUSY) {
-            console.info(`Already hiding notification ${notificationId}.`);
+            console.info(`Already hiding notification ${id}.`);
             return;
         }
 
@@ -332,14 +327,14 @@ class SN {
             notification.state === NotificationState.WAITING_ON_HIDE
         ) {
             console.debug(
-                `SN hide: Notification ${notificationId} in show action or waiting on hide action. Aborting any scheduled function calls...`,
+                `SN hide: Notification ${id} in show action or waiting on hide action. Aborting any scheduled calls...`,
             );
 
             notification.abortControllers.hideButtonElEvent.abort(
-                `Hide button event of notification ${notificationId} aborted.`,
+                `Hide button event of notification ${id} aborted.`,
             );
             notification.abortControllers.waitForHide.abort(
-                `Scheduled hide or active show action of notification ${notificationId} aborted.`,
+                `Scheduled hide or active show action of notification ${id} aborted.`,
             );
         }
 
@@ -351,25 +346,23 @@ class SN {
         notification.el.addEventListener(
             "animationend",
             () => {
-                console.debug(
-                    `SN hide: Animation of element of notification ${notificationId} completed.`,
-                );
+                console.debug(`SN hide: Animation of element of notification ${id} completed.`);
 
                 notification.el.innerHTML = "";
                 notification.el.remove();
 
-                this.notifications.delete(notificationId);
+                this.notifications.delete(id);
 
                 const notificationHiddenEvent = new CustomEvent("hidden", {
-                    detail: { notificationId },
+                    detail: { id },
                 });
-                this.notifierEl.dispatchEvent(notificationHiddenEvent);
+                this.el.dispatchEvent(notificationHiddenEvent);
 
-                console.debug(`SN hide: Notification ${notificationId} hidden.`);
+                console.debug(`SN hide: Notification ${id} hidden.`);
 
                 if (this.notifications.size === 0) {
                     const allNotificationsHiddenEvent = new CustomEvent("allhidden");
-                    this.notifierEl.dispatchEvent(allNotificationsHiddenEvent);
+                    this.el.dispatchEvent(allNotificationsHiddenEvent);
                     console.debug(`SN hide: All notifications hidden.`);
                 }
 
@@ -396,7 +389,7 @@ class SN {
 
         if (notificationIdsToHide.length === 0) return;
 
-        notificationIdsToHide.forEach((notificationId) => this.hide(notificationId));
+        notificationIdsToHide.forEach((id) => this.hide(id));
 
         return;
     }
