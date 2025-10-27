@@ -81,7 +81,10 @@ class SN {
         this.hideButtonElAriaLabelText =
             mergedOptions.hideButtonElAriaLabelText ?? "Dismiss notification";
 
-        mergedOptions.parentEl.insertBefore(this.el, mergedOptions.parentEl.firstElementChild);
+        const notifierElInParentEl = mergedOptions.parentEl.querySelector(".simple-notifier");
+        notifierElInParentEl
+            ? notifierElInParentEl.after(this.el)
+            : mergedOptions.parentEl.before(this.el);
 
         return;
     }
