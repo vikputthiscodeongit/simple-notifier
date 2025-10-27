@@ -1,9 +1,10 @@
 import globals from "globals";
 import eslintJs from "@eslint/js";
+import { defineConfig } from "eslint/config";
 import tsEslint from "typescript-eslint";
 import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
 
-export default tsEslint.config(
+export default defineConfig(
     {
         ignores: ["dist/*", "**/*"],
     },
