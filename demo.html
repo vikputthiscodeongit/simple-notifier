@@ -77,13 +77,11 @@
                             <div>
                                 <button id="button-instance-1-default">Default</button>
 
-                                <button id="button-instance-1-error">Error</button>
-
-                                <button id="button-instance-1-error-2">Error 2</button>
+                                <button id="button-instance-1-success">Success</button>
 
                                 <button id="button-instance-1-warning">Warning</button>
 
-                                <button id="button-instance-1-success">Success</button>
+                                <button id="button-instance-1-error">Error</button>
                             </div>
 
                             <div>
@@ -125,13 +123,11 @@
                             <div>
                                 <button id="button-instance-2-default">Default</button>
 
-                                <button id="button-instance-2-error">Error</button>
-
-                                <button id="button-instance-2-error-2">Error 2</button>
+                                <button id="button-instance-2-success">Success</button>
 
                                 <button id="button-instance-2-warning">Warning</button>
 
-                                <button id="button-instance-2-success">Success</button>
+                                <button id="button-instance-2-error">Error</button>
                             </div>
 
                             <div>
@@ -157,14 +153,15 @@
             document.querySelector("#button-instance-1-default").addEventListener("click", () => {
                 instanceOne.show("This is a notification of instance 1.");
             });
-            document.querySelector("#button-instance-1-error").addEventListener("click", () => {
-                instanceOne.show("This notification is of the 'error' variant.", "error");
-            });
-            document.querySelector("#button-instance-1-error-2").addEventListener("click", () => {
-                instanceOne.show({
-                    title: "This is a notification only has a title and is of the 'error' variant.",
-                    variant: "error",
-                });
+            document.querySelector("#button-instance-1-success").addEventListener("click", () => {
+                instanceOne.show(
+                    [
+                        "This content spans multiple paragraphs.",
+                        "The notification variant is <code>success</code>.",
+                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam pellentesque velit ornare, laoreet libero eu, rutrum risus.",
+                    ],
+                    "success",
+                );
             });
             document.querySelector("#button-instance-1-warning").addEventListener("click", () => {
                 instanceOne.show({
@@ -174,15 +171,10 @@
                     hideAfterTime: 5000,
                 });
             });
-            document.querySelector("#button-instance-1-success").addEventListener("click", () => {
+            document.querySelector("#button-instance-1-error").addEventListener("click", () => {
                 instanceOne.show({
-                    title: "This notification is configured to hide all older notifications before it'll be shown",
-                    text: [
-                        "The text content spans multiple paragraphs.",
-                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam aliquet vel ligula a porttitor.",
-                        "Nulla tincidunt massa urna, a fringilla est tristique sed. Phasellus at convallis sem.",
-                    ],
-                    variant: "success",
+                    text: "This notification is configured to hide all older notifications before it'll be shown",
+                    variant: "error",
                     hideOlder: true,
                 });
             });
@@ -205,42 +197,28 @@
                     "Notifications of this second instance will be hidden after 6 seconds.",
                 );
             });
-            document.querySelector("#button-instance-2-error").addEventListener("click", () => {
-                instanceTwo.show("This notification is of the 'error' variant.", "error");
-            });
-            document.querySelector("#button-instance-2-error-2").addEventListener("click", () => {
+            document.querySelector("#button-instance-2-success").addEventListener("click", () => {
                 instanceTwo.show({
-                    title: "This is a notification only has a title and is of the 'error' variant.",
-                    variant: "error",
+                    text: "However, this notification won't be automatically be hidden.",
+                    variant: "success",
                 });
             });
             document.querySelector("#button-instance-2-warning").addEventListener("click", () => {
                 instanceTwo.show({
-                    title: "This is notification has a title",
-                    text: "... and unlike all others of this instance won't automatically be hidden.",
+                    text: "And this notification can be shown alongside others.",
                     variant: "warning",
                     hideAfterTime: 0,
                 });
             });
-            document.querySelector("#button-instance-2-success").addEventListener("click", () => {
+            document.querySelector("#button-instance-2-error").addEventListener("click", () => {
                 instanceTwo.show({
-                    title: {
-                        text: "This notification is configured to hide all older notifications before it'll be shown",
-                        el: "h5",
-                    },
                     text: [
-                        "Its title level is 5 instead of 6.",
-                        {
-                            content: "This part is rendered in italics ",
-                            el: "em",
-                        },
-                        {
-                            content: "and this part is bold.",
-                            el: "strong",
-                        },
+                        "<em>By the way ...</em>",
+                        "The title and text are set as <code>innerHTML</code>.",
+                        "<strong>Be sure to sanitize any untrusted input!</strong>",
                     ],
-                    variant: "success",
                     hideOlder: true,
+                    variant: "error",
                 });
             });
             document.querySelector("#button-instance-2-hide-all").addEventListener("click", () => {

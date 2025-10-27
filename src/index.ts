@@ -22,14 +22,14 @@ interface NotifierOptions extends SharedOptions {
 }
 
 interface NotificationOptions extends Partial<SharedOptions> {
-    text?: string | { content: string; el: string } | (string | { content: string; el: string })[];
-    title?: string | { content: string; el: string };
+    text?: string | string[];
+    title?: string | [string, string];
     variant?: string;
 }
 
 interface ProcessedNotificationOptions
     extends Required<Omit<NotificationOptions, "text" | "title">> {
-    text: [string, string][] | null;
+    text: string[] | null;
     title: [string, string] | null;
 }
 
@@ -95,27 +95,15 @@ class SN {
     }
 
     #getMergedOptions(options: NotificationOptions): ProcessedNotificationOptions {
-        const text = !options?.text
-            ? null
-            : Array.isArray(options.text)
-              ? options.text.map((line) =>
-                    typeof line !== "string" ? [line.content, line.el] : [line, "p"],
-                )
-              : typeof options.text !== "string"
-                ? [[options.text.content, options.text.el]]
-                : [[options.text, "p"]];
-        const title = !options?.title
-            ? null
-            : typeof options.title !== "string"
-              ? [options.title.content, options.title.el]
-              : [options.title, "h6"];
         const mergedOptions = {
             hideAfterTime: options?.hideAfterTime ?? this.hideAfterTime,
             hideOlder: options?.hideOlder ?? this.hideOlder,
             dismissible: options?.dismissible ?? this.dismissible,
-            // TODO 20251004: Remove type assertions
-            text: text as [string, string][] | null,
-            title: title as [string, string] | null,
+            text: typeof options.text === "string" ? [options.text] : (options.text ?? null),
+            // TODO 20251026: Remove type assertion
+            title: (typeof options.title === "string"
+                ? [options.title, "h6"]
+                : (options.title ?? null)) as [string, string] | null,
             variant: options?.variant ?? "default",
         };
         console.debug("SN #getMergedOptions - mergedOptions:", mergedOptions);
@@ -137,18 +125,18 @@ class SN {
         if (notificationWithoutEl.title) {
             const titleEl = createEl(notificationWithoutEl.title[1], {
                 class: "simple-notification__title",
-                textContent: notificationWithoutEl.title[0],
             });
+            titleEl.innerHTML = notificationWithoutEl.title[0];
 
             contentEl.append(titleEl);
         }
 
         if (notificationWithoutEl.text) {
             notificationWithoutEl.text.forEach((line) => {
-                const textEl = createEl(line[1], {
+                const textEl = createEl("p", {
                     class: "simple-notification__text",
-                    textContent: line[0],
                 });
+                textEl.innerHTML = line;
 
                 contentEl.append(textEl);
             });
@@ -222,9 +210,7 @@ class SN {
         console.info("SN show: Running...");
 
         const textOrOptionsAsOptions =
-            typeof textOrOptions === "string" ||
-            (typeof textOrOptions === "object" && "el" in textOrOptions) ||
-            Array.isArray(textOrOptions)
+            typeof textOrOptions === "string" || Array.isArray(textOrOptions)
                 ? { text: textOrOptions, variant }
                 : { ...textOrOptions, variant: variant ?? textOrOptions?.variant };
 
@@ -241,7 +227,7 @@ class SN {
         }
 
         if ((options.hideOlder && this.notifications.size > 0) || this.queue.length > 0) {
-            this.queue.push(textOrOptionsAsOptions);
+            this.queue.push({ ...textOrOptionsAsOptions, hideOlder: options.hideOlder });
             this.el.addEventListener("allhidden", () => this.#processQueue(), {
                 once: true,
             });
