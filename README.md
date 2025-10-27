@@ -93,7 +93,7 @@ Requires an ECMAScript 2022 (ES13) compatible browser. Practically speaking, all
 ## Instance options
 ### JavaScript
 
-**All options listed in the 2 tables below can be provided in a `NotifierOptions` object as parameter on instance creation.**
+**All options listed in the 2 tables below may be provided in an object as parameter on instance creation.**
 
 | Property                    | Type                                               | Default                  | Description                                                                   |
 | :-------------------------- | :------------------------------------------------- | :----------------------- | :---------------------------------------------------------------------------- |
@@ -102,7 +102,7 @@ Requires an ECMAScript 2022 (ES13) compatible browser. Practically speaking, all
 | `classNames`                | `string[]`                                         | `[]`                     | Extra classes to add to the instance's HTML element.                          |
 | `hideButtonElAriaLabelText` | `string`                                           | `"Dismiss notification"` | Text used as `aria-label` for the notification hide button.                   |
 
-Options below can also be provided via [`NotificationOptions`](#notificationoptions) and if done so take preference.
+Options below may also be provided via [`NotificationOptions`](#notificationoptions) and if done so take preference.
 
 | Property        | Type      | Default | Description                                                                                                                            |
 | :-------------- | :-------- | :------ | :------------------------------------------------------------------------------------------------------------------------------------- |
@@ -118,7 +118,7 @@ Options below can also be provided via [`NotificationOptions`](#notificationopti
 | `--simple-notifier-font-family`        | [See `font-family` values](https://developer.mozilla.org/en-US/docs/Web/CSS/font-family#values) | [Native font stack](https://getbootstrap.com/docs/5.3/content/reboot/#native-font-stack) | Font family used for all notification content.             |
 | `--simple-notifier-font-size`          | [See `font-size` values](https://developer.mozilla.org/en-US/docs/Web/CSS/font-size#values)     | `1rem`                                                                                   | Base font size by which all internal sizes are calculated. |
 | `--simple-notifier-color-opacity`      | `<alpha-value>`                                                                                 | `0.9`                                                                                    | Opacity applied to all available colors                    |
-| `--simple-notifier-color-x`            | `<color>` \| `currentColor`                                                                     | White, black, green, yellow & red (see `/src/style.css` for exact values)                | Available colors.                                          |
+| `--simple-notifier-color-<name>`       | `<color>` \| `currentColor`                                                                     | White, black, green, yellow & red (see `/src/style.css` for exact values)                | Available colors.                                          |
 | `--simple-notifier-animation-duration` | `<time>` \| `auto`                                                                              | `500 ms`                                                                                 | Animation duration applied to all animations.              |
 
 <br>
@@ -177,7 +177,7 @@ Get the IDs of all currently shown notifications.
 
 ## Events
 
-Events are fired on the instance element `.simple-notifier`. The `details` property of the `Event` object contains the `id` of the notification it was fired for.
+Events are fired on the instance element `.simple-notifier`. The `detail` property contains the `id` of the notification it was fired for.
 
 | Event       | Fired after...                     |
 | :---------- | :--------------------------------- |
@@ -190,13 +190,12 @@ Events are fired on the instance element `.simple-notifier`. The `details` prope
 ## Upgrading from 2.x.x
 
 The following changes are breaking:
-* Removed `instanceId`.
-* `dismissable` spelling error corrected to `dismissible`.
-* `titleLevel` must now be provided as `title.el` - see [`NotificationOptions`](#notificationoptions).
-* If `variant` is provided both as `.show()` parameter and `NotificationOptions` value, `.show()` now takes preference.
-* Shortened `notificationId` to `id`. Effects getters, event `detail` renamed to `id`.
-* Modified undocumented but public class field names, visibility & mutability.
-
+* Removed - `instanceId`
+* Renamed - `notificationId` > `id`. Effects getters & event `detail`.
+* Renamed - `dismissable` > `dismissible`
+* Changed - `titleLevel` must now be provided as `title.el` (see [`NotificationOptions`](#notificationoptions)).
+* Changed - If `variant` is provided both as `.show()` parameter and in `NotificationOptions`, `.show()` now takes preference.
+* Changed - Undocumented but public class field names, visibility & mutability.
 
 <br>
 

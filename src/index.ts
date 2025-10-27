@@ -184,6 +184,7 @@ class SN {
         // Process the queue in reverse because all notifications older than the
         // oldest one that has `hideOlder` set should be ignored.
         const queueCopyReversed = [...this.queue].reverse();
+        console.debug("SN #processQueue - queueCopyReversed:", queueCopyReversed);
         this.queue.length = 0;
 
         let notificationsToShowReversed: NotificationOptions[] = [];
