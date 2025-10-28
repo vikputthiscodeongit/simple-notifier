@@ -8,7 +8,7 @@
 
 A fully featured yet easy to use & lightweight notification library.
 
-__[Demo page (interactive)](https://rawcdn.githack.com/vikputthiscodeongit/simple-notifier/204de93b29d497c6280e2ea0d2e85d8726d72bf2/demo.html)__
+**[Demo page (interactive)](https://rawcdn.githack.com/vikputthiscodeongit/simple-notifier/204de93b29d497c6280e2ea0d2e85d8726d72bf2/demo.html)**
 
 <br>
 
@@ -24,6 +24,7 @@ __[Demo page (interactive)](https://rawcdn.githack.com/vikputthiscodeongit/simpl
     * [`.show()`](#showtextoroptions-variant)
     * [`.hide()`](#hideid-number)
     * [`.hideAll()`](#hideall)
+    * [`.currentId`](#currentid)
     * [`.ids`](#ids)
 7. [Events](#events)
 8. [Upgrading from 2.x.x](#upgrading-from-2xx)
@@ -103,10 +104,10 @@ Requires an ECMAScript 2022 (ES13) compatible browser. Practically speaking, all
 
 Options below may also be provided via [`NotificationOptions`](#notificationoptions) and if done so take preference.
 
-| Property        | Type      | Default | Description                                                                                                                            |
-| :-------------- | :-------- | :------ | :------------------------------------------------------------------------------------------------------------------------------------- |
+| Property        | Type      | Default | Description                                                                                                                |
+| :-------------- | :-------- | :------ | :------------------------------------------------------------------------------------------------------------------------- |
 | `hideAfterTime` | `number`  | `4000`  | Time in milliseconds after which [`.hide()`](#hideid-number) is automatically called. Set to `0` to disable this behavior. |
-| `hideOlder`     | `boolean` | `false` | Hide all currently shown notifications before showing the next.                                                                        |
+| `hideOlder`     | `boolean` | `false` | Hide all currently shown notifications before showing the next.                                                            |
 | `dismissible`   | `boolean` | `false` | Render a close button which if pressed calls [`.hide()`](#hideid-number).                                                  |
 
 ### CSS
@@ -150,19 +151,13 @@ Notifications are only shown if either `text` or `title` is defined.
 | `hideOlder`     | `boolean`                                                          | `false`     | Hide all currently shown notifications before showing the next.                                                                                                                          |
 | `dismissible`   | `boolean`                                                          | `false`     | Render a close button which if pressed calls [`.hide()`](#hideid-number).                                                                                                                |
 
-<br>
-
 ### `.hide(id: number)`
 
 Hide a currently shown notification by its ID. An `id` can be retrieved via the [`event`](#events) fired on the instance element on notification show or the `data-notification-id` attribute on the notification element.
 
-<br>
-
 ### `.hideAll()`
 
 Hide all currently shown notifications.
-
-<br>
 
 ### `.currentId`
 
