@@ -184,12 +184,13 @@ Events are fired on the instance element `.simple-notifier`. The `detail` proper
 ## Upgrading from 2.x.x
 
 The following changes are breaking:
-* Removed - `instanceId`
-* Renamed - `notificationId` > `id`. Effects getters & event `detail`.
-* Renamed - `dismissable` > `dismissible`
-* Changed - `titleLevel` must now be provided as `title.el` (see [`NotificationOptions`](#notificationoptions)).
-* Changed - If `variant` is provided both as `.show()` parameter and in `NotificationOptions`, `.show()` now takes preference.
-* Changed - Undocumented but public class field names, visibility & mutability.
+* **Removed:** `instanceId`
+* **Renamed:** `notificationId` > `id`. Effects getters & event `detail`.
+* **Renamed:** `dismissable` > `dismissible`
+* **Changed:** Use physical directional keywords instead of logical keywords, i.e. `left` > `start`.
+* **Changed:** `notificationOptions.titleLevel` must now be provided as `notificationOptions.title.el` (see [`NotificationOptions`](#notificationoptions)).
+* **Changed:** If `variant` is provided both as `.show()` parameter and as `notificationOptions.variant`, `.show()` now takes preference.
+* **Changed:** Undocumented but public class field names, visibility & mutability.
 
 <br>
 
