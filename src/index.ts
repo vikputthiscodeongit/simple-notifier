@@ -106,6 +106,7 @@ class SN {
             dismissible: options?.dismissible ?? this.dismissible,
             text: typeof options.text === "string" ? [options.text] : (options.text ?? null),
             // TODO 20251026: Remove type assertion
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
             title: (typeof options.title === "string"
                 ? [options.title, "h6"]
                 : (options.title ?? null)) as [string, string] | null,
