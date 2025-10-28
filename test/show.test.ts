@@ -1,6 +1,7 @@
 import { expect, test, vi } from "vitest";
 import { waitFor } from "@testing-library/dom";
 import SimpleNotifier from "../src/index";
+import "../src/style.css";
 
 // TODO: Validate time to removal of notification from DOM.
 test("Notification with show text", async () => {
