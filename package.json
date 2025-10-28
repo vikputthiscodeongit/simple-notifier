@@ -40,9 +40,13 @@
   },
   "type": "module",
   "scripts": {
-    "test": "vitest --run",
-    "dev": "cross-env NODE_ENV=development webpack --watch",
-    "build": "cross-env NODE_ENV=production npm run test && cross-env NODE_ENV=production webpack"
+    "lint-fix": "eslint --fix",
+    "test": "vitest run",
+    "compile": "tsc",
+    "minify-css": "lightningcss --minify --browserslist src/style.css -o dist/style.css",
+    "minify-js": "terser dist/index.js --output dist/index.js --compress drop_console=[debug,log,info],ecma=2022,module=true,passes=2",
+    "dev": "rimraf dist && cross-env NODE_ENV=development npm run compile",
+    "build": "npm run lint-fix && cross-env NODE_ENV=production npm run test && rimraf dist && cross-env NODE_ENV=production npm run compile && npm run minify-css && npm run minify-js"
   },
   "dependencies": {
     "@codebundlesbyvik/js-helpers": "^2.1.5"
@@ -52,29 +56,18 @@
     "@testing-library/dom": "^10.4.1",
     "@tsconfig/recommended": "^1.0.10",
     "@vitest/browser-playwright": "^4.0.4",
-    "@vitest/coverage-v8": "^4.0.4",
     "autoprefixer": "^10.4.21",
     "cross-env": "^10.1.0",
-    "css-loader": "^7.1.2",
-    "css-minimizer-webpack-plugin": "^7.0.2",
     "eslint": "^9.38.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
-    "eslint-webpack-plugin": "^5.0.2",
     "globals": "^16.4.0",
-    "mini-css-extract-plugin": "^2.9.4",
-    "postcss": "^8.5.6",
-    "postcss-loader": "^8.2.0",
+    "lightningcss-cli": "^1.30.2",
     "prettier": "^3.6.2",
-    "source-map-loader": "^5.0.0",
-    "terser-webpack-plugin": "^5.3.14",
-    "ts-loader": "^9.5.4",
+    "rimraf": "^6.0.1",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.46.2",
-    "vitest": "^4.0.4",
-    "webpack": "^5.102.1",
-    "webpack-cli": "^6.0.1",
-    "webpack-merge": "^6.0.1"
+    "vitest": "^4.0.4"
   },
   "browserslist": [
     "> 0.25%",

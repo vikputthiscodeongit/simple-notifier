@@ -1,5 +1,4 @@
 import { createEl, wait } from "@codebundlesbyvik/js-helpers";
-import "./style.css";
 
 enum NotificationState {
     HIDE_BUSY = "HIDE_BUSY",
