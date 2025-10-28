@@ -51,10 +51,9 @@ For this example I assume the main JavaScript file is processed by a module bund
 npm install @codebundlesbyvik/simple-notifier
 ```
 
-If you're not using a module bundler then either:
-
-* [Download the latest release from the GitHub releases page](https://github.com/vikputthiscodeongit/simple-notifier/releases/latest), or
-* [Load the JavaScript](https://cdn.jsdelivr.net/npm/@codebundlesbyvik/simple-notifier@2.2.4/dist/index.js) [and the CSS](https://cdn.jsdelivr.net/npm/@codebundlesbyvik/simple-notifier@2.2.4/dist/style.css) via the jsdelivr CDN.
+If you're not using a module bundler then:
+* Download the latest `@codebundlesbyvik/js-helpers` release [from GitHub](https://github.com/vikputthiscodeongit/js-helpers/releases/latest) or load it directly [via jsdelivr](https://cdn.jsdelivr.net/npm/@codebundlesbyvik/js-helpers@2.1.5/dist/index.js).
+* Download the latest `@codebundlesbyvik/simple-notifier` release [from GitHub](https://github.com/vikputthiscodeongit/simple-notifier/releases/latest) or load [the CSS](https://cdn.jsdelivr.net/npm/@codebundlesbyvik/simple-notifier@3.0.0/dist/style.css) and [the JavaScript](https://cdn.jsdelivr.net/npm/@codebundlesbyvik/simple-notifier@3.0.0/dist/index.js) via the jsdelivr CDN.
 
 For the example below I assume the main JavaScript file is processed by a module bundler.
 
