@@ -385,11 +385,11 @@ test("Notification with show options text & hide older enabled", async () => {
     expect(notifier.queue.length).toBe(2);
 
     await vi.waitFor(async () => {
-        expect(notifier.notifications.size).toBe(2);
-        expect(notifier.queue.length).toBe(0);
+        expect(notifier.currentId).toBe(3);
     });
 
-    expect(notifier.currentId).toBe(3);
+    expect(notifier.notifications.size).toBe(2);
+    expect(notifier.queue.length).toBe(0);
 
     const notification2 = notifier.notifications.get(1);
     expect(notification2?.text).toStrictEqual(["Test notification 2 text"]);
