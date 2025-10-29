@@ -187,7 +187,7 @@ The following changes are breaking:
 * **Removed:** `instanceId`
 * **Renamed:** `notificationId` > `id`. Effects getters & event `detail`.
 * **Renamed:** `dismissable` > `dismissible`
-* **Changed:** Use physical directional keywords instead of logical keywords, i.e. `left` > `start`.
+* **Changed:** Use logical directional keywords instead of physical keywords, i.e. `left` > `start`.
 * **Changed:** `notificationOptions.titleLevel` must now be provided as `notificationOptions.title.el` (see [`NotificationOptions`](#notificationoptions)).
 * **Changed:** If `variant` is provided both as `.show()` parameter and as `notificationOptions.variant`, `.show()` now takes preference.
 * **Changed:** Undocumented but public class field names, visibility & mutability.
