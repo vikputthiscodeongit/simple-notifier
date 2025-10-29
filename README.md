@@ -14,7 +14,7 @@ A fully featured yet easy to use & lightweight notification library.
 
 ## Table of Contents
 
-1. [Unique features](#unique-features)
+1. [Nice features](#nice-features)
 4. [Usage](#usage)
 3. [Browser support](#browser-support)
 5. [Instance options](#instance-options)
@@ -32,12 +32,12 @@ A fully featured yet easy to use & lightweight notification library.
 
 <br>
 
-## Unique features
+## Nice features
 
 * Show multiple notifications simultaneously, and/or
 * Hide older notifications before showing one or more new notifications.
 * Great accessibility.
-* Module-based.
+* Is a compact ES module.
 
 Skip to [Instance options](#instance-options) to get a complete overview of all features!
 
@@ -119,7 +119,7 @@ Options below may also be provided via [`NotificationOptions`](#notificationopti
 | `--simple-notifier-font-size`          | [See `font-size` values](https://developer.mozilla.org/en-US/docs/Web/CSS/font-size#values)     | `1rem`                                                                                   | Base font size by which all internal sizes are calculated. |
 | `--simple-notifier-color-opacity`      | `<alpha-value>`                                                                                 | `0.9`                                                                                    | Opacity applied to all available colors                    |
 | `--simple-notifier-color-<name>`       | `<color>` \| `currentColor`                                                                     | White, black, green, yellow & red (see `/src/style.css` for exact values)                | Available colors.                                          |
-| `--simple-notifier-animation-duration` | `<time>` \| `auto`                                                                              | `500 ms`                                                                                 | Animation duration applied to all animations.              |
+| `--simple-notifier-animation-duration` | `<time>` \| `auto`                                                                              | `500ms`                                                                                  | Animation duration applied to all animations.              |
 
 <br>
 
@@ -176,7 +176,7 @@ Events are fired on the instance element `.simple-notifier`. The `detail` proper
 | Event       | Fired after...                     |
 | :---------- | :--------------------------------- |
 | `shown`     | Notification is shown.             |
-| `hidden`    | Hotification is hidden.            |
+| `hidden`    | Notification is hidden.            |
 | `allhidden` | Last shown notification is hidden. |
 
 <br>
