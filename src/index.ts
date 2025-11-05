@@ -154,6 +154,15 @@ class SN {
             const sideContentEl = createEl("div", {
                 class: "simple-notification__part simple-notification__part--side",
             });
+            sideContentEl.addEventListener(
+                "animationend",
+                (e) => {
+                    e.stopPropagation();
+                    sideContentEl.remove();
+                },
+                { once: true },
+            );
+
             const hideButtonEl = createEl("button", {
                 type: "button",
                 class: "simple-notification__hide-button",
