@@ -5,11 +5,16 @@
         "Liberation Sans", Arial, sans-serif;
     --simple-notifier-font-size: 1rem;
     --simple-notifier-color-opacity: 0.9;
-    --simple-notifier-color-white: rgba(255, 255, 255, var(--simple-notifier-color-opacity));
-    --simple-notifier-color-black: rgba(0, 0, 0, var(--simple-notifier-color-opacity));
-    --simple-notifier-color-green: rgba(209, 231, 221, var(--simple-notifier-color-opacity));
-    --simple-notifier-color-yellow: rgba(255, 243, 205, var(--simple-notifier-color-opacity));
-    --simple-notifier-color-red: rgba(132, 32, 41, var(--simple-notifier-color-opacity));
+    --simple-notifier-color-white-channels: 255, 255, 255;
+    --simple-notifier-color-white-channels-dark: 222, 223, 223;
+    --simple-notifier-color-grey-channels: 52, 58, 64;
+    --simple-notifier-color-black-channels: 0, 0, 0;
+    --simple-notifier-color-green-channels: 209, 231, 221;
+    --simple-notifier-color-green-channels-dark: 5, 27, 17;
+    --simple-notifier-color-yellow-channels: 255, 243, 205;
+    --simple-notifier-color-yellow-channels-dark: 51, 39, 1;
+    --simple-notifier-color-red-channels: 132, 32, 41;
+    --simple-notifier-color-red-channels-dark: 44, 11, 14;
     --simple-notifier-animation-duration: 500ms;
 
     box-sizing: border-box;
@@ -40,10 +45,13 @@
     width: calc(100vw - 2em);
     margin-block-end: 0.75em;
     padding: 0.75em 1em;
-    color: var(--simple-notifier-color-black);
-    background-color: var(--simple-notifier-color-white);
+    color: var(--simple-notifier-color-black, rgb(var(--simple-notifier-color-black-channels)));
+    background-color: var(
+        --simple-notifier-color-white,
+        rgba(var(--simple-notifier-color-white-channels), var(--simple-notifier-color-opacity))
+    );
     border-radius: 0.25em;
-    box-shadow: 0 0 0.125em 0 rgba(0, 0, 0, 0.25);
+    box-shadow: 0 0 0.125em 0 rgba(var(--simple-notifier-color-black-channels), 0.25);
     backdrop-filter: blur(0.25em);
     /* This may be expensive. */
     transition-property: grid-template-rows, margin-block-end, padding-block;
@@ -56,16 +64,25 @@
 }
 
 .simple-notification--success {
-    background-color: var(--simple-notifier-color-green);
+    background-color: var(
+        --simple-notifier-color-green,
+        rgba(var(--simple-notifier-color-green-channels), var(--simple-notifier-color-opacity))
+    );
 }
 
 .simple-notification--warning {
-    background-color: var(--simple-notifier-color-yellow);
+    background-color: var(
+        --simple-notifier-color-yellow,
+        rgba(var(--simple-notifier-color-yellow-channels), var(--simple-notifier-color-opacity))
+    );
 }
 
 .simple-notification--error {
-    color: var(--simple-notifier-color-white);
-    background-color: var(--simple-notifier-color-red);
+    color: var(--simple-notifier-color-white, rgb(var(--simple-notifier-color-white-channels)));
+    background-color: var(
+        --simple-notifier-color-red,
+        rgba(var(--simple-notifier-color-red-channels), var(--simple-notifier-color-opacity))
+    );
 }
 
 @keyframes fade-in {
@@ -161,7 +178,8 @@
     content: "";
     position: relative;
     display: block;
-    border-block-start: solid 0.125em var(--simple-notifier-color-black);
+    border-block-start: solid 0.125em
+        var(--simple-notifier-color-black, rgb(var(--simple-notifier-color-black-channels)));
     border-radius: 1em;
 }
 
@@ -177,7 +195,47 @@
 
 .simple-notification--error .simple-notification__hide-button::before,
 .simple-notification--error .simple-notification__hide-button::after {
-    border-block-start-color: var(--simple-notifier-color-white);
+    border-block-start-color: var(
+        --simple-notifier-color-white,
+        rgb(var(--simple-notifier-color-white-channels))
+    );
+}
+
+.simple-notifier.color-scheme-dark {
+    .simple-notification {
+        color: rgb(var(--simple-notifier-color-white-channels-dark));
+        background-color: rgba(
+            var(--simple-notifier-color-grey-channels),
+            var(--simple-notifier-color-opacity)
+        );
+        box-shadow: 0 0 0.125em 0 rgba(var(--simple-notifier-color-white-channels), 0.2);
+    }
+
+    .simple-notification--success {
+        background-color: rgba(
+            var(--simple-notifier-color-green-channels-dark),
+            var(--simple-notifier-color-opacity)
+        );
+    }
+
+    .simple-notification--warning {
+        background-color: rgba(
+            var(--simple-notifier-color-yellow-channels-dark),
+            var(--simple-notifier-color-opacity)
+        );
+    }
+
+    .simple-notification--error {
+        background-color: rgba(
+            var(--simple-notifier-color-red-channels-dark),
+            var(--simple-notifier-color-opacity)
+        );
+    }
+
+    .simple-notification__hide-button::before,
+    .simple-notification__hide-button::after {
+        border-block-color: rgb(var(--simple-notifier-color-white-channels-dark));
+    }
 }
 
 /* 480 px */
