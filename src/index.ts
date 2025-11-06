@@ -18,6 +18,7 @@ interface NotifierOptions extends SharedOptions {
     position: ["start" | "end", "start" | "center" | "end"];
     classNames: string[];
     hideButtonElAriaLabelText?: string;
+    animations: false | "auto";
 }
 
 interface NotificationOptions extends Partial<SharedOptions> {
@@ -48,6 +49,7 @@ const DEFAULT_INSTANCE_OPTIONS: NotifierOptions = {
     hideOlder: false,
     dismissible: false,
     classNames: [],
+    animations: "auto",
 };
 
 class SN {
@@ -74,11 +76,30 @@ class SN {
         });
         this.el.classList.add(...mergedOptions.classNames);
 
+        if (
+            mergedOptions.animations === false ||
+            (mergedOptions.animations === "auto" &&
+                window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+        ) {
+            this.el.classList.add("motion-reduced");
+        }
+
         this.notifications = new Map<number, Notification>();
         this.#currentId = 0;
         this.queue = [];
         this.hideButtonElAriaLabelText =
             mergedOptions.hideButtonElAriaLabelText ?? "Dismiss notification";
+        if (mergedOptions.animations === "auto") {
+            window
+                .matchMedia("(prefers-reduced-motion: reduce)")
+                .addEventListener("change", ({ matches }) => {
+                    if (matches) {
+                        this.el.classList.add("motion-reduced");
+                    } else {
+                        this.el.classList.remove("motion-reduced");
+                    }
+                });
+        }
 
         const notifierElInParentEl = mergedOptions.parentEl.querySelector(".simple-notifier");
 

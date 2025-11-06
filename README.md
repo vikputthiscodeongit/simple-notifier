@@ -101,6 +101,7 @@ Requires an ECMAScript 2022 (ES13) compatible browser. Practically speaking, all
 | `position`                  | `["start" \| "end", "start" \| "center" \| "end"]` | `["start", "center"]`    | Logical position in the HTML document to render the instance's HTML element.  |
 | `classNames`                | `string[]`                                         | `[]`                     | Extra classes to add to the instance's HTML element.                          |
 | `hideButtonElAriaLabelText` | `string`                                           | `"Dismiss notification"` | Text used as `aria-label` for the notification hide button.                   |
+| `animations`                | `false` \| `"auto"`                                | `"auto"`                 | Force animation preference.                                                   |
 
 Options below may also be provided via [`NotificationOptions`](#notificationoptions) and if done so take preference.
 
