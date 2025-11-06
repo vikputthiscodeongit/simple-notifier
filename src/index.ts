@@ -311,9 +311,6 @@ class SN {
             ...notificationWithoutEl,
             el: this.#makeDomEl(currentId, notificationWithoutEl),
         };
-        this.notifications.set(currentId, notification);
-
-        this.el.append(notification.el);
 
         notification.el.addEventListener(
             "animationend",
@@ -349,6 +346,10 @@ class SN {
             },
             { once: true, signal: notification.abortControllers.waitForHide.signal },
         );
+
+        this.notifications.set(currentId, notification);
+
+        this.el.append(notification.el);
 
         return;
     }
@@ -386,9 +387,6 @@ class SN {
 
         notification.state = NotificationState.HIDE_BUSY;
 
-        notification.el.classList.remove("simple-notification--animation-in");
-        notification.el.classList.add("simple-notification--animation-out");
-
         notification.el.addEventListener(
             "animationend",
             () => {
@@ -416,6 +414,8 @@ class SN {
             },
             { once: true },
         );
+        notification.el.classList.remove("simple-notification--animation-in");
+        notification.el.classList.add("simple-notification--animation-out");
 
         return;
     }
