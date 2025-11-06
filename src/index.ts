@@ -17,7 +17,7 @@ interface NotifierOptions extends SharedOptions {
     parentEl: HTMLElement;
     position: ["start" | "end", "start" | "center" | "end"];
     classNames: string[];
-    hideButtonElAriaLabelText?: string;
+    hideButtonElAriaLabelText: string;
     theme: "light" | "dark" | "auto";
     animations: false | "auto";
 }
@@ -50,6 +50,7 @@ const DEFAULT_INSTANCE_OPTIONS: NotifierOptions = {
     hideOlder: false,
     dismissible: false,
     classNames: [],
+    hideButtonElAriaLabelText: "Dismiss notification",
     theme: "auto",
     animations: "auto",
 };
@@ -96,8 +97,8 @@ class SN {
         this.notifications = new Map<number, Notification>();
         this.#currentId = 0;
         this.queue = [];
-        this.hideButtonElAriaLabelText =
-            mergedOptions.hideButtonElAriaLabelText ?? "Dismiss notification";
+        this.hideButtonElAriaLabelText = mergedOptions.hideButtonElAriaLabelText;
+
         if (mergedOptions.theme === "auto") {
             window
                 .matchMedia("(prefers-color-scheme: dark)")
