@@ -181,13 +181,14 @@
     border-block-start: solid 0.125em
         var(--simple-notifier-color-black, rgb(var(--simple-notifier-color-black-channels)));
     border-radius: 1em;
+}
 
-    .simple-notification--error & {
-        border-block-start-color: var(
-            --simple-notifier-color-white,
-            rgb(var(--simple-notifier-color-white-channels))
-        );
-    }
+.simple-notification--error .simple-notification__hide-button::before,
+.simple-notification--error .simple-notification__hide-button::after {
+    border-block-start-color: var(
+        --simple-notifier-color-white,
+        rgb(var(--simple-notifier-color-white-channels))
+    );
 }
 
 .simple-notification__hide-button::before {
