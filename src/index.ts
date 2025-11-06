@@ -296,8 +296,7 @@ class SN {
             return;
         }
 
-        const currentId = this.#currentId;
-        this.#currentId++;
+        const currentId = this.#currentId++;
 
         const notificationWithoutEl = {
             ...options,
@@ -320,15 +319,14 @@ class SN {
                 );
 
                 notification.state = NotificationState.SHOWN;
+                console.debug(`SN show: Notification ${currentId} shown.`);
 
-                const notificationShownEvent = new CustomEvent("shown", {
+                const shownEvent = new CustomEvent("shown", {
                     detail: {
                         id: currentId,
                     },
                 });
-                this.el.dispatchEvent(notificationShownEvent);
-
-                console.debug(`SN show: Notification ${currentId} shown.`);
+                this.el.dispatchEvent(shownEvent);
 
                 if (notification.hideAfterTime > 0) {
                     notification.state = NotificationState.WAITING_ON_HIDE;
@@ -397,17 +395,18 @@ class SN {
 
                 this.notifications.delete(id);
 
-                const notificationHiddenEvent = new CustomEvent("hidden", {
-                    detail: { id },
-                });
-                this.el.dispatchEvent(notificationHiddenEvent);
-
                 console.debug(`SN hide: Notification ${id} hidden.`);
 
+                const hiddenEvent = new CustomEvent("hidden", {
+                    detail: { id },
+                });
+                this.el.dispatchEvent(hiddenEvent);
+
                 if (this.notifications.size === 0) {
+                    console.debug(`SN hide: All notifications hidden.`);
+
                     const allNotificationsHiddenEvent = new CustomEvent("allhidden");
                     this.el.dispatchEvent(allNotificationsHiddenEvent);
-                    console.debug(`SN hide: All notifications hidden.`);
                 }
 
                 return;
