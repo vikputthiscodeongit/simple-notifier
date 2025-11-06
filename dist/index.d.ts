@@ -27,10 +27,7 @@ interface ProcessedNotificationOptions extends Required<Omit<NotificationOptions
     title: [string, string] | null;
 }
 interface Notification extends ProcessedNotificationOptions {
-    abortControllers: {
-        hideButtonElEvent: AbortController;
-        waitForHide: AbortController;
-    };
+    abortController: AbortController;
     state: NotificationState;
     el: HTMLDivElement;
 }
