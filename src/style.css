@@ -213,7 +213,7 @@
     }
 }
 
-@media (prefers-reduced-motion: reduce) {
+.simple-notifier.motion-reduced {
     .simple-notification,
     .simple-notification__part--side {
         transition-duration: 1ms;
