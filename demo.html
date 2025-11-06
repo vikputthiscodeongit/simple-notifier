@@ -27,6 +27,13 @@
             p:last-child {
                 margin-block-end: 0;
             }
+
+            @media (prefers-color-scheme: dark) {
+                body {
+                    color: rgb(222, 223, 223);
+                    background-color: rgb(33, 37, 41);
+                }
+            }
         </style>
 
         <!-- Simple Notifier CSS -->
@@ -114,6 +121,10 @@
                                     <code>
                                         classNames: ["extra-html-class", "another-extra-html-class"]
                                     </code>
+                                </li>
+
+                                <li>
+                                    <code>theme: "dark"</code>
                                 </li>
 
                                 <li>
@@ -205,6 +216,7 @@
                 hideAfterTime: 6000,
                 hideOlder: true,
                 classNames: ["extra-html-class", "another-extra-html-class"],
+                theme: "dark",
                 animations: false,
             });
 

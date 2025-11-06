@@ -18,6 +18,7 @@ interface NotifierOptions extends SharedOptions {
     position: ["start" | "end", "start" | "center" | "end"];
     classNames: string[];
     hideButtonElAriaLabelText?: string;
+    theme: "light" | "dark" | "auto";
     animations: false | "auto";
 }
 
@@ -49,6 +50,7 @@ const DEFAULT_INSTANCE_OPTIONS: NotifierOptions = {
     hideOlder: false,
     dismissible: false,
     classNames: [],
+    theme: "auto",
     animations: "auto",
 };
 
@@ -77,6 +79,13 @@ class SN {
         this.el.classList.add(...mergedOptions.classNames);
 
         if (
+            mergedOptions.theme === "dark" ||
+            (mergedOptions.theme === "auto" &&
+                window.matchMedia("(prefers-color-scheme: dark)").matches)
+        ) {
+            this.el.classList.add("color-scheme-dark");
+        }
+        if (
             mergedOptions.animations === false ||
             (mergedOptions.animations === "auto" &&
                 window.matchMedia("(prefers-reduced-motion: reduce)").matches)
@@ -89,6 +98,17 @@ class SN {
         this.queue = [];
         this.hideButtonElAriaLabelText =
             mergedOptions.hideButtonElAriaLabelText ?? "Dismiss notification";
+        if (mergedOptions.theme === "auto") {
+            window
+                .matchMedia("(prefers-color-scheme: dark)")
+                .addEventListener("change", ({ matches }) => {
+                    if (matches) {
+                        this.el.classList.add("color-scheme-dark");
+                    } else {
+                        this.el.classList.remove("color-scheme-dark");
+                    }
+                });
+        }
         if (mergedOptions.animations === "auto") {
             window
                 .matchMedia("(prefers-reduced-motion: reduce)")
