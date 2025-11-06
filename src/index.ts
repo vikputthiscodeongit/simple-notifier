@@ -121,12 +121,14 @@ class SN {
                 });
         }
 
-        const notifierElInParentEl = mergedOptions.parentEl.querySelector(".simple-notifier");
+        const notifierElInParentEl = mergedOptions.parentEl.querySelector(
+            ":scope > .simple-notifier",
+        );
 
         if (notifierElInParentEl) {
             notifierElInParentEl.after(this.el);
         } else {
-            mergedOptions.parentEl.before(this.el);
+            mergedOptions.parentEl.prepend(this.el);
         }
 
         return;
