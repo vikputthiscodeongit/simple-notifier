@@ -35,10 +35,7 @@ interface ProcessedNotificationOptions
 }
 
 interface Notification extends ProcessedNotificationOptions {
-    abortControllers: {
-        hideButtonElEvent: AbortController;
-        waitForHide: AbortController;
-    };
+    abortController: AbortController;
     state: NotificationState;
     el: HTMLDivElement;
 }
@@ -214,7 +211,7 @@ class SN {
             });
             hideButtonEl.addEventListener("click", () => this.hide(id), {
                 once: true,
-                signal: notificationWithoutEl.abortControllers.hideButtonElEvent.signal,
+                signal: notificationWithoutEl.abortController.signal,
             });
 
             sideContentEl.append(hideButtonEl);
@@ -301,10 +298,7 @@ class SN {
         const notificationWithoutEl = {
             ...options,
             state: NotificationState.SHOW_BUSY,
-            abortControllers: {
-                hideButtonElEvent: new AbortController(),
-                waitForHide: new AbortController(),
-            },
+            abortController: new AbortController(),
         };
         const notification = {
             ...notificationWithoutEl,
@@ -331,18 +325,14 @@ class SN {
                 if (notification.hideAfterTime > 0) {
                     notification.state = NotificationState.WAITING_ON_HIDE;
 
-                    wait(
-                        notification.hideAfterTime,
-                        true,
-                        notification.abortControllers.waitForHide.signal,
-                    )
+                    wait(notification.hideAfterTime, true, notification.abortController.signal)
                         .then(() => this.hide(currentId))
                         .catch((abortReason) => console.debug(abortReason));
                 }
 
                 return;
             },
-            { once: true, signal: notification.abortControllers.waitForHide.signal },
+            { once: true, signal: notification.abortController.signal },
         );
 
         this.notifications.set(currentId, notification);
@@ -375,10 +365,7 @@ class SN {
                 `SN hide: Notification ${id} in show action or waiting on hide action. Aborting any scheduled calls...`,
             );
 
-            notification.abortControllers.hideButtonElEvent.abort(
-                `Hide button event of notification ${id} aborted.`,
-            );
-            notification.abortControllers.waitForHide.abort(
+            notification.abortController.abort(
                 `Scheduled hide or active show action of notification ${id} aborted.`,
             );
         }
