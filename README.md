@@ -8,7 +8,7 @@
 
 A fully featured yet easy to use & lightweight notification library.
 
-**[Demo page (interactive)](https://rawcdn.githack.com/vikputthiscodeongit/simple-notifier/be2978026a883d40ad4816b00ef1c448fbb75a5a/demo.html)**
+**[Demo page (interactive)](https://rawcdn.githack.com/vikputthiscodeongit/simple-notifier/f1be47697a635cf75e3b23f5e7d1987b4350aac7/demo.html)**
 
 <br>
 
@@ -54,7 +54,7 @@ npm install @codebundlesbyvik/simple-notifier
 
 If you're not using a module bundler then:
 * Download the latest `@codebundlesbyvik/js-helpers` release [from GitHub](https://github.com/vikputthiscodeongit/js-helpers/releases/latest) or load it directly [via jsdelivr](https://cdn.jsdelivr.net/npm/@codebundlesbyvik/js-helpers@2.2.0/dist/index.js).
-* Download the latest `@codebundlesbyvik/simple-notifier` release [from GitHub](https://github.com/vikputthiscodeongit/simple-notifier/releases/latest) or load [the CSS](https://cdn.jsdelivr.net/npm/@codebundlesbyvik/simple-notifier@3.1.0/dist/style.css) and [the JavaScript](https://cdn.jsdelivr.net/npm/@codebundlesbyvik/simple-notifier@3.1.0/dist/index.js) via the jsdelivr CDN.
+* Download the latest `@codebundlesbyvik/simple-notifier` release [from GitHub](https://github.com/vikputthiscodeongit/simple-notifier/releases/latest) or load [the CSS](https://cdn.jsdelivr.net/npm/@codebundlesbyvik/simple-notifier@3.1.1/dist/style.css) and [the JavaScript](https://cdn.jsdelivr.net/npm/@codebundlesbyvik/simple-notifier@3.1.1/dist/index.js) via the jsdelivr CDN.
 
 For the example below I assume the main JavaScript file is processed by a module bundler.
 
