@@ -13,7 +13,9 @@ interface NotifierOptions extends SharedOptions {
     parentEl: HTMLElement;
     position: ["start" | "end", "start" | "center" | "end"];
     classNames: string[];
-    hideButtonElAriaLabelText?: string;
+    hideButtonElAriaLabelText: string;
+    theme: "light" | "dark" | "auto";
+    animations: false | "auto";
 }
 interface NotificationOptions extends Partial<SharedOptions> {
     text?: string | string[];
